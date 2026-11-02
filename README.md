@@ -38,6 +38,10 @@ iOS 26 already translates Messages as you read them. L!NK works on what comes af
 
 Sample chats on the iOS 27 simulator. The translations, replies, summaries and notes in them are real output of the on-device models.
 
+**In motion.** A study group writing in Japanese and Spanish: each message's translation fills in inside its bubble, and a new answer arrives translated. Waiting for the on-device model is sped up.
+
+<img src="docs/screenshots/demo.gif" width="320" alt="The chat list, then a group chat where translations fill in inside each Japanese and Spanish message and a new Spanish answer arrives translated">
+
 **Reply suggestions and search by meaning.** Three short replies appear when someone writes. Searching "dinner plans" in English finds the Korean message about dinner.
 
 ![Suggested replies above the message field, and an English search that finds a Korean message](docs/screenshots/suggestions-search.png)
@@ -61,6 +65,10 @@ SwiftUI and SwiftData, MVVM with protocol-backed repositories, Foundation Models
 1. Open `TalkMVP.xcodeproj` in Xcode 27 or later.
 2. Run it on an iOS 26 or later simulator.
 3. Tap **Try Test Mode** to start with sample friends and chats.
+
+## About
+
+Designed and built solo by David Song, from September 2025: the product, the interface and the code, with on-device AI and accessibility as the parts I cared about most. Questions and feedback are welcome through [@mobssy](https://github.com/mobssy).
 
 ## License
 

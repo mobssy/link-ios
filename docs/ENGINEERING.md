@@ -79,7 +79,8 @@ link-mvp/
 │   ├── DesignSystem/            # Brand colors, text size and accessibility preferences, touch targets
 │   ├── AppShortcuts.xcstrings   # Siri phrases, in the app's five languages
 │   ├── Localizable.xcstrings    # Siri and Shortcuts strings, in the same languages (the UI is localized in code)
-│   └── Assets.xcassets/         # App icon, color sets, image assets
+│   ├── AppIcon.icon/            # The app icon (Icon Composer): one glass bubble layer, light and dark backgrounds
+│   └── Assets.xcassets/         # Color sets, image assets
 ├── TalkMVPTests/
 │   └── TalkMVPTests.swift       # Swift Testing suites
 ├── TalkMVPUITests/
