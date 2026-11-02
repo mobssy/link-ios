@@ -51,7 +51,7 @@ L!NK has no backend: the other side of every chat is simulated, and every AI fea
 The app target is split by role: screens live in `Features/`, one folder per flow, and logic with no UI lives in `Services/`, `Repositories/` and `Models/`. `TalkMVP/` is a folder Xcode synchronizes into the target, so the folders on disk are the groups in Xcode.
 
 ```
-link-mvp/
+link-ios/
 ├── TalkMVP.xcodeproj/
 ├── TalkMVP/
 │   ├── App/                     # Entry point, the tab shell, the router and the sample chats
