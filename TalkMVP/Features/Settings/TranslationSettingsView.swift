@@ -16,7 +16,7 @@ struct TranslationSettingsView: View {
                             .foregroundStyle(.teal)
                     }
                 }
-                Picker(languageManager.string("Translate Into"), selection: $translationTargetLanguage) {
+                Picker(selection: $translationTargetLanguage) {
                     Text(languageManager.string("App Language")).tag("auto")
                     // Each language in its own name, the same in every app language.
                     Text(verbatim: "한국어").tag("ko")
@@ -25,6 +25,14 @@ struct TranslationSettingsView: View {
                     Text(verbatim: "中文(简体)").tag("zh-Hans")
                     Text(verbatim: "中文(繁體)").tag("zh-Hant")
                     Text(verbatim: "Español").tag("es")
+                } label: {
+                    // An icon like the row above, so both labels start at the same edge.
+                    Label {
+                        Text(languageManager.string("Translate Into"))
+                    } icon: {
+                        Image(systemName: "translate")
+                            .foregroundStyle(.blue)
+                    }
                 }
                 .pickerStyle(.navigationLink)
             }
