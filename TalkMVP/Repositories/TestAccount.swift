@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  The one local account test mode signs into
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

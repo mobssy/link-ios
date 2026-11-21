@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  What the Siri and Shortcuts actions do, apart from the App Intents plumbing
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

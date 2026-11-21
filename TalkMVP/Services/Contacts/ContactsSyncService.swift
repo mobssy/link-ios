@@ -2,6 +2,7 @@
 // TalkMVP
 //
 // Handles iOS Contacts access, normalization, hashing, and server-side matching.
+//  Copyright © 2025–2026 David Song. All rights reserved.
 
 import Foundation
 import Contacts

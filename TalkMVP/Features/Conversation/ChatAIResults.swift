@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  The summary and meeting notes a chat is writing, for the sheets that show them
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Observation

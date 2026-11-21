@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Swiping a message to the right to reply to it
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import SwiftUI

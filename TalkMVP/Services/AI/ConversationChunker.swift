@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Cuts a long chat into parts the on-device model can read at once
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

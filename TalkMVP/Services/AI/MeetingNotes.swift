@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Structured notes pulled out of a conversation
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

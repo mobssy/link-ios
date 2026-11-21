@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Siri and Shortcuts: send a message to a chat, summarize a chat
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import AppIntents

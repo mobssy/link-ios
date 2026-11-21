@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Friend adding views following Single Responsibility Principle
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import SwiftUI

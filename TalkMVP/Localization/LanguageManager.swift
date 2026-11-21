@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Created by David Song on 10/3/25.
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import SwiftUI

@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Meeting notes for a chat, grouped by kind
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import SwiftUI

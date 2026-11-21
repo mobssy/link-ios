@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Says in a sentence what a shared photo shows, on device
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

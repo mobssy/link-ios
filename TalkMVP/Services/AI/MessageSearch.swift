@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Finding messages by what they say, and by what they mean
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

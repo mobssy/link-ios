@@ -3,6 +3,7 @@
 //  TalkMVPSiriUITests
 //
 //  The Siri and Shortcuts actions, run through the system against the app
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import AppIntentsTesting

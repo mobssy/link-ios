@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Repository pattern for Message data access
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

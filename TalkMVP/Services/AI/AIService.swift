@@ -3,6 +3,7 @@
 //
 //  Conversation summaries and message translation using on-device models,
 //  with offline fallbacks when Apple Intelligence or a language pack is unavailable.
+//  Copyright © 2025–2026 David Song. All rights reserved.
 
 import Foundation
 import NaturalLanguage

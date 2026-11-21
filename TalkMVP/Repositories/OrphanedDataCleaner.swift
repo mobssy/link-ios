@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Launch-time sweep for data nothing can reach any more
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

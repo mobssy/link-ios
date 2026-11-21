@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Translating a message on device
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

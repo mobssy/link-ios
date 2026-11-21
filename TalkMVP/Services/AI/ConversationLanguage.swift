@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Which language a chat is written in
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

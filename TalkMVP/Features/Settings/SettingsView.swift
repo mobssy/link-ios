@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Main settings screen: profile card, preference links and account actions.
+//  Copyright © 2025–2026 David Song. All rights reserved.
 
 import SwiftUI
 import UIKit

@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Created by David Song on 9/26/25.
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation

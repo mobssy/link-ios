@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Writes down what was said in a voice message, on device
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import AVFoundation

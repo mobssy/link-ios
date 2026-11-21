@@ -2,6 +2,7 @@
 //  TalkMVP
 //
 //  Convenience colors bridging UIKit label colors to SwiftUI.
+//  Copyright © 2025–2026 David Song. All rights reserved.
 
 import SwiftUI
 

@@ -3,6 +3,7 @@
 //  TalkMVP
 //
 //  Short replies the user can pick instead of typing
+//  Copyright © 2025–2026 David Song. All rights reserved.
 //
 
 import Foundation
