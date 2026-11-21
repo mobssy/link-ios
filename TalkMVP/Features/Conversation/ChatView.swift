@@ -516,10 +516,9 @@ struct ChatView: View {
         )
     }
 
-    /// Its own key: as an alert title, "Add Friend" reads differently in Chinese than the button.
     private var addFriendAlertTitle: String {
         languageManager.string(LocalizedStringResource(
-            "addFriend.alertTitle", defaultValue: "Add Friend",
+            "Add Friend",
             comment: "Title of the alert that asks before sending a friend request"
         ))
     }

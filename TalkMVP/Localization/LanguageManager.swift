@@ -34,7 +34,7 @@ class LanguageManager {
         }
     }
 
-    private let languageKey = "selectedLanguage"
+    private let languageKey = AppLocalization.languageKey
 
     init() {
         loadLanguagePreference()
@@ -89,29 +89,6 @@ class LanguageManager {
 
     private func applyLanguage() {
         UserDefaults.standard.set([currentLanguage.rawValue], forKey: "AppleLanguages")
-    }
-
-    // 5개 언어를 인라인으로 분기하는 편의 메서드 (번체 중국어는 간체로 폴백)
-    func localize(ko: String, en: String, ja: String, zh: String, es: String) -> String {
-        switch currentLanguage {
-        case .korean: return ko
-        case .english: return en
-        case .japanese: return ja
-        case .chinese, .chineseTraditional: return zh
-        case .spanish: return es
-        }
-    }
-
-    // 간체/번체 중국어를 구분할 때 사용하는 6개 언어 메서드
-    func localize(ko: String, en: String, ja: String, zhHans: String, zhHant: String, es: String) -> String {
-        switch currentLanguage {
-        case .korean: return ko
-        case .english: return en
-        case .japanese: return ja
-        case .chinese: return zhHans
-        case .chineseTraditional: return zhHant
-        case .spanish: return es
-        }
     }
 
     // 디버깅을 위한 언어 설정 정보 제공

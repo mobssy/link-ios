@@ -161,7 +161,7 @@ struct ChatListView: View {
     private func createSampleDataIfNeeded() {
         guard chatRooms.isEmpty else { return }
         let now = Date()
-        for sample in SampleChats.rooms(readerLanguage: LanguageManager.currentLanguageCode) {
+        for sample in SampleChats.rooms(readerLanguage: AppLocalization.languageCode()) {
             let room = ChatRoom(
                 name: sample.personName ?? groupName(forSampleKey: sample.key),
                 profileImage: sample.members.isEmpty ? ChatRoom.personSymbol : ChatRoom.groupSymbol
@@ -300,6 +300,6 @@ struct ChatScreen: View {
             .modelContainer(container)
             .environment(AppRouter())
     } else {
-        Text("Preview unavailable")
+        Text(verbatim: "Preview unavailable")
     }
 }

@@ -147,7 +147,7 @@ struct MessageBubbleView: View {
                 switch senderStanding {
                 case .stranger:
                     Button(languageManager.string(LocalizedStringResource(
-                        "add_friend.avatar_menu", defaultValue: "Add Friend",
+                        "Add Friend",
                         comment: "Menu item on a message sender's avatar that sends them a friend request."
                     ))) { addFriend() }
                 case .requested:

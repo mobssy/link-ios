@@ -70,42 +70,6 @@ struct AttachmentHandlerTests {
     }
 }
 
-// MARK: - L10n
-
-@Suite("L10n")
-struct L10nTests {
-
-    @Test("Known key resolves to the correct string per language", arguments: [
-        (AppLanguage.korean, "친구"),
-        (AppLanguage.english, "Friends"),
-        (AppLanguage.japanese, "友だち"),
-        (AppLanguage.chinese, "朋友"),
-        (AppLanguage.spanish, "Amigos")
-    ])
-    func knownKeyPerLanguage(language: AppLanguage, expected: String) {
-        #expect(L10n.text("friends", language) == expected)
-    }
-
-    @Test("Unknown key falls back to a humanized version of the key itself")
-    func unknownKeyFallsBackToHumanizedKey() {
-        #expect(L10n.text("this_key_does_not_exist", AppLanguage.english) == "This Key Does Not Exist")
-    }
-
-    @Test("LanguageManager.Language overload maps to the matching AppLanguage")
-    func languageManagerOverloadMapsCorrectly() {
-        #expect(L10n.text("send", LanguageManager.Language.korean) == L10n.text("send", AppLanguage.korean))
-        #expect(L10n.text("send", LanguageManager.Language.english) == L10n.text("send", AppLanguage.english))
-        #expect(L10n.text("send", LanguageManager.Language.japanese) == L10n.text("send", AppLanguage.japanese))
-    }
-
-    @Test("Traditional Chinese currently falls back to Simplified Chinese text")
-    func traditionalChineseFallsBackToSimplified() {
-        // AppLanguage has no distinct case for Traditional Chinese, so both
-        // LanguageManager variants resolve to the same translated string today.
-        #expect(L10n.text("send", LanguageManager.Language.chineseTraditional) == L10n.text("send", AppLanguage.chinese))
-    }
-}
-
 // MARK: - MessageRepository
 
 @MainActor
@@ -653,45 +617,6 @@ struct FriendSearchServiceTests {
     func sendFriendRequestSucceeds() async throws {
         let sent = try await FriendSearchService.sendFriendRequest(from: "user-1", to: "user-2")
         #expect(sent == true)
-    }
-}
-
-// MARK: - LocalizationService
-
-@MainActor
-@Suite("LocalizationService")
-struct LocalizationServiceTests {
-
-    @Test("Known key resolves per language", arguments: [
-        (Language.korean, "취소"),
-        (Language.english, "Cancel"),
-        (Language.japanese, "キャンセル"),
-        (Language.chinese, "取消"),
-        (Language.spanish, "Cancelar")
-    ])
-    func cancelKeyPerLanguage(language: Language, expected: String) {
-        #expect(LocalizationService.shared.text(for: .cancel, language: language) == expected)
-    }
-
-    @Test("String-keyed bridging resolves a known key through LanguageManager")
-    func localizedTextResolvesKnownKey() {
-        let manager = LanguageManager()
-        manager.setLanguage(.english)
-        #expect(LocalizationService.shared.localizedText("save", languageManager: manager) == "Save")
-    }
-
-    @Test("String-keyed bridging returns the raw key when it doesn't match any LocalizationKey")
-    func localizedTextFallsBackToRawKeyWhenUnknown() {
-        let manager = LanguageManager()
-        manager.setLanguage(.english)
-        #expect(LocalizationService.shared.localizedText("not_a_real_localization_key", languageManager: manager) == "not_a_real_localization_key")
-    }
-
-    @Test("Traditional Chinese currently falls back to Simplified Chinese text, same as L10n")
-    func traditionalChineseFallsBackToSimplified() {
-        let manager = LanguageManager()
-        manager.setLanguage(.chineseTraditional)
-        #expect(LocalizationService.shared.localizedText("cancel", languageManager: manager) == "取消")
     }
 }
 
@@ -3211,6 +3136,42 @@ struct AppLocalizationTests {
         #expect(AppLocalization.string("Send Message", languageCode: "ko") == "메시지 보내기")
         #expect(AppLocalization.string("Send Message", languageCode: "ja") == "メッセージを送信")
         #expect(AppLocalization.string("Send Message", languageCode: "en") == "Send Message")
+    }
+
+    @Test("Traditional Chinese has its own text, not Simplified")
+    func traditionalChinese() {
+        #expect(AppLocalization.string("Settings", languageCode: "zh-Hans") == "设置")
+        #expect(AppLocalization.string("Settings", languageCode: "zh-Hant") == "設定")
+    }
+
+    @Test("English counts read as one or many")
+    func englishPlurals() {
+        #expect(AppLocalization.string("\(1) Members", languageCode: "en") == "1 Member")
+        #expect(AppLocalization.string("\(3) Members", languageCode: "en") == "3 Members")
+        #expect(AppLocalization.string("\(1) unread messages", languageCode: "en") == "1 unread message")
+    }
+
+    @Test("Every language has every string", arguments: ["ja", "zh-Hans", "zh-Hant", "es"])
+    func everyLanguageIsComplete(language: String) throws {
+        // Korean is the reference: the app was written in it first, so it has every key.
+        let korean = try #require(Self.keys(in: "ko"))
+        let other = try #require(Self.keys(in: language))
+        #expect(korean.count > 400)
+        #expect(korean.subtracting(other).sorted() == [])
+        #expect(other.subtracting(korean).sorted() == [])
+    }
+
+    /// The keys of the compiled Localizable table, plain strings and plurals, for one language.
+    private static func keys(in language: String) -> Set<String>? {
+        let bundle = Bundle(for: LanguageManager.self)
+        var keys = Set<String>()
+        for type in ["strings", "stringsdict"] {
+            if let path = bundle.path(forResource: "Localizable", ofType: type, inDirectory: nil, forLocalization: language),
+               let table = NSDictionary(contentsOfFile: path) as? [String: Any] {
+                keys.formUnion(table.keys)
+            }
+        }
+        return keys.isEmpty ? nil : keys
     }
 
     @Test("A language the app doesn't have falls back to English")

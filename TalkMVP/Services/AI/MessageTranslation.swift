@@ -93,12 +93,9 @@ nonisolated enum TranslationLanguage {
         case "fr", "fra": return "fr"
         case "de", "deu": return "de"
         case "auto":
-            // "auto" should be resolved to the app language before reaching here;
-            // fall back to English only as a last resort
-            if let language = UserDefaults.standard.string(forKey: "selectedLanguage") {
-                return normalizedCode(language)
-            }
-            return "en"
+            // "auto" should be resolved to the app language before reaching here; if it
+            // wasn't, the app's language is the best guess.
+            return normalizedCode(AppLocalization.languageCode())
         default: return lowercased
         }
     }

@@ -32,7 +32,7 @@ nonisolated struct ReplySuggestionsDraft {
 nonisolated struct OnDeviceReplySuggester: ReplySuggesting {
     var historyLimit = 10
     /// The language to suggest in when the chat's can't be told, e.g. the app's language code.
-    var fallbackLanguage: String = LanguageManager.currentLanguageCode
+    var fallbackLanguage: String = AppLocalization.languageCode()
 
     func suggestions(for conversation: [SummaryMessage]) async -> [String] {
         let recent = conversation.filter { $0.messageType != .deleted }.suffix(historyLimit)

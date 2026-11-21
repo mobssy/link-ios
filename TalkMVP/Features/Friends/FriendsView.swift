@@ -270,8 +270,7 @@ struct FriendsView: View {
                         Image(systemName: "ellipsis")
                     }
                     .accessibilityLabel(languageManager.string(LocalizedStringResource(
-                        "friends.moreOptions",
-                        defaultValue: "More options",
+                        "More options",
                         comment: "Accessibility label of the Friends tab's \"more\" menu"
                     )))
                 }

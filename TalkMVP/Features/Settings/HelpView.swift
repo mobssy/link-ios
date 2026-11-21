@@ -68,7 +68,7 @@ struct HelpView: View {
             FAQItem(category: .friends, question: "What are favorite friends?", answers: ["Swipe right on a friend and add a star to show them in the favorites section."]),
 
             // Notifications
-            FAQItem(category: .notifications, question: "I'm not receiving notifications", answers: ["Check Settings → Notifications and ensure TalkMVP notifications are enabled.", "Check Focus mode or Do Not Disturb settings."]),
+            FAQItem(category: .notifications, question: "I'm not receiving notifications", answers: ["Check Settings → Notifications and ensure L!NK notifications are enabled.", "Check Focus mode or Do Not Disturb settings."]),
             FAQItem(category: .notifications, question: "How do I mute a specific chat?", answers: ["Tap the bell icon at the top right of the chat to toggle notifications."]),
 
             // Account & Settings
@@ -189,7 +189,7 @@ struct HelpView: View {
 
     private func sendEmail() {
         let email = "support@linkmvp.com"
-        let subject = languageManager.string("TalkMVP Support Request")
+        let subject = languageManager.string("L!NK Support Request")
         let body = languageManager.string("Please describe your issue:\n\nApp Version: \(getAppVersion())")
 
         let urlString = "mailto:\(email)?subject=\(subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&body=\(body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"

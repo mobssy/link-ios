@@ -52,7 +52,7 @@ nonisolated struct OnDeviceReplyWriter: ReplyWriting {
     /// How much of the chat the model sees; enough to stay on topic and well within its context.
     var historyLimit = 12
     /// The language to answer in when the chat's can't be told, e.g. the app's language code.
-    var fallbackLanguage: String = LanguageManager.currentLanguageCode
+    var fallbackLanguage: String = AppLocalization.languageCode()
 
     func reply(to conversation: [SummaryMessage], as partner: String, language: String?) async -> String? {
         // A message that has disappeared is only a placeholder now.
@@ -101,7 +101,7 @@ nonisolated struct OnDeviceReplyWriter: ReplyWriting {
 /// is writing in, so an English chat doesn't get a Korean answer.
 nonisolated struct CannedReplyWriter: ReplyWriting {
     /// Used when the chat's language can't be told, e.g. the app's language code.
-    var fallbackLanguage: String = LanguageManager.currentLanguageCode
+    var fallbackLanguage: String = AppLocalization.languageCode()
 
     static let replies: [String: [String]] = [
         "ko": ["네 알겠습니다! 👍", "좋은 생각이네요 😊", "그렇네요!", "재미있겠어요 😄", "네네 맞습니다",

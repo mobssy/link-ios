@@ -184,7 +184,7 @@ nonisolated enum TestData {
     static let testModeStatuses: Set<String> = [
         "테스트 모드로 체험 중입니다", "Experiencing in test mode",
         "テストモードを体験中", "テストモードで体験中です",
-        "正在体验测试模式", "正在以测试模式体验",
+        "正在体验测试模式", "正在以测试模式体验", "正在以測試模式體驗",
         "Explorando en modo de prueba", "Experimentando en modo de prueba",
     ]
 
@@ -205,6 +205,6 @@ nonisolated enum TestData {
             .environment(LanguageManager())
             .modelContainer(container)
     } else {
-        Text("Preview unavailable")
+        Text(verbatim: "Preview unavailable")
     }
 }

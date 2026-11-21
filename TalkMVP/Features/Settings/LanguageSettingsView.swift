@@ -10,7 +10,7 @@ import SwiftUI
 struct LanguageSettingsView: View {
     @Environment(LanguageManager.self) var languageManager
     @Environment(\.dismiss) private var dismiss
-    @State private var showingRestartAlert = false
+    @State private var showingChangeAlert = false
     @State private var pendingLanguage: LanguageManager.Language?
 
     var body: some View {
@@ -18,7 +18,7 @@ struct LanguageSettingsView: View {
         List {
             Section(
                 header: Text(languageManager.string("Language Selection")),
-                footer: Text(languageManager.string("The app will restart when you change the language."))
+                footer: Text(languageManager.string("The app's text changes as soon as you pick a language."))
             ) {
                 ForEach(LanguageManager.Language.allCases, id: \.self) { language in
                     LanguageRow(
@@ -51,7 +51,7 @@ struct LanguageSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .alert(
             languageManager.string("Change Language"),
-            isPresented: $showingRestartAlert
+            isPresented: $showingChangeAlert
         ) {
             Button(languageManager.string("Cancel"), role: .cancel) {
                 pendingLanguage = nil
@@ -59,19 +59,18 @@ struct LanguageSettingsView: View {
             Button(languageManager.string(LocalizedStringResource("Change", comment: "Confirms switching the app's language"))) {
                 if let pendingLanguage = pendingLanguage {
                     languageManager.setLanguage(pendingLanguage)
-                    // 앱을 다시 시작하도록 알림 또는 다른 처리 로직
                     dismiss()
                 }
             }
         } message: {
-            Text(languageManager.string("Changing the language will restart the app. Do you want to continue?"))
+            Text(languageManager.string("The app's text will change to this language. Do you want to continue?"))
         }
     }
 
     private func selectLanguage(_ language: LanguageManager.Language) {
         if language != languageManager.currentLanguage {
             pendingLanguage = language
-            showingRestartAlert = true
+            showingChangeAlert = true
         }
     }
 }

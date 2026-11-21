@@ -259,6 +259,6 @@ struct CustomTextField: View {
             .environment(AuthManager(modelContext: ModelContext(container)))
             .environment(LanguageManager())
     } else {
-        Text("Preview unavailable")
+        Text(verbatim: "Preview unavailable")
     }
 }

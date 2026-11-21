@@ -89,7 +89,7 @@ struct MeetingNotesView: View {
             title: languageManager.string("Meeting Notes"),
             decisions: languageManager.string("Decisions"),
             actionItems: languageManager.string("Action Items"),
-            schedule: languageManager.string(LocalizedStringResource("Schedule", comment: "Meeting notes heading over the dates and times mentioned in the chat.")),
+            schedule: languageManager.string(LocalizedStringResource("meetingNotes.schedule", defaultValue: "Schedule", comment: "Meeting notes heading over the dates and times mentioned in the chat.")),
             openQuestions: languageManager.string("Open Questions")
         )
     }

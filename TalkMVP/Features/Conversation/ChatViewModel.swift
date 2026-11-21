@@ -165,7 +165,7 @@ class ChatViewModel {
     @discardableResult
     func sendImage(_ imageData: Data) -> Task<Void, Never> {
         let describer = photoDescriber
-        let language = LanguageManager.currentLanguageCode
+        let language = AppLocalization.languageCode()
         return deliver(
             Message(imageData: imageData, isFromCurrentUser: true, chatRoomId: chatRoom.id.uuidString),
             preview: AppLocalization.string("Photo sent"),
@@ -181,7 +181,7 @@ class ChatViewModel {
     @discardableResult
     func sendVoiceMessage(audioData: Data, duration: Double) -> Task<Void, Never> {
         // Spoken most likely in the language this chat is written in.
-        let language = ConversationLanguage.code(for: messages.map(SummaryMessage.init), fallbackCode: LanguageManager.currentLanguageCode)
+        let language = ConversationLanguage.code(for: messages.map(SummaryMessage.init), fallbackCode: AppLocalization.languageCode())
         let transcriber = voiceTranscriber
         return deliver(
             Message(audioData: audioData, duration: duration, isFromCurrentUser: true, chatRoomId: chatRoom.id.uuidString),

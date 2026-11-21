@@ -163,8 +163,7 @@ struct FriendProfileView: View {
             Text(languageManager.string("Block \(friendship.friendName)? Blocked friends can no longer send you messages."))
         }
         .alert(languageManager.string(LocalizedStringResource(
-            "friend.profile.unblockFriend",
-            defaultValue: "Unblock Friend",
+            "Unblock Friend",
             comment: "Title of the alert that unblocks a friend, on their profile"
         )), isPresented: $showingUnblockAlert) {
             Button(languageManager.string("Cancel"), role: .cancel) { }
@@ -173,8 +172,7 @@ struct FriendProfileView: View {
             }
         } message: {
             Text(languageManager.string(LocalizedStringResource(
-                "friend.profile.unblockMessage",
-                defaultValue: "Unblock \(friendship.friendName)?",
+                "Unblock \(friendship.friendName)?",
                 comment: "Message of the alert that unblocks a friend, on their profile; the argument is their name"
             )))
         }

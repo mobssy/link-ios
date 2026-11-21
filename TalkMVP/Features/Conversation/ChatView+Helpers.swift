@@ -209,11 +209,10 @@ extension ChatView {
         }
     }
 
-    /// The reader, as VoiceOver and the reply bar name them. Its own key: Japanese says it
-    /// differently here than in the bookmarks and meeting notes.
+    /// The reader, as VoiceOver and the reply bar name them.
     var meAsSender: String {
         languageManager.string(LocalizedStringResource(
-            "chat.me", defaultValue: "Me",
+            "Me",
             comment: "Names the reader when VoiceOver reads their message or they reply to it"
         ))
     }
