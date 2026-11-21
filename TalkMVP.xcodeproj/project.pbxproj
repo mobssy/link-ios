@@ -479,6 +479,7 @@
 				DEVELOPMENT_TEAM = J2H9W2R9WX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "L!NK";
 				INFOPLIST_KEY_NSContactsUsageDescription = "We need access to your contacts so you can easily find friends and start conversations.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID is used to unlock the app when App Lock is turned on.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location is only used when you choose to share it in a chat.";
@@ -519,6 +520,7 @@
 				DEVELOPMENT_TEAM = J2H9W2R9WX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "L!NK";
 				INFOPLIST_KEY_NSContactsUsageDescription = "We need access to your contacts so you can easily find friends and start conversations.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID is used to unlock the app when App Lock is turned on.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location is only used when you choose to share it in a chat.";
