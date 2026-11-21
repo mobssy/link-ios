@@ -14,15 +14,15 @@ struct AccessibilitySettingsView: View {
     // MARK: - Text Size Helpers
 
     private var textSizeLabel: String {
-        let labels: [String] = [
-            languageManager.localize(ko: "작게", en: "Small", ja: "小さく", zh: "小", es: "Pequeño"),
-            languageManager.localize(ko: "중간", en: "Medium", ja: "中", zh: "中等", es: "Mediano"),
-            languageManager.localize(ko: "기본", en: "Default", ja: "デフォルト", zh: "默认", es: "Predeterminado"),
-            languageManager.localize(ko: "크게", en: "Large", ja: "大きく", zh: "大", es: "Grande"),
-            languageManager.localize(ko: "더 크게", en: "Extra Large", ja: "さらに大きく", zh: "特大", es: "Extra grande")
+        let labels: [LocalizedStringResource] = [
+            LocalizedStringResource("Small", comment: "Text size step"),
+            LocalizedStringResource("Medium", comment: "Text size step"),
+            LocalizedStringResource("Default", comment: "Text size step"),
+            LocalizedStringResource("Large", comment: "Text size step"),
+            LocalizedStringResource("Extra Large", comment: "Text size step")
         ]
-        guard textSizeStep >= 0 && textSizeStep < labels.count else { return labels[2] }
-        return labels[textSizeStep]
+        let step = labels.indices.contains(textSizeStep) ? textSizeStep : 2
+        return languageManager.string(labels[step])
     }
 
     var body: some View {
@@ -31,7 +31,7 @@ struct AccessibilitySettingsView: View {
             Section {
                 Toggle(isOn: $overridesSystemTextSize.animation(reduceMotion ? nil : .default)) {
                     Label(
-                        languageManager.localize(ko: "앱에서 글자 크기 정하기", en: "Custom Text Size", ja: "アプリで文字サイズを設定", zh: "在应用中设置文字大小", es: "Tamaño de texto propio"),
+                        languageManager.string("Custom Text Size"),
                         systemImage: "textformat.size"
                     )
                 }
@@ -66,7 +66,7 @@ struct AccessibilitySettingsView: View {
                             step: 1
                         )
                         .tint(.appPrimaryText)
-                        .accessibilityLabel(languageManager.localize(ko: "글자 크기", en: "Text Size", ja: "テキストサイズ", zh: "文字大小", es: "Tamaño de texto"))
+                        .accessibilityLabel(languageManager.string("Text Size"))
                         .accessibilityValue(textSizeLabel)
 
                         Text(textSizeLabel)
@@ -78,24 +78,12 @@ struct AccessibilitySettingsView: View {
                     .padding(.vertical, 6)
                 }
             } header: {
-                Text(languageManager.localize(ko: "글자 크기", en: "Text Size", ja: "テキストサイズ", zh: "文字大小", es: "Tamaño de texto"))
+                Text(languageManager.string("Text Size"))
             } footer: {
                 if overridesSystemTextSize {
-                    Text(languageManager.localize(
-                        ko: "iOS 설정 대신 이 크기를 앱의 모든 글자에 바로 적용합니다.",
-                        en: "Applies this size to all text in the app right away, instead of the iOS setting.",
-                        ja: "iOSの設定の代わりに、このサイズをアプリ内のすべての文字にすぐ適用します。",
-                        zh: "立即将此大小应用于应用中的所有文字，而不是使用 iOS 设置。",
-                        es: "Aplica este tamaño a todo el texto de la app al instante, en lugar del ajuste de iOS."
-                    ))
+                    Text(languageManager.string("Applies this size to all text in the app right away, instead of the iOS setting."))
                 } else {
-                    Text(languageManager.localize(
-                        ko: "iOS 설정 → 손쉬운 사용 → 디스플레이 및 텍스트 크기의 글자 크기를 따릅니다.",
-                        en: "Follows the text size in iOS Settings → Accessibility → Display & Text Size.",
-                        ja: "iOSの設定 → アクセシビリティ → 画面表示とテキストサイズの文字サイズに従います。",
-                        zh: "跟随 iOS 设置 → 辅助功能 → 显示与文字大小 中的文字大小。",
-                        es: "Sigue el tamaño de texto de Ajustes de iOS → Accesibilidad → Pantalla y tamaño del texto."
-                    ))
+                    Text(languageManager.string("Follows the text size in iOS Settings → Accessibility → Display & Text Size."))
                 }
             }
 
@@ -103,7 +91,7 @@ struct AccessibilitySettingsView: View {
             Section {
                 Toggle(isOn: $boldText) {
                     Label(
-                        languageManager.localize(ko: "굵은 텍스트", en: "Bold Text", ja: "太字テキスト", zh: "粗体文本", es: "Texto en negrita"),
+                        languageManager.string("Bold Text"),
                         systemImage: "bold"
                     )
                 }
@@ -111,7 +99,7 @@ struct AccessibilitySettingsView: View {
 
                 Toggle(isOn: $inAppReducesMotion) {
                     Label(
-                        languageManager.localize(ko: "모션 줄이기", en: "Reduce Motion", ja: "モーションを減らす", zh: "减少动效", es: "Reducir movimiento"),
+                        languageManager.string("Reduce Motion"),
                         systemImage: "circle.dotted"
                     )
                 }
@@ -119,32 +107,26 @@ struct AccessibilitySettingsView: View {
 
                 Toggle(isOn: $inAppHighContrast) {
                     Label(
-                        languageManager.localize(ko: "고대비 메시지 버블", en: "High Contrast Bubbles", ja: "高コントラストバブル", zh: "高对比度气泡", es: "Burbujas de alto contraste"),
+                        languageManager.string("High Contrast Bubbles"),
                         systemImage: "circle.lefthalf.filled"
                     )
                 }
                 .accessibilityIdentifier("highContrastToggle")
             } header: {
-                Text(languageManager.localize(ko: "앱 내 설정", en: "In-App Settings", ja: "アプリ内設定", zh: "应用内设置", es: "Configuración en la aplicación"))
+                Text(languageManager.string("In-App Settings"))
             } footer: {
                 // The iOS features themselves are set in iOS; the app follows them without a row each.
-                Text(languageManager.localize(
-                    ko: "바로 적용됩니다. 앱은 VoiceOver, 큰 글자, 동작 줄이기 같은 iOS 손쉬운 사용 설정도 그대로 따릅니다.",
-                    en: "These apply right away. The app also follows your iOS accessibility settings, such as VoiceOver, larger text and Reduce Motion.",
-                    ja: "すぐに適用されます。アプリはVoiceOver、文字の拡大、視差効果を減らすなど、iOSのアクセシビリティ設定にも従います。",
-                    zh: "设置会立即生效。应用也会遵循你的 iOS 辅助功能设置，例如旁白、更大字体和减弱动态效果。",
-                    es: "Se aplican al instante. La app también sigue tus ajustes de accesibilidad de iOS, como VoiceOver, el texto más grande y Reducir movimiento."
-                ))
+                Text(languageManager.string("These apply right away. The app also follows your iOS accessibility settings, such as VoiceOver, larger text and Reduce Motion."))
             }
 
             // MARK: - Preview Section
             Section {
                 previewBubbles
             } header: {
-                Text(languageManager.localize(ko: "미리보기", en: "Preview", ja: "プレビュー", zh: "预览", es: "Vista previa"))
+                Text(languageManager.string(LocalizedStringResource("Preview", comment: "Section header above sample message bubbles")))
             }
         }
-        .navigationTitle(languageManager.localize(ko: "손쉬운 사용", en: "Accessibility", ja: "アクセシビリティ", zh: "辅助功能", es: "Accesibilidad"))
+        .navigationTitle(languageManager.string("Accessibility"))
         .navigationBarTitleDisplayMode(.inline)
         // Apply bold and size in this view so Preview section reflects changes live
     }
@@ -154,7 +136,7 @@ struct AccessibilitySettingsView: View {
         VStack(spacing: 10) {
             HStack {
                 Spacer()
-                Text(languageManager.localize(ko: "안녕하세요! 메시지 미리보기입니다.", en: "Hello! This is a preview message.", ja: "こんにちは！これはプレビューメッセージです。", zh: "你好！这是一条预览消息。", es: "¡Hola! Este es un mensaje de vista previa."))
+                Text(languageManager.string("Hello! This is a preview message."))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background(
@@ -164,7 +146,7 @@ struct AccessibilitySettingsView: View {
                     .foregroundStyle(Color.onOwnBubble(highContrast: highContrast))
             }
             HStack {
-                Text(languageManager.localize(ko: "반갑습니다! 잘 보이시나요?", en: "Nice to meet you! Can you see this?", ja: "はじめまして！見えますか？", zh: "很高兴认识你！看得清楚吗？", es: "¡Mucho gusto! ¿Puedes ver esto?"))
+                Text(languageManager.string("Nice to meet you! Can you see this?"))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background(

@@ -8,9 +8,6 @@
 import SwiftUI
 import PhotosUI
 import SwiftData
-import os
-
-private let profileEditLogger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TalkMVP", category: "ProfileEditView")
 
 struct ProfileEditView: View {
     @Environment(\.dismiss) private var dismiss
@@ -90,62 +87,62 @@ struct ProfileEditView: View {
                             profileImage = nil
                             didRemovePhoto = true
                         } label: {
-                            Text(localizedText("remove_photo"))
+                            Text(languageManager.string("Remove Photo"))
                         }
                     }
                 } header: {
-                    Text(localizedText("profile_photo"))
+                    Text(languageManager.string("Profile Photo"))
                 }
 
                 Section {
                     HStack {
-                        Text(localizedText("username"))
+                        Text(languageManager.string("Username"))
                         Spacer()
                         Text(authManager.currentUser?.username ?? "")
                             .foregroundStyle(Color.secondary)
                     }
 
                     HStack {
-                        Text(localizedText("display_name"))
-                        TextField(localizedText("display_name"), text: $displayName)
+                        Text(languageManager.string("Display Name"))
+                        TextField(languageManager.string("Display Name"), text: $displayName)
                             .multilineTextAlignment(.trailing)
                     }
 
                     HStack {
-                        Text(localizedText("email"))
+                        Text(languageManager.string("Email"))
                         Spacer()
                         Text(authManager.currentUser?.email ?? "")
                             .foregroundStyle(Color.secondary)
                     }
                 } header: {
-                    Text(localizedText("account_info"))
+                    Text(languageManager.string("Account Information"))
                 }
 
                 Section {
-                    TextField(localizedText("status_message"), text: $statusMessage, axis: .vertical)
+                    TextField(languageManager.string("Status Message"), text: $statusMessage, axis: .vertical)
                         .lineLimit(1...3)
                 } header: {
-                    Text(localizedText("status_message"))
+                    Text(languageManager.string("Status Message"))
                 }
 
                 Section {
-                    Button(localizedText("logout")) {
+                    Button(languageManager.string("Sign Out")) {
                         authManager.signOut()
                     }
                     .foregroundStyle(.red)
                 }
             }
-            .navigationTitle(localizedText("edit_profile"))
+            .navigationTitle(languageManager.string("Edit Profile"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(localizedText("cancel")) {
+                    Button(languageManager.string("Cancel")) {
                         dismiss()
                     }
                 }
 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(localizedText("save")) {
+                    Button(languageManager.string("Save")) {
                         saveProfile()
                         dismiss()
                     }
@@ -178,26 +175,6 @@ struct ProfileEditView: View {
             imageData = authManager.currentUser?.profileImageData
         }
         authManager.updateProfile(displayName: displayName, statusMessage: statusMessage, profileImageData: imageData)
-    }
-
-    private func localizedText(_ key: String) -> String {
-        switch key {
-        case "profile_photo": return languageManager.localize(ko: "프로필 사진", en: "Profile Photo", ja: "プロフィール写真", zh: "个人头像", es: "Foto de perfil")
-        case "remove_photo": return languageManager.localize(ko: "사진 삭제", en: "Remove Photo", ja: "写真を削除", zh: "删除照片", es: "Eliminar foto")
-        case "account_info": return languageManager.localize(ko: "계정 정보", en: "Account Information", ja: "アカウント情報", zh: "账户信息", es: "Información de cuenta")
-        case "edit_profile": return languageManager.localize(ko: "프로필 편집", en: "Edit Profile", ja: "プロフィール編集", zh: "编辑资料", es: "Editar perfil")
-        case "cancel": return languageManager.localize(ko: "취소", en: "Cancel", ja: "キャンセル", zh: "取消", es: "Cancelar")
-        case "save": return languageManager.localize(ko: "저장", en: "Save", ja: "保存", zh: "保存", es: "Guardar")
-        case "display_name": return languageManager.localize(ko: "표시 이름", en: "Display Name", ja: "表示名", zh: "显示名称", es: "Nombre visible")
-        case "status_message": return languageManager.localize(ko: "상태 메시지", en: "Status Message", ja: "ステータスメッセージ", zh: "状态消息", es: "Mensaje de estado")
-        case "email": return languageManager.localize(ko: "이메일", en: "Email", ja: "メール", zh: "邮箱", es: "Correo electrónico")
-        case "username": return languageManager.localize(ko: "사용자명", en: "Username", ja: "ユーザー名", zh: "用户名", es: "Nombre de usuario")
-        case "logout": return languageManager.localize(ko: "로그아웃", en: "Sign Out", ja: "サインアウト", zh: "退出登录", es: "Cerrar sesión")
-        default:
-            // 디버깅을 위해 키가 정의되지 않은 경우를 확인
-            profileEditLogger.error("키 '\(key, privacy: .public)'가 정의되지 않음")
-            return key
-        }
     }
 }
 
