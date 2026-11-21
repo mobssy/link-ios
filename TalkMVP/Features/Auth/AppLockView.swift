@@ -14,7 +14,7 @@ struct AppLockView: View {
                     .font(.system(size: 48))
                     .foregroundStyle(.appPrimaryText)
 
-                Text(localizedText("unlock_required"))
+                Text(languageManager.string("Unlock Required"))
                     .font(.title2)
                     .fontWeight(.semibold)
 
@@ -31,7 +31,7 @@ struct AppLockView: View {
                 }) {
                     HStack {
                         Image(systemName: "faceid")
-                        Text(localizedText("try_authentication"))
+                        Text(languageManager.string(LocalizedStringResource("Authenticate", comment: "Button on the lock screen that asks for Face ID, Touch ID or the passcode")))
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -45,34 +45,22 @@ struct AppLockView: View {
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active && appLock.isLocked {
                 // 포그라운드 복귀 시 자동 인증 시도
-                Task { await appLock.authenticate(reason: localizedText("unlock_reason")) }
+                Task { await appLock.authenticate(reason: unlockReason) }
             }
         }
         .onAppear {
             if appLock.isLocked {
-                Task { await appLock.authenticate(reason: localizedText("unlock_reason")) }
+                Task { await appLock.authenticate(reason: unlockReason) }
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel(localizedText("app_lock_screen"))
-        .accessibilityHint(localizedText("auth_hint"))
+        .accessibilityLabel(languageManager.string("App Lock Screen"))
+        .accessibilityHint(languageManager.string("Authenticate with Face ID, Touch ID or your passcode"))
     }
 
-    private func localizedText(_ key: String) -> String {
-        switch key {
-        case "unlock_required":
-            return languageManager.currentLanguage == .korean ? "잠금 해제 필요" : "Unlock Required"
-        case "try_authentication":
-            return languageManager.currentLanguage == .korean ? "인증 시도" : "Authenticate"
-        case "app_lock_screen":
-            return languageManager.currentLanguage == .korean ? "앱 잠금 화면" : "App Lock Screen"
-        case "auth_hint":
-            return languageManager.currentLanguage == .korean ? "Face ID, Touch ID 또는 기기 암호로 인증하세요" : "Authenticate with Face ID, Touch ID or your passcode"
-        case "unlock_reason":
-            return languageManager.currentLanguage == .korean ? "앱을 잠금 해제하려면 인증이 필요합니다." : "Authentication is required to unlock the app."
-        default:
-            return key
-        }
+    /// Why the app asks for Face ID, shown in the system prompt.
+    private var unlockReason: String {
+        languageManager.string("Authentication is required to unlock the app.")
     }
 }
 

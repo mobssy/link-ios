@@ -52,15 +52,6 @@ class NotificationManager {
 
     private var notificationsEnabled: Bool { NotificationPreferences.isEnabled(in: defaults) }
 
-    private func loc(ko: String, en: String, ja: String, zh: String, es: String) -> String {
-        let lang = LanguageManager.currentLanguageCode
-        if lang.hasPrefix("ko") { return ko }
-        if lang.hasPrefix("ja") { return ja }
-        if lang.hasPrefix("zh") { return zh }
-        if lang.hasPrefix("es") { return es }
-        return en
-    }
-
     init(center: NotificationScheduling = UNUserNotificationCenter.current(), defaults: UserDefaults = .standard) {
         self.center = center
         self.defaults = defaults
@@ -81,8 +72,8 @@ class NotificationManager {
         guard notificationsEnabled, await center.isAuthorizedToNotify() else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = loc(ko: "새 친구 요청", en: "New Friend Request", ja: "新しい友達リクエスト", zh: "新的好友请求", es: "Nueva solicitud de amistad")
-        content.body = loc(ko: "\(friendName)님이 친구 요청을 보냈습니다", en: "\(friendName) sent you a friend request", ja: "\(friendName)さんから友達リクエストが届きました", zh: "\(friendName)发送了好友请求", es: "\(friendName) te envió una solicitud de amistad")
+        content.title = AppLocalization.string("New Friend Request")
+        content.body = AppLocalization.string("\(friendName) sent you a friend request")
         content.sound = .default
         content.badge = 1
 

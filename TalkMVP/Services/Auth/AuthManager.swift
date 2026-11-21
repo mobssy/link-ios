@@ -34,56 +34,6 @@ class AuthManager {
     private let attachmentFiles: AttachmentFileStoring
     private let passwordStore: PasswordStoring
 
-    // MARK: - Lightweight localization for non-View layer
-    private func loc(_ key: String, _ param: String = "") -> String {
-        let lang = LanguageManager.currentLanguageCode
-        let isKo = lang.hasPrefix("ko")
-        let isJa = lang.hasPrefix("ja")
-        let isZh = lang.hasPrefix("zh")
-        let isEs = lang.hasPrefix("es")
-
-        switch key {
-        case "signup_exists":
-            if isKo { return "이미 존재하는 사용자명 또는 이메일입니다." }
-            if isJa { return "既に存在するユーザー名またはメールアドレスです。" }
-            if isZh { return "用户名或电子邮件已存在。" }
-            if isEs { return "El nombre de usuario o correo electrónico ya existe." }
-            return "Username or email already exists."
-        case "signup_reserved":
-            if isKo { return "apple_ 또는 google_로 시작하는 사용자명은 사용할 수 없습니다." }
-            if isJa { return "apple_ または google_ で始まるユーザー名は使用できません。" }
-            if isZh { return "不能使用以 apple_ 或 google_ 开头的用户名。" }
-            if isEs { return "No se pueden usar nombres de usuario que empiecen por apple_ o google_." }
-            return "Usernames can't start with apple_ or google_."
-        case "signup_error_prefix":
-            if isKo { return "회원가입 중 오류가 발생했습니다: " }
-            if isJa { return "会員登録中にエラーが発生しました: " }
-            if isZh { return "注册时发生错误: " }
-            if isEs { return "Se produjo un error durante el registro: " }
-            return "An error occurred during sign up: "
-        case "signin_failed":
-            if isKo { return "아이디 또는 비밀번호가 올바르지 않습니다." }
-            if isJa { return "ユーザー名またはパスワードが正しくありません。" }
-            if isZh { return "用户名或密码不正确。" }
-            if isEs { return "El usuario o la contraseña no son correctos." }
-            return "The username or password is incorrect."
-        case "signin_error_prefix":
-            if isKo { return "로그인 중 오류가 발생했습니다: " }
-            if isJa { return "ログイン中にエラーが発生しました: " }
-            if isZh { return "登录时发生错误: " }
-            if isEs { return "Se produjo un error durante el inicio de sesión: " }
-            return "An error occurred during sign in: "
-        case "apple_signin_error":
-            if isKo { return "Apple 로그인 중 오류가 발생했습니다." }
-            if isJa { return "Apple サインイン中にエラーが発生しました。" }
-            if isZh { return "Apple登录时发生错误。" }
-            if isEs { return "Se produjo un error durante el inicio de sesión con Apple." }
-            return "An error occurred during Apple sign in."
-        default:
-            return param.isEmpty ? key : "\(key) \(param)"
-        }
-    }
-
     init(
         modelContext: ModelContext,
         simulatedLatency: Duration = .seconds(1),
@@ -124,7 +74,7 @@ class AuthManager {
         try? await Task.sleep(for: simulatedLatency)
 
         guard !Self.reservedUsernamePrefixes.contains(where: { username.lowercased().hasPrefix($0) }) else {
-            errorMessage = loc("signup_reserved")
+            errorMessage = AppLocalization.string("Usernames can't start with apple_ or google_.")
             return
         }
 
@@ -138,23 +88,15 @@ class AuthManager {
         do {
             let existingUsers = try modelContext.fetch(existingUserDescriptor)
             if !existingUsers.isEmpty {
-                errorMessage = loc("signup_exists")
+                errorMessage = AppLocalization.string("Username or email already exists.")
                 return
             }
-
-            let lang = LanguageManager.currentLanguageCode
-            let defaultStatus: String
-            if lang.hasPrefix("ko") { defaultStatus = "안녕하세요!" }
-            else if lang.hasPrefix("ja") { defaultStatus = "よろしくお願いします！" }
-            else if lang.hasPrefix("zh") { defaultStatus = "你好！" }
-            else if lang.hasPrefix("es") { defaultStatus = "¡Hola!" }
-            else { defaultStatus = "Hey there!" }
 
             let newUser = User(
                 username: username,
                 displayName: displayName,
                 email: email,
-                statusMessage: defaultStatus
+                statusMessage: AppLocalization.string(LocalizedStringResource("Hey there!", comment: "Status message a new account starts with"))
             )
             // The password goes to the Keychain as a salted hash before the account exists, so
             // there is never an account that signs in without one. Hashing is slow on purpose,
@@ -168,7 +110,7 @@ class AuthManager {
             // 샘플 친구들 추가
             createSampleFriends(for: newUser)
         } catch {
-            errorMessage = loc("signup_error_prefix") + error.localizedDescription
+            errorMessage = AppLocalization.string("An error occurred during sign up: \(error.localizedDescription)")
         }
     }
 
@@ -186,23 +128,24 @@ class AuthManager {
             }
         )
 
+        // One message for an unknown account and a wrong password, so the form doesn't
+        // tell anyone which usernames exist.
+        let signInFailed = AppLocalization.string("The username or password is incorrect.")
         do {
-            // One message for an unknown account and a wrong password, so the form doesn't
-            // tell anyone which usernames exist.
             guard let user = try modelContext.fetch(descriptor).first else {
-                errorMessage = loc("signin_failed")
+                errorMessage = signInFailed
                 return
             }
             let store = passwordStore
             let accountID = user.id
             let verified = await Task.detached { store.verifyPassword(password, for: accountID) }.value
             guard verified else {
-                errorMessage = loc("signin_failed")
+                errorMessage = signInFailed
                 return
             }
             try activate(user)
         } catch {
-            errorMessage = loc("signin_error_prefix") + error.localizedDescription
+            errorMessage = AppLocalization.string("An error occurred during sign in: \(error.localizedDescription)")
         }
     }
 
@@ -345,7 +288,7 @@ class AuthManager {
                 email: email ?? ""
             )
         } catch {
-            errorMessage = loc("apple_signin_error")
+            errorMessage = AppLocalization.string("An error occurred during Apple sign in.")
         }
     }
 

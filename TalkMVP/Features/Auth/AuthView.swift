@@ -101,19 +101,21 @@ struct AuthView<Footer: View>: View {
         VStack(spacing: 16) {
             CustomTextField(
                 text: $username,
-                placeholder: localizedText(isSignUp ? "username" : "username_or_email"),
+                placeholder: isSignUp
+                    ? languageManager.string("Username")
+                    : languageManager.string("Username or Email"),
                 icon: "person.fill"
             )
 
             if isSignUp {
                 CustomTextField(
                     text: $displayName,
-                    placeholder: localizedText("display_name"),
+                    placeholder: languageManager.string("Display Name"),
                     icon: "person.crop.circle.fill"
                 )
                 CustomTextField(
                     text: $email,
-                    placeholder: localizedText("email"),
+                    placeholder: languageManager.string(LocalizedStringResource("Email", comment: "Placeholder of the email address field")),
                     icon: "envelope.fill",
                     keyboardType: .emailAddress
                 )
@@ -121,7 +123,7 @@ struct AuthView<Footer: View>: View {
 
             CustomTextField(
                 text: $password,
-                placeholder: localizedText("password"),
+                placeholder: languageManager.string("Password"),
                 icon: "lock.fill",
                 isSecure: true
             )
@@ -129,7 +131,7 @@ struct AuthView<Footer: View>: View {
             if isSignUp {
                 CustomTextField(
                     text: $confirmPassword,
-                    placeholder: localizedText("confirm_password"),
+                    placeholder: languageManager.string("Confirm Password"),
                     icon: "lock.fill",
                     isSecure: true
                 )
@@ -156,7 +158,7 @@ struct AuthView<Footer: View>: View {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .onAppPrimary))
                 } else {
-                    Text(localizedText(isSignUp ? "signup" : "signin"))
+                    Text(isSignUp ? languageManager.string("Sign Up") : languageManager.string("Sign In"))
                         .fontWeight(.semibold)
                 }
             }
@@ -179,7 +181,9 @@ struct AuthView<Footer: View>: View {
                     clearForm()
                 }
             }) {
-                Text(localizedText(isSignUp ? "have_account" : "no_account"))
+                Text(isSignUp
+                     ? languageManager.string("Already have an account? Sign In")
+                     : languageManager.string("Don't have an account? Sign Up"))
                     .foregroundStyle(.appPrimaryText)
             }
         }
@@ -211,32 +215,6 @@ struct AuthView<Footer: View>: View {
         password = ""
         confirmPassword = ""
         authManager.errorMessage = nil
-    }
-
-    private func localizedText(_ key: String) -> String {
-        switch key {
-        case "signin":
-            return languageManager.localize(ko: "로그인", en: "Sign In", ja: "ログイン", zh: "登录", es: "Iniciar sesión")
-        case "signup":
-            return languageManager.localize(ko: "회원가입", en: "Sign Up", ja: "新規登録", zh: "注册", es: "Registrarse")
-        case "have_account":
-            return languageManager.localize(ko: "이미 계정이 있나요? 로그인", en: "Already have an account? Sign In", ja: "すでにアカウントをお持ちですか？ログイン", zh: "已有账号？登录", es: "¿Ya tienes cuenta? Inicia sesión")
-        case "no_account":
-            return languageManager.localize(ko: "계정이 없나요? 회원가입", en: "Don't have an account? Sign Up", ja: "アカウントがありませんか？新規登録", zh: "没有账号？注册", es: "¿No tienes cuenta? Regístrate")
-        case "username":
-            return languageManager.localize(ko: "사용자명", en: "Username", ja: "ユーザー名", zh: "用户名", es: "Nombre de usuario")
-        case "username_or_email":
-            return languageManager.localize(ko: "사용자명 또는 이메일", en: "Username or Email", ja: "ユーザー名またはメール", zh: "用户名或邮箱", es: "Usuario o correo")
-        case "display_name":
-            return languageManager.localize(ko: "표시 이름", en: "Display Name", ja: "表示名", zh: "显示名称", es: "Nombre visible")
-        case "email":
-            return languageManager.localize(ko: "이메일", en: "Email", ja: "メール", zh: "邮箱", es: "Correo")
-        case "password":
-            return languageManager.localize(ko: "비밀번호", en: "Password", ja: "パスワード", zh: "密码", es: "Contraseña")
-        case "confirm_password":
-            return languageManager.localize(ko: "비밀번호 확인", en: "Confirm Password", ja: "パスワード確認", zh: "确认密码", es: "Confirmar contraseña")
-        default: return key
-        }
     }
 }
 

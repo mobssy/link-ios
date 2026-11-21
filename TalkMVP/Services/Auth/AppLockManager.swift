@@ -84,43 +84,17 @@ class AppLockManager {
         isAuthenticating = true
         defer { isAuthenticating = false }
 
-        let currentLanguage: String = {
-            if let saved = defaults.string(forKey: "selectedLanguage") { return saved }
-            if let langs = defaults.array(forKey: "AppleLanguages") as? [String], let first = langs.first { return first }
-            return "en"
-        }()
-        let reasonText: String
-        let fallbackTitle: String
-        let unavailable: String
-        if currentLanguage.hasPrefix("ja") {
-            reasonText = reason ?? "アプリのロックを解除するには認証が必要です。"
-            fallbackTitle = "パスコードを使用"
-            unavailable = "このデバイスでは認証を使用できません。"
-        } else if currentLanguage.hasPrefix("zh") {
-            reasonText = reason ?? "解锁应用需要进行身份验证。"
-            fallbackTitle = "使用密码"
-            unavailable = "此设备上无法使用身份验证。"
-        } else if currentLanguage.hasPrefix("es") {
-            reasonText = reason ?? "Se requiere autenticación para desbloquear la app."
-            fallbackTitle = "Usar código"
-            unavailable = "La autenticación no está disponible en este dispositivo."
-        } else if currentLanguage.hasPrefix("ko") {
-            reasonText = reason ?? "앱을 잠금 해제하려면 인증이 필요합니다."
-            fallbackTitle = "암호 사용"
-            unavailable = "이 기기에서는 인증을 사용할 수 없습니다."
-        } else {
-            reasonText = reason ?? "Authentication is required to unlock the app."
-            fallbackTitle = "Use Passcode"
-            unavailable = "Authentication is unavailable on this device."
-        }
-
+        let language = AppLocalization.languageCode(defaults: defaults)
         guard authenticator.canAuthenticate() else {
             isLocked = true
-            errorMessage = unavailable
+            errorMessage = AppLocalization.string("Authentication is unavailable on this device.", languageCode: language)
             return
         }
         do {
-            try await authenticator.authenticate(reason: reasonText, fallbackTitle: fallbackTitle)
+            try await authenticator.authenticate(
+                reason: reason ?? AppLocalization.string("Authentication is required to unlock the app.", languageCode: language),
+                fallbackTitle: AppLocalization.string("Use Passcode", languageCode: language)
+            )
             isLocked = false
             errorMessage = nil
         } catch {

@@ -27,7 +27,7 @@ struct SSOSignInView: View {
             Rectangle()
                 .frame(height: 1)
                 .foregroundStyle(Color(UIColor.separator))
-            Text(languageManager.localize(ko: "또는", en: "or", ja: "または", zh: "或者", es: "o"))
+            Text(languageManager.string(LocalizedStringResource("or", comment: "Divider between the sign-in form and Sign in with Apple / Google")))
                 .font(.footnote)
                 .foregroundStyle(Color.secondary)
             Rectangle()
@@ -42,14 +42,7 @@ struct SSOSignInView: View {
         let isDark = colorScheme == .dark
         let background: Color = isDark ? .white : .black
         let foreground: Color = isDark ? .black : .white
-        let label = languageManager.localize(
-            ko: "Apple로 로그인",
-            en: "Sign in with Apple",
-            ja: "Appleでサインイン",
-            zhHans: "通过 Apple 登录",
-            zhHant: "使用 Apple 登入",
-            es: "Iniciar sesión con Apple"
-        )
+        let label = languageManager.string("Sign in with Apple")
 
         return Button(action: triggerAppleSignIn) {
             HStack(spacing: 8) {
@@ -69,13 +62,7 @@ struct SSOSignInView: View {
     private var googleButton: some View {
         let isDark = colorScheme == .dark
         let background: Color = isDark ? Color(UIColor.secondarySystemBackground) : .white
-        let label = languageManager.localize(
-            ko: "Google로 로그인",
-            en: "Sign in with Google",
-            ja: "Googleでサインイン",
-            zh: "通过 Google 登录",
-            es: "Iniciar sesión con Google"
-        )
+        let label = languageManager.string("Sign in with Google")
 
         return Button(action: triggerGoogleSignIn) {
             HStack(spacing: 8) {

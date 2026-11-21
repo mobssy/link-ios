@@ -19,11 +19,11 @@ struct ContentView: View {
     var body: some View {
         mainContent()
             .environment(router)
-            .alert(languageManager.localizedText("test_mode_title"), isPresented: $showTestModeAlert) {
-                Button(languageManager.localizedText("cancel"), role: .cancel) { }
-                Button(languageManager.localizedText("start_test")) { enterTestMode() }
+            .alert(languageManager.string("Test Mode"), isPresented: $showTestModeAlert) {
+                Button(languageManager.string("Cancel"), role: .cancel) { }
+                Button(languageManager.string("Start Test")) { enterTestMode() }
             } message: {
-                Text(languageManager.localizedText("test_mode_message"))
+                Text(languageManager.string("You can experience all app features without logging in.\nWould you like to enter test mode?"))
             }
             .tint(.appPrimaryText)
             .sheet(isPresented: $showContactsOnboarding, onDismiss: {
@@ -57,8 +57,8 @@ struct ContentView: View {
 
     private func enterTestMode() {
         authManager.startTestSession(
-            displayName: languageManager.localize(ko: "테스터", en: "Tester", ja: "テスター", zh: "测试用户", es: "Tester"),
-            statusMessage: languageManager.localize(ko: "테스트 모드로 체험 중입니다", en: "Experiencing in test mode", ja: "テストモードを体験中", zh: "正在体验测试模式", es: "Explorando en modo de prueba"),
+            displayName: languageManager.string("Tester"),
+            statusMessage: languageManager.string("Experiencing in test mode"),
             friends: TestData.friends
         )
     }
@@ -77,20 +77,20 @@ struct AuthenticatedTabsView: View {
         TabView(selection: Bindable(router).selectedTab) {
             FriendsTab()
                 .tabItem {
-                    Label(languageManager.localizedText("friends"), systemImage: "person.fill")
+                    Label(languageManager.string(LocalizedStringResource("Friends", comment: "Tab bar item")), systemImage: "person.fill")
                 }
                 .tag(AppTab.friends)
 
             ChatTab()
                 .tabItem {
-                    Label(languageManager.localizedText("chat"), systemImage: "message.fill")
+                    Label(languageManager.string(LocalizedStringResource("Chats", comment: "Tab bar item")), systemImage: "message.fill")
                 }
                 .badge(totalUnread)
                 .tag(AppTab.chats)
 
             SettingsTab()
                 .tabItem {
-                    Label(languageManager.localizedText("settings"), systemImage: "gearshape.fill")
+                    Label(languageManager.string(LocalizedStringResource("Settings", comment: "Tab bar item")), systemImage: "gearshape.fill")
                 }
                 .tag(AppTab.settings)
         }
@@ -138,7 +138,7 @@ struct TestModeButtonView: View {
 
     var body: some View {
         // A secondary action beside signing in, so it is styled as one.
-        Button(languageManager.localizedText("test_experience"), systemImage: "wrench.and.screwdriver") {
+        Button(languageManager.string("Try Test Mode"), systemImage: "wrench.and.screwdriver") {
             showTestModeAlert = true
         }
         .buttonStyle(.bordered)
@@ -192,39 +192,6 @@ nonisolated enum TestData {
     /// anything the user wrote as written.
     static func statusMessage(_ raw: String, testModeStatus: String) -> String {
         testModeStatuses.contains(raw.trimmingCharacters(in: .whitespacesAndNewlines)) ? testModeStatus : raw
-    }
-}
-
-// MARK: - Shared Localization
-
-fileprivate extension LanguageManager {
-    func localizedText(_ key: String) -> String {
-        switch key {
-        case "friends":
-            return localize(ko: "친구", en: "Friends", ja: "友だち", zh: "朋友", es: "Amigos")
-        case "chat":
-            return localize(ko: "채팅", en: "Chats", ja: "チャット", zh: "聊天", es: "Chats")
-        case "settings":
-            return localize(ko: "설정", en: "Settings", ja: "設定", zh: "设置", es: "Configuración")
-        case "test_mode_title":
-            return localize(ko: "테스트 모드", en: "Test Mode", ja: "テストモード", zh: "测试模式", es: "Modo de prueba")
-        case "start_test":
-            return localize(ko: "테스트 시작", en: "Start Test", ja: "テスト開始", zh: "开始测试", es: "Iniciar prueba")
-        case "test_mode_message":
-            return localize(
-                ko: "로그인 없이 앱의 모든 기능을 체험할 수 있습니다.\n테스트 모드로 진입하시겠습니까?",
-                en: "You can experience all app features without logging in.\nWould you like to enter test mode?",
-                ja: "ログインなしですべての機能を体験できます。\nテストモードに入りますか？",
-                zh: "无需登录即可体验所有功能。\n是否进入测试模式？",
-                es: "Puedes explorar todas las funciones sin iniciar sesión.\n¿Deseas entrar al modo de prueba?"
-            )
-        case "test_experience":
-            return localize(ko: "테스트 모드로 체험하기", en: "Try Test Mode", ja: "テストモードを体験", zh: "体验测试模式", es: "Probar modo de prueba")
-        case "cancel":
-            return localize(ko: "취소", en: "Cancel", ja: "キャンセル", zh: "取消", es: "Cancelar")
-        default:
-            return key
-        }
     }
 }
 
