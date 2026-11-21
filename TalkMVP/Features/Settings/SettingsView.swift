@@ -7,9 +7,6 @@
 import SwiftUI
 import UIKit
 import SwiftData
-import os
-
-private let settingsLogger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TalkMVP", category: "SettingsView")
 
 struct SettingsView: View {
     var authManager: AuthManager
@@ -30,7 +27,7 @@ struct SettingsView: View {
     /// The status under the name; test mode's in the app's current language, not the one it
     /// started in.
     private var profileStatus: String {
-        let testModeStatus = languageManager.localize(ko: "테스트 모드로 체험 중입니다", en: "Experiencing in test mode", ja: "テストモードで体験中です", zh: "正在以测试模式体验", es: "Experimentando en modo de prueba")
+        let testModeStatus = languageManager.string("Experiencing in test mode")
         guard let raw = authManager.currentUser?.statusMessage else { return testModeStatus }
         return TestData.statusMessage(raw, testModeStatus: testModeStatus)
     }
@@ -48,11 +45,11 @@ struct SettingsView: View {
                         action: { showingProfileEdit = true }
                     )
 
-                    SettingsSectionCard(title: languageManager.localize(ko: "일반", en: "General", ja: "一般", zh: "通用", es: "General")) {
+                    SettingsSectionCard(title: languageManager.string(LocalizedStringResource("General", comment: "Settings section with the app's everyday preferences"))) {
                         SettingsToggleRow(
                             systemImage: "bell.fill",
                             tint: .green,
-                            title: localizedText("notifications"),
+                            title: languageManager.string("Notifications"),
                             isOn: $notificationsEnabled
                         )
                         Divider().padding(.leading, 52)
@@ -60,7 +57,7 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "paintpalette.fill",
                                 tint: .orange,
-                                title: languageManager.localize(ko: "테마", en: "Theme", ja: "テーマ", zh: "主题", es: "Tema")
+                                title: languageManager.string("Theme")
                             )
                         }
                         Divider().padding(.leading, 52)
@@ -68,7 +65,7 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "globe",
                                 tint: .blue,
-                                title: localizedText("language")
+                                title: languageManager.string("Language")
                             )
                         }
                         Divider().padding(.leading, 52)
@@ -76,7 +73,7 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "lock.fill",
                                 tint: .purple,
-                                title: localizedText("app_lock")
+                                title: languageManager.string("App Lock")
                             )
                         }
                         Divider().padding(.leading, 52)
@@ -84,7 +81,7 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "sparkles",
                                 tint: .pink,
-                                title: localizedText("ai_features")
+                                title: languageManager.string("AI Features")
                             )
                         }
                         Divider().padding(.leading, 52)
@@ -92,7 +89,7 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "character.bubble",
                                 tint: .teal,
-                                title: localizedText("translation")
+                                title: languageManager.string(LocalizedStringResource("Translation", comment: "Settings row that opens the message translation settings"))
                             )
                         }
                         Divider().padding(.leading, 52)
@@ -100,7 +97,7 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "person.crop.circle.badge.plus",
                                 tint: .green,
-                                title: languageManager.localize(ko: "연락처", en: "Contacts", ja: "連絡先", zh: "通讯录", es: "Contactos")
+                                title: languageManager.string("Contacts")
                             )
                         }
                         Divider().padding(.leading, 52)
@@ -108,17 +105,17 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "accessibility",
                                 tint: .indigo,
-                                title: languageManager.localize(ko: "손쉬운 사용", en: "Accessibility", ja: "アクセシビリティ", zh: "辅助功能", es: "Accesibilidad")
+                                title: languageManager.string("Accessibility")
                             )
                         }
                     }
 
-                    SettingsSectionCard(title: languageManager.localize(ko: "정보", en: "Info", ja: "情報", zh: "信息", es: "Info")) {
+                    SettingsSectionCard(title: languageManager.string(LocalizedStringResource("Info", comment: "Settings section with help, app info and terms"))) {
                         NavigationLink(value: SettingsPage.help) {
                             SettingsLinkRow(
                                 systemImage: "questionmark.circle.fill",
                                 tint: .blue,
-                                title: languageManager.localize(ko: "도움말", en: "Help", ja: "ヘルプ", zh: "帮助", es: "Ayuda")
+                                title: languageManager.string("Help")
                             )
                         }
                         Divider().padding(.leading, 52)
@@ -126,7 +123,7 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "info.circle.fill",
                                 tint: .blue,
-                                title: languageManager.localize(ko: "앱 정보", en: "App Info", ja: "アプリ情報", zh: "应用信息", es: "Información de la app")
+                                title: languageManager.string("App Info")
                             )
                         }
                         Divider().padding(.leading, 52)
@@ -134,18 +131,18 @@ struct SettingsView: View {
                             SettingsLinkRow(
                                 systemImage: "doc.text.fill",
                                 tint: .blue,
-                                title: languageManager.localize(ko: "약관 및 정책", en: "Terms & Policies", ja: "利用規約とポリシー", zh: "条款与政策", es: "Términos y políticas")
+                                title: languageManager.string("Terms & Policies")
                             )
                         }
                     }
                     // One group like the others, signing out first; deleting the account asks to
                     // be confirmed, so it needs no card of its own.
-                    SettingsSectionCard(title: languageManager.localize(ko: "계정", en: "Account", ja: "アカウント", zh: "账户", es: "Cuenta")) {
+                    SettingsSectionCard(title: languageManager.string(LocalizedStringResource("Account", comment: "Settings section with sign out and delete account"))) {
                         Button {
                             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             showingLogoutAlert = true
                         } label: {
-                            SettingsActionRow(systemImage: "rectangle.portrait.and.arrow.right", title: localizedText("logout"))
+                            SettingsActionRow(systemImage: "rectangle.portrait.and.arrow.right", title: languageManager.string("Sign Out"))
                         }
                         .buttonStyle(.plain)
                         Divider().padding(.leading, 52)
@@ -153,7 +150,7 @@ struct SettingsView: View {
                             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             showingDeleteAlert = true
                         } label: {
-                            SettingsActionRow(systemImage: "trash", title: localizedText("delete_account"))
+                            SettingsActionRow(systemImage: "trash", title: languageManager.string("Delete Account"))
                         }
                         .buttonStyle(.plain)
                     }
@@ -166,21 +163,21 @@ struct SettingsView: View {
                     .environment(languageManager)
             }
             // Alerts for destructive actions
-            .alert(localizedText("delete_account"), isPresented: $showingDeleteAlert) {
-                Button(localizedText("cancel"), role: .cancel) {}
-                Button(localizedText("delete_account"), role: .destructive) {
+            .alert(languageManager.string("Delete Account"), isPresented: $showingDeleteAlert) {
+                Button(languageManager.string("Cancel"), role: .cancel) {}
+                Button(languageManager.string("Delete Account"), role: .destructive) {
                     Task { await authManager.deleteAccount() }
                 }
             } message: {
-                Text(localizedText("delete_account_hint"))
+                Text(languageManager.string("Permanently delete your account."))
             }
-            .alert(localizedText("logout"), isPresented: $showingLogoutAlert) {
-                Button(localizedText("cancel"), role: .cancel) {}
-                Button(localizedText("logout")) {
+            .alert(languageManager.string("Sign Out"), isPresented: $showingLogoutAlert) {
+                Button(languageManager.string("Cancel"), role: .cancel) {}
+                Button(languageManager.string("Sign Out")) {
                     authManager.signOut()
                 }
             } message: {
-                Text(localizedText("logout_hint"))
+                Text(languageManager.string("Sign out of your current account."))
             }
             .onChange(of: notificationsEnabled) { _, newValue in
                 if !newValue {
@@ -197,7 +194,7 @@ struct SettingsView: View {
                     notificationManager.updateBadgeCount(totalUnread)
                 }
             }
-            .navigationTitle(localizedText("settings"))
+            .navigationTitle(languageManager.string("Settings"))
             .navigationBarTitleDisplayMode(.large)
             // In a split view the page replaces the detail column; collapsed, it is pushed.
             .navigationDestination(for: SettingsPage.self) { page in
@@ -206,56 +203,22 @@ struct SettingsView: View {
             }
         } detail: {
             ContentUnavailableView(
-                languageManager.localize(ko: "설정을 선택하세요", en: "Select a Setting", ja: "設定を選択", zh: "选择一个设置", es: "Selecciona un ajuste"),
+                languageManager.string("Select a Setting"),
                 systemImage: "gearshape",
-                description: Text(languageManager.localize(ko: "왼쪽 목록에서 항목을 고르면 여기에 열립니다.", en: "Pick an item from the list to open it here.", ja: "リストから項目を選ぶとここに表示されます。", zh: "从列表中选择一项，它会在这里打开。", es: "Elige un elemento de la lista para abrirlo aquí."))
+                description: Text(languageManager.string("Pick an item from the list to open it here."))
             )
             .screenCentered()
         }
         .preferredColorScheme(themeMode == "light" ? .light : (themeMode == "dark" ? .dark : nil))
     }
 
-    private func localizedText(_ key: String) -> String {
-        switch key {
-        // Common
-        case "settings": return languageManager.localize(ko: "설정", en: "Settings", ja: "設定", zh: "设置", es: "Configuración")
-        case "cancel": return languageManager.localize(ko: "취소", en: "Cancel", ja: "キャンセル", zh: "取消", es: "Cancelar")
-
-        // Language
-        case "language": return languageManager.localize(ko: "언어", en: "Language", ja: "言語", zh: "语言", es: "Idioma")
-
-        // Security / App Lock
-        case "app_lock": return languageManager.localize(ko: "앱 잠금", en: "App Lock", ja: "アプリロック", zh: "应用锁定", es: "Bloqueo de aplicación")
-
-        // Notifications
-        case "notifications": return languageManager.localize(ko: "알림", en: "Notifications", ja: "通知", zh: "通知", es: "Notificaciones")
-
-        // AI
-        case "ai_features": return languageManager.localize(ko: "AI 기능", en: "AI Features", ja: "AI機能", zh: "AI功能", es: "Funciones de IA")
-
-        // Translation
-        case "translation": return languageManager.localize(ko: "번역", en: "Translation", ja: "翻訳", zh: "翻译", es: "Traducción")
-
-        // Destructive
-        case "delete_account": return languageManager.localize(ko: "계정 삭제", en: "Delete Account", ja: "アカウントを削除", zh: "删除账户", es: "Eliminar cuenta")
-        case "delete_account_hint": return languageManager.localize(ko: "계정을 영구적으로 삭제합니다.", en: "Permanently delete your account.", ja: "アカウントを完全に削除します。", zh: "将永久删除您的账户。", es: "Elimina tu cuenta de forma permanente.")
-        case "logout": return languageManager.localize(ko: "로그아웃", en: "Sign Out", ja: "ログアウト", zh: "退出登录", es: "Cerrar sesión")
-        case "logout_hint": return languageManager.localize(ko: "현재 계정에서 로그아웃합니다.", en: "Sign out of your current account.", ja: "現在のアカウントからログアウトします。", zh: "从当前账户退出登录。", es: "Cierra sesión de tu cuenta actual.")
-
-        default:
-            // 디버깅을 위해 키가 정의되지 않은 경우를 확인
-            settingsLogger.error("키 '\(key, privacy: .public)'가 정의되지 않음")
-            return key
-        }
-    }
-
     private func profileDisplayName() -> String {
         let raw = (authManager.currentUser?.displayName ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         if raw.isEmpty {
-            return languageManager.localize(ko: "사용자", en: "User", ja: "ユーザー", zh: "用户", es: "Usuario")
+            return languageManager.string(LocalizedStringResource("User", comment: "Profile name shown when the account has no display name"))
         }
         if raw == "테스터" || raw == "Tester" {
-            return languageManager.localize(ko: "테스터", en: "Tester", ja: "テスター", zh: "测试员", es: "Tester")
+            return languageManager.string(LocalizedStringResource("Tester", comment: "Profile name of the test-mode account"))
         }
         return raw
     }
