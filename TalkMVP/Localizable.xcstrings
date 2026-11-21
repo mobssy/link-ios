@@ -7934,7 +7934,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "長按新增反應，滑動回復"
+            "value" : "長按新增反應，滑動回覆"
           }
         }
       }
@@ -8144,7 +8144,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "會議記錄會整理聊天中的決定、任務、日程和待解決的問題，可從聊天選單開啟。收到訊息時，回復建議會在輸入框上方提供簡短回復。開啟按含義搜尋後，搜尋“晚飯約會”也能找到“dinner tonight”。這些功能都使用裝置上的 Apple Intelligence。"
+            "value" : "會議記錄會整理聊天中的決定、任務、日程和待解決的問題，可從聊天選單開啟。收到訊息時，回覆建議會在輸入框上方提供簡短回覆。開啟按含義搜尋後，搜尋“晚飯約會”也能找到“dinner tonight”。這些功能都使用裝置上的 Apple Intelligence。"
           }
         }
       }
@@ -10605,7 +10605,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回復"
+            "value" : "回覆"
           }
         }
       }
@@ -10641,7 +10641,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回復建議"
+            "value" : "回覆建議"
           }
         }
       }
@@ -10675,7 +10675,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回復訊息"
+            "value" : "回覆訊息"
           }
         }
       }
@@ -10709,7 +10709,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@回復中"
+            "value" : "%@回覆中"
           }
         }
       }
@@ -12855,7 +12855,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回復建議"
+            "value" : "回覆建議"
           }
         }
       }
@@ -13063,7 +13063,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左滑訊息即可回復。"
+            "value" : "左滑訊息即可回覆。"
           }
         }
       }
