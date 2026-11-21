@@ -34,7 +34,7 @@ final class TalkMVPUITests: XCTestCase {
         let testModeButton = app.buttons["testModeButton"]
         XCTAssertTrue(testModeButton.waitForExistence(timeout: 10))
         testModeButton.tap()
-        let startButton = app.alerts.buttons["Start Test"]
+        let startButton = app.buttons["Start Test"].firstMatch
         XCTAssertTrue(startButton.waitForExistence(timeout: 5))
         startButton.tap()
         XCTAssertTrue(tab("Friends").waitForExistence(timeout: 10))

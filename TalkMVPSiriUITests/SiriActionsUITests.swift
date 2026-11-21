@@ -24,7 +24,9 @@ final class SiriActionsUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.buttons["testModeButton"].waitForExistence(timeout: 10))
         app.buttons["testModeButton"].tap()
-        app.alerts.buttons["Start Test"].tap()
+        let startTest = app.buttons["Start Test"].firstMatch
+        XCTAssertTrue(startTest.waitForExistence(timeout: 5))
+        startTest.tap()
         XCTAssertTrue(app.buttons["Chats"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Chats"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["Family Group"].firstMatch.waitForExistence(timeout: 5))

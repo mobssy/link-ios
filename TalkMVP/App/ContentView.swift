@@ -20,12 +20,6 @@ struct ContentView: View {
     var body: some View {
         mainContent()
             .environment(router)
-            .alert(languageManager.string("Test Mode"), isPresented: $showTestModeAlert) {
-                Button(languageManager.string("Cancel"), role: .cancel) { }
-                Button(languageManager.string("Start Test")) { enterTestMode() }
-            } message: {
-                Text(languageManager.string("You can experience all app features without logging in.\nWould you like to enter test mode?"))
-            }
             .tint(.appPrimaryText)
             .sheet(isPresented: $showContactsOnboarding, onDismiss: {
                 contactsOnboardingShown = true
@@ -51,7 +45,8 @@ struct ContentView: View {
             AuthenticatedTabsView()
         } else {
             UnauthenticatedView(
-                showTestModeAlert: $showTestModeAlert
+                showTestModeAlert: $showTestModeAlert,
+                startTestMode: enterTestMode
             )
         }
     }
@@ -125,10 +120,11 @@ private struct SettingsTab: View {
 
 struct UnauthenticatedView: View {
     @Binding var showTestModeAlert: Bool
+    let startTestMode: () -> Void
 
     var body: some View {
         AuthView {
-            TestModeButtonView(showTestModeAlert: $showTestModeAlert)
+            TestModeButtonView(showTestModeAlert: $showTestModeAlert, startTestMode: startTestMode)
         }
     }
 }
@@ -136,6 +132,7 @@ struct UnauthenticatedView: View {
 struct TestModeButtonView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var showTestModeAlert: Bool
+    let startTestMode: () -> Void
 
     var body: some View {
         // A secondary action beside signing in, so it is styled as one.
@@ -145,6 +142,19 @@ struct TestModeButtonView: View {
         .buttonStyle(.bordered)
         .controlSize(.large)
         .accessibilityIdentifier("testModeButton")
+        // The question comes out of the button that asked it. An alert sits in the middle of
+        // the safe area, which is off to one side of this screen when the status bar runs down
+        // one edge (iPhone Duo open, in landscape).
+        .confirmationDialog(
+            languageManager.string("Test Mode"),
+            isPresented: $showTestModeAlert,
+            titleVisibility: .visible
+        ) {
+            Button(languageManager.string("Start Test"), action: startTestMode)
+            Button(languageManager.string("Cancel"), role: .cancel) { }
+        } message: {
+            Text(languageManager.string("You can experience all app features without logging in.\nWould you like to enter test mode?"))
+        }
     }
 }
 
