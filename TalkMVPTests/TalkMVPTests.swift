@@ -3109,3 +3109,30 @@ struct TestModeStatusTests {
         #expect(TestData.statusMessage("At the gym 💪", testModeStatus: "Experiencing in test mode") == "At the gym 💪")
     }
 }
+
+// MARK: - Screen centering
+
+@Suite("Screen centering")
+struct ScreenCenteringTests {
+    @Test("Even insets add nothing")
+    func evenInsets() {
+        let padding = ScreenCentering.extraPadding(for: EdgeInsets(top: 0, leading: 59, bottom: 0, trailing: 59))
+        #expect(padding.leading == 0)
+        #expect(padding.trailing == 0)
+    }
+
+    @Test("A status bar on the right is matched on the left")
+    func trailingInset() {
+        // iPhone Duo's open screen in landscape puts the status bar down the right edge.
+        let padding = ScreenCentering.extraPadding(for: EdgeInsets(top: 24, leading: 0, bottom: 20, trailing: 84))
+        #expect(padding.leading == 84)
+        #expect(padding.trailing == 0)
+    }
+
+    @Test("A wider left inset is matched on the right")
+    func leadingInset() {
+        let padding = ScreenCentering.extraPadding(for: EdgeInsets(top: 0, leading: 62, bottom: 0, trailing: 20))
+        #expect(padding.leading == 0)
+        #expect(padding.trailing == 42)
+    }
+}

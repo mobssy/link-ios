@@ -89,6 +89,7 @@ struct AuthView<Footer: View>: View {
                 }
                 .scrollBounceBehavior(.basedOnSize)
                 .scrollDismissesKeyboard(.interactively)
+                .screenCentered()
             }
             .navigationTitle("")
             .navigationBarHidden(true)
