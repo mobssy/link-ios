@@ -51,15 +51,6 @@ class ChatViewModel {
     private var chatRoom: ChatRoom
     private var chatService: ChatServiceProtocol?
 
-    private func localizedVM(ko: String, en: String, ja: String, zh: String, es: String) -> String {
-        let lang = LanguageManager.currentLanguageCode
-        if lang.hasPrefix("ko") { return ko }
-        if lang.hasPrefix("ja") { return ja }
-        if lang.hasPrefix("zh") { return zh }
-        if lang.hasPrefix("es") { return es }
-        return en
-    }
-
     init(
         messageRepository: MessageRepositoryProtocol,
         chatRoomRepository: ChatRoomRepositoryProtocol,
@@ -121,7 +112,7 @@ class ChatViewModel {
             refreshReplySuggestions()
         } catch {
             vmLogger.error("Failed to load messages: \(error.localizedDescription, privacy: .public)")
-            errorMessage = localizedVM(ko: "메시지를 불러오지 못했습니다.", en: "Failed to load messages.", ja: "メッセージの読み込みに失敗しました。", zh: "加载消息失败。", es: "Error al cargar los mensajes.")
+            errorMessage = AppLocalization.string("Failed to load messages.")
         }
     }
 
@@ -165,7 +156,7 @@ class ChatViewModel {
         return deliver(
             message,
             preview: message.text,
-            failureMessage: localizedVM(ko: "메시지 전송에 실패했습니다.", en: "Failed to send message.", ja: "メッセージの送信に失敗しました。", zh: "发送消息失败。", es: "Error al enviar el mensaje.")
+            failureMessage: AppLocalization.string("Failed to send message.")
         )
     }
 
@@ -177,8 +168,8 @@ class ChatViewModel {
         let language = LanguageManager.currentLanguageCode
         return deliver(
             Message(imageData: imageData, isFromCurrentUser: true, chatRoomId: chatRoom.id.uuidString),
-            preview: localizedVM(ko: "사진을 보냈습니다", en: "Photo sent", ja: "写真を送りました", zh: "发送了照片", es: "Foto enviada"),
-            failureMessage: localizedVM(ko: "사진 전송에 실패했습니다.", en: "Failed to send image.", ja: "画像の送信に失敗しました。", zh: "发送图片失败。", es: "Error al enviar la imagen."),
+            preview: AppLocalization.string("Photo sent"),
+            failureMessage: AppLocalization.string("Failed to send image."),
             thenWorkOut: { message in
                 message.imageDescription = await describer.describe(imageData, languageCode: language)
             }
@@ -194,8 +185,8 @@ class ChatViewModel {
         let transcriber = voiceTranscriber
         return deliver(
             Message(audioData: audioData, duration: duration, isFromCurrentUser: true, chatRoomId: chatRoom.id.uuidString),
-            preview: localizedVM(ko: "음성 메시지", en: "Voice message", ja: "音声メッセージ", zh: "语音消息", es: "Mensaje de voz"),
-            failureMessage: localizedVM(ko: "음성 메시지 전송에 실패했습니다.", en: "Failed to send voice message.", ja: "音声メッセージの送信に失敗しました。", zh: "发送语音消息失败。", es: "Error al enviar el mensaje de voz."),
+            preview: AppLocalization.string("Voice message"),
+            failureMessage: AppLocalization.string("Failed to send voice message."),
             thenWorkOut: { [weak self] message in
                 self?.transcribingMessageIDs.insert(message.id)
                 message.transcript = await transcriber.transcribe(audioData, languageCode: language)
@@ -216,14 +207,14 @@ class ChatViewModel {
         message.fileURL = fileURL
         return deliver(
             message,
-            preview: localizedVM(ko: "파일을 보냈습니다", en: "Sent a file", ja: "ファイルを送りました", zh: "发送了一个文件", es: "Envió un archivo"),
-            failureMessage: localizedVM(ko: "파일 전송에 실패했습니다.", en: "Failed to send file.", ja: "ファイルの送信に失敗しました。", zh: "发送文件失败。", es: "Error al enviar el archivo.")
+            preview: AppLocalization.string("Sent a file"),
+            failureMessage: AppLocalization.string("Failed to send file.")
         )
     }
 
     @discardableResult
     func sendVideo(_ videoData: Data, fileExtension: String = AttachmentPreviewer.fallbackVideoExtension) -> Task<Void, Never> {
-        let preview = localizedVM(ko: "동영상을 보냈습니다", en: "Sent a video", ja: "動画を送りました", zh: "发送了一个视频", es: "Envió un video")
+        let preview = AppLocalization.string("Sent a video")
         let message = Message(
             text: preview,
             isFromCurrentUser: true,
@@ -236,7 +227,7 @@ class ChatViewModel {
         return deliver(
             message,
             preview: preview,
-            failureMessage: localizedVM(ko: "동영상 전송에 실패했습니다.", en: "Failed to send video.", ja: "動画の送信に失敗しました。", zh: "发送视频失败。", es: "Error al enviar el vídeo.")
+            failureMessage: AppLocalization.string("Failed to send video.")
         )
     }
 
@@ -244,8 +235,11 @@ class ChatViewModel {
     func sendLocationMessage(latitude: Double, longitude: Double) -> Task<Void, Never> {
         deliver(
             Message(latitude: latitude, longitude: longitude, isFromCurrentUser: true, chatRoomId: chatRoom.id.uuidString),
-            preview: localizedVM(ko: "위치를 공유했습니다", en: "Location shared", ja: "位置情報を共有しました", zh: "共享了位置", es: "Ubicación compartida"),
-            failureMessage: localizedVM(ko: "위치 전송에 실패했습니다.", en: "Failed to send location.", ja: "位置情報の送信に失敗しました。", zh: "发送位置失败。", es: "Error al enviar ubicación."),
+            preview: AppLocalization.string(LocalizedStringResource(
+                "preview.locationShared", defaultValue: "Location shared",
+                comment: "Chat list preview after the user shares their location"
+            )),
+            failureMessage: AppLocalization.string("Failed to send location."),
             requestsReply: false
         )
     }
@@ -497,7 +491,7 @@ class ChatViewModel {
                 messages.sort { $0.timestamp < $1.timestamp }
             } catch {
                 vmLogger.error("Failed to save scheduled message: \(error.localizedDescription, privacy: .public)")
-                errorMessage = localizedVM(ko: "예약 메시지 저장에 실패했습니다.", en: "Failed to schedule the message.", ja: "予約メッセージの保存に失敗しました。", zh: "保存定时消息失败。", es: "Error al programar el mensaje.")
+                errorMessage = AppLocalization.string("Failed to schedule the message.")
             }
         }
     }
@@ -532,7 +526,7 @@ class ChatViewModel {
                 }
             } catch {
                 vmLogger.error("Failed to send scheduled messages: \(error.localizedDescription, privacy: .public)")
-                errorMessage = localizedVM(ko: "예약 메시지 전송에 실패했습니다.", en: "Failed to send a scheduled message.", ja: "予約メッセージの送信に失敗しました。", zh: "发送定时消息失败。", es: "Error al enviar un mensaje programado.")
+                errorMessage = AppLocalization.string("Failed to send a scheduled message.")
             }
         }
         sendAutoResponse()
@@ -594,7 +588,7 @@ class ChatViewModel {
                 chatService?.deleteMessage(message, in: chatRoom)
             } catch {
                 vmLogger.error("Failed to delete message: \(error.localizedDescription, privacy: .public)")
-                errorMessage = localizedVM(ko: "메시지 삭제에 실패했습니다.", en: "Failed to delete message.", ja: "メッセージの削除に失敗しました。", zh: "删除消息失败。", es: "Error al eliminar el mensaje.")
+                errorMessage = AppLocalization.string("Failed to delete message.")
                 messages.append(message)
                 messages.sort { $0.timestamp < $1.timestamp }
             }
@@ -616,7 +610,7 @@ class ChatViewModel {
                 // chatService?.hideMessage(message, for: currentUserId, in: chatRoom)
             } catch {
                 vmLogger.error("Failed to hide message: \(error.localizedDescription, privacy: .public)")
-                errorMessage = localizedVM(ko: "메시지 숨기기에 실패했습니다.", en: "Failed to hide message.", ja: "メッセージの非表示に失敗しました。", zh: "隐藏消息失败。", es: "Error al ocultar el mensaje.")
+                errorMessage = AppLocalization.string("Failed to hide message.")
                 // Rollback UI
                 messages.append(message)
                 messages.sort { $0.timestamp < $1.timestamp }

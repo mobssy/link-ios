@@ -13,38 +13,21 @@ import SwiftUI
 
 /// 메시지 편집 Alert
 struct EditMessageAlertModifier: ViewModifier {
-    let localizationService: LocalizationServiceProtocol
-    let language: Language
+    @Environment(LanguageManager.self) private var languageManager
 
     @Binding var isPresented: Bool
     @Binding var editingText: String
     @Binding var editingMessage: Message?
     let onSave: (Message, String) -> Void
 
-    init(
-        isPresented: Binding<Bool>,
-        editingText: Binding<String>,
-        editingMessage: Binding<Message?>,
-        onSave: @escaping (Message, String) -> Void,
-        localizationService: LocalizationServiceProtocol = LocalizationService.shared,
-        language: Language
-    ) {
-        self._isPresented = isPresented
-        self._editingText = editingText
-        self._editingMessage = editingMessage
-        self.onSave = onSave
-        self.localizationService = localizationService
-        self.language = language
-    }
-
     func body(content: Content) -> some View {
-        content.alert(localizedAlertText(.edit, language) + " " + localizedAlertText(.message, language), isPresented: $isPresented) {
-            TextField(localizedAlertText(.message, language), text: $editingText)
-            Button(localizedAlertText(.cancel, language), role: .cancel) {
+        content.alert(languageManager.string("Edit Message"), isPresented: $isPresented) {
+            TextField(languageManager.string(LocalizedStringResource("Message", comment: "Placeholder of the field that edits a message")), text: $editingText)
+            Button(languageManager.string("Cancel"), role: .cancel) {
                 editingMessage = nil
                 editingText = ""
             }
-            Button(localizedAlertText(.save, language)) {
+            Button(languageManager.string("Save")) {
                 if let message = editingMessage {
                     let newText = editingText.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !newText.isEmpty {
@@ -53,101 +36,61 @@ struct EditMessageAlertModifier: ViewModifier {
                 }
                 editingMessage = nil
                 editingText = ""
-                UIAccessibility.post(notification: .announcement, argument: localizedAlertText(.editedMessageAnnouncement, language))
+                UIAccessibility.post(notification: .announcement, argument: languageManager.string("Message edited"))
             }
         } message: {
-            Text(localizedAlertText(.editMessagePrompt, language))
+            Text(languageManager.string("Edit your message"))
         }
     }
 }
 
 /// 위치 권한 Alert
 struct LocationPermissionAlertModifier: ViewModifier {
-    let localizationService: LocalizationServiceProtocol
-    let language: Language
+    @Environment(LanguageManager.self) private var languageManager
     @Binding var isPresented: Bool
     let openSettings: () -> Void
 
-    init(
-        isPresented: Binding<Bool>,
-        openSettings: @escaping () -> Void,
-        localizationService: LocalizationServiceProtocol = LocalizationService.shared,
-        language: Language
-    ) {
-        self._isPresented = isPresented
-        self.openSettings = openSettings
-        self.localizationService = localizationService
-        self.language = language
-    }
-
     func body(content: Content) -> some View {
-        content.alert(localizedAlertText(.locationPermissionTitle, language), isPresented: $isPresented) {
-            Button(localizedAlertText(.cancel, language), role: .cancel) {}
-            Button(localizedAlertText(.openSettings, language)) { openSettings() }
+        content.alert(languageManager.string("Location Permission Required"), isPresented: $isPresented) {
+            Button(languageManager.string("Cancel"), role: .cancel) {}
+            Button(languageManager.string("Open Settings")) { openSettings() }
         } message: {
-            Text(localizedAlertText(.locationPermissionMessage, language))
+            Text(languageManager.string("Location access is required for emergency calls. Please allow it in Settings."))
         }
     }
 }
 
 /// 신고 Alert
 struct ReportAlertModifier: ViewModifier {
-    let localizationService: LocalizationServiceProtocol
-    let language: Language
+    @Environment(LanguageManager.self) private var languageManager
     @Binding var isPresented: Bool
     let name: String
 
-    init(
-        isPresented: Binding<Bool>,
-        name: String,
-        localizationService: LocalizationServiceProtocol = LocalizationService.shared,
-        language: Language
-    ) {
-        self._isPresented = isPresented
-        self.name = name
-        self.localizationService = localizationService
-        self.language = language
-    }
-
     func body(content: Content) -> some View {
-        content.alert(localizedAlertText(.reportUser, language), isPresented: $isPresented) {
-            Button(localizedAlertText(.ok, language), role: .cancel) {}
+        content.alert(languageManager.string(LocalizedStringResource("Report", comment: "Reports the person a chat is with")), isPresented: $isPresented) {
+            Button(languageManager.string("OK"), role: .cancel) {}
         } message: {
-            Text(String(format: localizedAlertText(.reportedUserMessage, language), name))
+            Text(languageManager.string("Reported \(name)"))
         }
     }
 }
 
 /// 차단 Alert
 struct BlockAlertModifier: ViewModifier {
-    let localizationService: LocalizationServiceProtocol
-    let language: Language
+    @Environment(LanguageManager.self) private var languageManager
     @Binding var isPresented: Bool
     let name: String
     let onBlock: () -> Void
 
-    init(
-        isPresented: Binding<Bool>,
-        name: String,
-        onBlock: @escaping () -> Void,
-        localizationService: LocalizationServiceProtocol = LocalizationService.shared,
-        language: Language
-    ) {
-        self._isPresented = isPresented
-        self.name = name
-        self.onBlock = onBlock
-        self.localizationService = localizationService
-        self.language = language
-    }
-
     func body(content: Content) -> some View {
-        content.alert(localizedAlertText(.blockUser, language), isPresented: $isPresented) {
-            Button(localizedAlertText(.cancel, language), role: .cancel) {}
-            Button(localizedAlertText(.block, language), role: .destructive) {
+        let block = languageManager.string(LocalizedStringResource("Block", comment: "Blocks the person a chat is with"))
+        content.alert(block, isPresented: $isPresented) {
+            Button(languageManager.string("Cancel"), role: .cancel) {}
+            Button(block, role: .destructive) {
                 onBlock()
             }
         } message: {
-            Text(String(format: localizedAlertText(.blockedUserMessage, language), name))
+            Text(languageManager.string("Blocked \(name)"))
         }
     }
 }
@@ -167,27 +110,13 @@ struct CompoundAlertModifier: ViewModifier {
     let onEditSave: (Message, String) -> Void
     let onBlock: () -> Void
 
-    @Environment(LanguageManager.self) private var languageManager
-
-    private var language: Language {
-        switch languageManager.currentLanguage {
-        case .korean:            return .korean
-        case .english:           return .english
-        case .japanese:          return .japanese
-        case .chinese,
-             .chineseTraditional: return .chinese
-        case .spanish:           return .spanish
-        }
-    }
-
     func body(content: Content) -> some View {
         content
             .modifier(EditMessageAlertModifier(
                 isPresented: $showingEditAlert,
                 editingText: $editingText,
                 editingMessage: $editingMessage,
-                onSave: onEditSave,
-                language: language
+                onSave: onEditSave
             ))
             .modifier(LocationPermissionAlertModifier(
                 isPresented: $showingLocationPermissionAlert,
@@ -195,25 +124,16 @@ struct CompoundAlertModifier: ViewModifier {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
                         openURL(url)
                     }
-                },
-                language: language
+                }
             ))
             .modifier(ReportAlertModifier(
                 isPresented: $showingReportAlert,
-                name: chatRoomName,
-                language: language
+                name: chatRoomName
             ))
             .modifier(BlockAlertModifier(
                 isPresented: $showingBlockAlert,
                 name: chatRoomName,
-                onBlock: onBlock,
-                language: language
+                onBlock: onBlock
             ))
     }
-}
-
-// MARK: - Localization Helper for Alerts
-// Private helper to avoid conflict with global L10n
-private func localizedAlertText(_ key: LocalizationKey, _ language: Language) -> String {
-    return LocalizationService.shared.text(for: key, language: language)
 }

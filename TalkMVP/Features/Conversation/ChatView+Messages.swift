@@ -46,7 +46,7 @@ extension ChatView {
                         TypingIndicatorView(senderName: chatRoom.name)
                             .id("typing_indicator")
                             .transition(reduceMotion ? .opacity : .scale.combined(with: .opacity))
-                            .accessibilityLabel(String(format: localizedText("typing_indicator"), chatRoom.name))
+                            .accessibilityLabel(languageManager.string("\(chatRoom.name) is typing"))
                             .accessibilityIdentifier("typingIndicator")
                     }
                 }
@@ -58,8 +58,8 @@ extension ChatView {
             // newest message; anchored at the bottom, that message stays in view instead of
             // sliding under the message field.
             .defaultScrollAnchor(.bottom, for: .sizeChanges)
-            .accessibilityLabel(localizedText("message_list"))
-            .accessibilityHint(localizedText("scroll_messages_hint"))
+            .accessibilityLabel(languageManager.string(LocalizedStringResource("Messages", comment: "VoiceOver name for the list of messages in a chat")))
+            .accessibilityHint(languageManager.string("Scroll up and down to review messages"))
             .accessibilityIdentifier("messagesScrollView")
             .onChange(of: viewModel.messages.count) { _, _ in
                 scrollToBottomInline(proxy: proxy)
@@ -116,60 +116,60 @@ extension ChatView {
                 .accessibilityElement(children: .combine)
                 .accessibilityIdentifier("message_\(message.id)")
                 .accessibilityLabel(accessibilityLabelForMessage(message))
-                .accessibilityHint(localizedText("message_action_hint"))
+                .accessibilityHint(languageManager.string("Long press for reactions, swipe to reply"))
                 // Holding a message opens its menu, which has Add Reaction. A second long-press
                 // gesture for the reactions raced the menu, so a hold opened either one.
-                .swipeToReply(localizedText("reply")) {
+                .swipeToReply(replyLabel) {
                     replyingToMessage = message
                     isTextFieldFocused = true
                 }
                 .contextMenu {
                     if message.messageType == .text {
-                        Button(localizedText("copy"), systemImage: "doc.on.doc") {
+                        Button(languageManager.string(LocalizedStringResource("Copy", comment: "Copies a message's text")), systemImage: "doc.on.doc") {
                             UIPasteboard.general.string = message.text
-                            UIAccessibility.post(notification: .announcement, argument: localizedText("copied_message"))
+                            UIAccessibility.post(notification: .announcement, argument: languageManager.string("Message copied"))
                         }
                     }
-                    Button(localizedText("reply"), systemImage: "arrowshape.turn.up.left") {
+                    Button(replyLabel, systemImage: "arrowshape.turn.up.left") {
                         replyingToMessage = message
                         isTextFieldFocused = true
                     }
-                    Button(localizedText("add_reaction"), systemImage: "face.smiling") {
+                    Button(languageManager.string("Add Reaction"), systemImage: "face.smiling") {
                         showReactionPicker(for: message)
                     }
                     Button(
                         message.isBookmarked
-                            ? (languageManager.currentLanguage == .korean ? "북마크 해제" : "Remove Bookmark")
-                            : (languageManager.currentLanguage == .korean ? "북마크" : "Bookmark"),
+                            ? languageManager.string("Remove Bookmark")
+                            : languageManager.string(LocalizedStringResource("Bookmark", comment: "Command that bookmarks a message")),
                         systemImage: message.isBookmarked ? "bookmark.slash" : "bookmark"
                     ) {
                         toggleBookmark(message)
                     }
                     if message.isFromCurrentUser {
-                        Button(localizedText("edit"), systemImage: "pencil") {
+                        Button(languageManager.string(LocalizedStringResource("Edit", comment: "Command that edits a message")), systemImage: "pencil") {
                             startEditingMessage(message)
                         }
                         Divider()
-                        Button(localizedText("delete_for_me"), systemImage: "trash") {
+                        Button(languageManager.string("Delete for Me"), systemImage: "trash") {
                             deleteMessageForMe(message)
                         }
-                        Button(localizedText("delete_for_everyone"), systemImage: "trash.fill", role: .destructive) {
+                        Button(languageManager.string("Delete for Everyone"), systemImage: "trash.fill", role: .destructive) {
                             deleteMessageForEveryone(message)
                         }
                     } else {
-                        Button(localizedText("delete_for_me"), systemImage: "trash") {
+                        Button(languageManager.string("Delete for Me"), systemImage: "trash") {
                             deleteMessageForMe(message)
                         }
                         Divider()
-                        Button(localizedText("report"), systemImage: "exclamationmark.bubble") {
+                        Button(languageManager.string(LocalizedStringResource("Report", comment: "Reports the person a chat is with")), systemImage: "exclamationmark.bubble") {
                             showingReportAlert = true
                         }
                         if isBlocked {
-                            Button(localizedText("unblock"), systemImage: "hand.raised.slash") {
+                            Button(languageManager.string(LocalizedStringResource("Unblock", comment: "Command that unblocks the other person")), systemImage: "hand.raised.slash") {
                                 unblockUser()
                             }
                         } else {
-                            Button(localizedText("block"), systemImage: "hand.raised") {
+                            Button(languageManager.string(LocalizedStringResource("Block", comment: "Blocks the person a chat is with")), systemImage: "hand.raised") {
                                 showingBlockAlert = true
                             }
                         }
@@ -183,6 +183,11 @@ extension ChatView {
                     .padding(.horizontal, 2)
             }
         }
+    }
+
+    /// The swipe's and the menu's name for replying to a message.
+    private var replyLabel: String {
+        languageManager.string(LocalizedStringResource("Reply", comment: "Command that replies to a message"))
     }
 
     /// Whether this chat translates: its own choice, or the app's setting.
@@ -287,13 +292,10 @@ extension ChatView {
                         HStack(spacing: 6) {
                             ProgressView()
                                 .controlSize(.small)
-                            Text(languageManager.localize(ko: "의미로 찾는 중…", en: "Searching by meaning…", ja: "意味で検索中…", zh: "正在按含义搜索…", es: "Buscando por significado…"))
+                            Text(languageManager.string("Searching by meaning…"))
                         }
                     } else if !viewModel.relatedSearchTerms.isEmpty {
-                        Text(String(
-                            format: languageManager.localize(ko: "함께 찾은 말: %@", en: "Also searched for: %@", ja: "一緒に検索した言葉: %@", zh: "同时搜索：%@", es: "También se buscó: %@"),
-                            viewModel.relatedSearchTerms.joined(separator: ", ")
-                        ))
+                        Text(languageManager.string("Also searched for: \(viewModel.relatedSearchTerms.joined(separator: ", "))"))
                     }
                 }
                 .font(.caption)

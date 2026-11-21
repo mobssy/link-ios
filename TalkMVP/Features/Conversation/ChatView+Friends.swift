@@ -63,7 +63,7 @@ extension ChatView {
         do {
             try sendFriendRequestToOtherSide()
         } catch {
-            viewModel?.errorMessage = localizedText("friend_request_failed")
+            viewModel?.errorMessage = languageManager.string("Failed to send friend request. Please try again.")
         }
     }
 
@@ -136,7 +136,7 @@ extension ChatView {
             senderStandings?[chatRoom.name] = .requested
             NotificationCenter.default.post(name: .friendshipPendingCreated, object: nil, userInfo: ["friendId": otherUserId])
         } catch {
-            viewModel?.errorMessage = localizedText("friend_request_failed")
+            viewModel?.errorMessage = languageManager.string("Failed to send friend request. Please try again.")
         }
     }
 
@@ -188,7 +188,7 @@ extension ChatView {
             isFriend = status == .accepted
             NotificationCenter.default.post(name: .friendshipStatusChanged, object: nil, userInfo: ["friendId": otherUserId])
         } catch {
-            viewModel?.errorMessage = localizedText("block_failed")
+            viewModel?.errorMessage = languageManager.string("Failed to block user. Please try again.")
         }
     }
 

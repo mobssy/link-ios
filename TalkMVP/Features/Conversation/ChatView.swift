@@ -170,11 +170,11 @@ struct ChatView: View {
     private var summaryLoadingText: String {
         switch aiResults.summaryProgress {
         case .readingPart(let index, let count):
-            String(format: languageManager.localize(ko: "긴 대화를 나눠 읽는 중… (%d/%d)", en: "Reading a long chat in parts… (%d/%d)", ja: "長い会話を分けて読んでいます… (%d/%d)", zh: "正在分段阅读长对话… (%d/%d)", es: "Leyendo un chat largo por partes… (%d/%d)"), index, count)
+            languageManager.string("Reading a long chat in parts… (\(index)/\(count))")
         case .writing:
-            languageManager.localize(ko: "요약 정리 중…", en: "Writing the summary…", ja: "要約をまとめています…", zh: "正在整理摘要…", es: "Redactando el resumen…")
+            languageManager.string("Writing the summary…")
         case nil:
-            languageManager.localize(ko: "요약 생성 중...", en: "Generating summary...", ja: "要約を生成中...", zh: "正在生成摘要...", es: "Generando resumen...")
+            languageManager.string("Generating summary...")
         }
     }
 
@@ -218,17 +218,17 @@ struct ChatView: View {
                         isTextFieldFocused = false
                         isSearchShown = true
                     } label: {
-                        Label(languageManager.localize(ko: "검색", en: "Search", ja: "検索", zh: "搜索", es: "Buscar"), systemImage: "magnifyingglass")
+                        Label(languageManager.string(LocalizedStringResource("Search", comment: "Menu command that shows the search field")), systemImage: "magnifyingglass")
                     }
 
                     Toggle(isOn: translationHereBinding) {
-                        Label(languageManager.localize(ko: "메시지 번역", en: "Translate Messages", ja: "メッセージを翻訳", zh: "翻译消息", es: "Traducir mensajes"), systemImage: "translate")
+                        Label(languageManager.string("Translate Messages"), systemImage: "translate")
                     }
 
                     Button {
                         showingBackgroundSettings = true
                     } label: {
-                        Label(languageManager.localize(ko: "배경 설정", en: "Background", ja: "背景設定", zh: "背景设置", es: "Fondo"), systemImage: "photo.fill")
+                        Label(languageManager.string(LocalizedStringResource("Background", comment: "Menu command that opens this chat's background settings")), systemImage: "photo.fill")
                     }
 
                     Button {
@@ -236,8 +236,8 @@ struct ChatView: View {
                     } label: {
                         Label(
                             chatRoom.notificationsEnabled ?
-                                languageManager.localize(ko: "알림 끄기", en: "Mute", ja: "通知オフ", zh: "静音", es: "Silenciar") :
-                                languageManager.localize(ko: "알림 켜기", en: "Unmute", ja: "通知オン", zh: "取消静音", es: "Activar"),
+                                languageManager.string(LocalizedStringResource("Mute", comment: "Menu command that turns off this chat's notifications")) :
+                                languageManager.string(LocalizedStringResource("Unmute", comment: "Menu command that turns this chat's notifications back on")),
                             systemImage: chatRoom.notificationsEnabled ? "bell.slash.fill" : "bell.fill"
                         )
                     }
@@ -245,20 +245,20 @@ struct ChatView: View {
                     Button {
                         showingBookmarks = true
                     } label: {
-                        Label(languageManager.localize(ko: "북마크", en: "Bookmarks", ja: "ブックマーク", zh: "书签", es: "Marcadores"), systemImage: "bookmark")
+                        Label(languageManager.string("Bookmarks"), systemImage: "bookmark")
                     }
 
                     Button {
                         showingDisappearingPicker = true
                     } label: {
-                        Label(languageManager.localize(ko: "자폭 메시지", en: "Disappearing", ja: "消えるメッセージ", zh: "阅后即焚", es: "Mensajes efímeros"), systemImage: "flame")
+                        Label(languageManager.string(LocalizedStringResource("Disappearing", comment: "Menu command that opens the disappearing-messages timer")), systemImage: "flame")
                     }
 
                     if aiSummaryEnabled {
                         Button {
                             generateSummary()
                         } label: {
-                            Label(languageManager.localize(ko: "대화 요약", en: "Summarize", ja: "会話要約", zh: "对话摘要", es: "Resumir"), systemImage: "text.quote")
+                            Label(languageManager.string("Summarize"), systemImage: "text.quote")
                         }
                     }
 
@@ -266,7 +266,7 @@ struct ChatView: View {
                         Button {
                             generateMeetingNotes()
                         } label: {
-                            Label(languageManager.localize(ko: "회의 노트", en: "Meeting Notes", ja: "会議メモ", zh: "会议记录", es: "Notas de reunión"), systemImage: "note.text")
+                            Label(languageManager.string("Meeting Notes"), systemImage: "note.text")
                         }
                     }
 
@@ -274,13 +274,13 @@ struct ChatView: View {
                         Button {
                             unblockUser()
                         } label: {
-                            Label(languageManager.localize(ko: "차단 해제", en: "Unblock", ja: "ブロック解除", zh: "解除屏蔽", es: "Desbloquear"), systemImage: "hand.raised.slash")
+                            Label(languageManager.string(LocalizedStringResource("Unblock", comment: "Command that unblocks the other person")), systemImage: "hand.raised.slash")
                         }
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                         .foregroundStyle(.appPrimaryText)
-                        .accessibilityLabel(localizedText("more_options"))
+                        .accessibilityLabel(languageManager.string("More options"))
                 }
             }
         }
@@ -332,39 +332,39 @@ struct ChatView: View {
     var body: some View {
         baseScaffold
             .modifier(allAlertModifiers)
-            .alert(localizedText("add_friend_title"), isPresented: $showingAddFriendAlert) {
-                Button(localizedText("cancel"), role: .cancel) {}
-                Button(localizedText("add")) {
+            .alert(addFriendAlertTitle, isPresented: $showingAddFriendAlert) {
+                Button(languageManager.string("Cancel"), role: .cancel) {}
+                Button(languageManager.string(LocalizedStringResource("Add", comment: "Button that sends the friend request"))) {
                     requestFriendship()
                 }
             } message: {
-                Text(String(format: localizedText("add_friend_message"), chatRoom.name))
+                Text(languageManager.string("Add \(chatRoom.name) as a friend?"))
             }
             .accessibilityElement(children: .contain)
-            .accessibilityLabel(localizedText("chat_screen"))
-            .accessibilityHint(String(format: localizedText("chat_screen_hint"), chatRoom.name))
+            .accessibilityLabel(languageManager.string("Chat Screen"))
+            .accessibilityHint(languageManager.string("Chat with \(chatRoom.name)"))
             .accessibilityIdentifier("chatView")
             .alert(
-                localizedText("error_title"),
+                languageManager.string("Error"),
                 isPresented: Binding(
                     get: { viewModel?.errorMessage != nil },
                     set: { if !$0 { viewModel?.errorMessage = nil } }
                 )
             ) {
-                Button(localizedText("ok")) { viewModel?.errorMessage = nil }
+                Button(languageManager.string("OK")) { viewModel?.errorMessage = nil }
             } message: {
                 Text(viewModel?.errorMessage ?? "")
             }
-            .modifier(SearchWhenShown(text: $searchText, isShown: $isSearchShown, prompt: localizedText("search_conversation")))
+            .modifier(SearchWhenShown(text: $searchText, isShown: $isSearchShown, prompt: languageManager.string("Search conversation")))
             .task(id: searchText) { await viewModel?.expandSearch(for: searchText) }
             .sheet(isPresented: $showingSummarySheet) {
                 NavigationStack {
                     summarySheetContent
-                        .navigationTitle(localizedText("conversation_summary"))
+                        .navigationTitle(languageManager.string("Conversation Summary"))
                         .navigationBarTitleDisplayMode(.large)
                         .toolbar {
                             ToolbarItem(placement: .topBarTrailing) {
-                                Button(localizedText("done")) { showingSummarySheet = false }
+                                Button(languageManager.string("Done")) { showingSummarySheet = false }
                             }
                         }
                 }
@@ -383,7 +383,7 @@ struct ChatView: View {
                                 }
                             }
                             ToolbarItem(placement: .topBarTrailing) {
-                                Button(localizedText("done")) { showingMeetingNotes = false }
+                                Button(languageManager.string("Done")) { showingMeetingNotes = false }
                             }
                         }
                 }
@@ -511,9 +511,17 @@ struct ChatView: View {
             partnerLanguage: ConversationLanguage.of(sender: nil, in: received)?.rawValue,
             readerLanguage: appLanguageCode(),
             isTranslating: isTranslatingHere,
-            translatedLabel: localizedText("translated"),
-            originalLabel: localizedText("original")
+            translatedLabel: languageManager.string(LocalizedStringResource("Translated", comment: "Says a message is shown translated")),
+            originalLabel: languageManager.string(LocalizedStringResource("Original", comment: "Says messages are shown as written, not translated"))
         )
+    }
+
+    /// Its own key: as an alert title, "Add Friend" reads differently in Chinese than the button.
+    private var addFriendAlertTitle: String {
+        languageManager.string(LocalizedStringResource(
+            "addFriend.alertTitle", defaultValue: "Add Friend",
+            comment: "Title of the alert that asks before sending a friend request"
+        ))
     }
 
 
@@ -566,7 +574,7 @@ struct ChatView: View {
         if let viewModel = viewModel {
             chatContentView(viewModel: viewModel)
         } else {
-            ProgressView(localizedText("loading"))
+            ProgressView(languageManager.string("Loading..."))
         }
     }
 }

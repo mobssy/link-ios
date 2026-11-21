@@ -13,14 +13,6 @@ struct BookmarkedMessagesSheet: View {
     let onDismiss: () -> Void
     @Environment(LanguageManager.self) private var languageManager
 
-    private func loc(ko: String, en: String, ja: String, zh: String, es: String) -> String {
-        languageManager.localize(ko: ko, en: en, ja: ja, zh: zh, es: es)
-    }
-
-    private var title: String { loc(ko: "북마크", en: "Bookmarks", ja: "ブックマーク", zh: "书签", es: "Marcadores") }
-    private var emptyLabel: String { loc(ko: "북마크된 메시지가 없습니다", en: "No bookmarked messages", ja: "ブックマークはありません", zh: "没有书签消息", es: "No hay mensajes marcados") }
-    private var doneLabel: String { loc(ko: "완료", en: "Done", ja: "完了", zh: "完成", es: "Listo") }
-
     var body: some View {
         NavigationStack {
             Group {
@@ -29,7 +21,7 @@ struct BookmarkedMessagesSheet: View {
                         Image(systemName: "bookmark.slash")
                             .font(.system(size: 48))
                             .foregroundStyle(Color.secondary)
-                        Text(emptyLabel)
+                        Text(languageManager.string("No bookmarked messages"))
                             .foregroundStyle(Color.secondary)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -38,7 +30,7 @@ struct BookmarkedMessagesSheet: View {
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
                                 Text(message.isFromCurrentUser
-                                    ? loc(ko: "나", en: "Me", ja: "自分", zh: "我", es: "Yo")
+                                    ? languageManager.string(LocalizedStringResource("Me", comment: "Names the reader as the writer of their own messages"))
                                     : message.sender)
                                     .font(.caption)
                                     .fontWeight(.semibold)
@@ -56,11 +48,11 @@ struct BookmarkedMessagesSheet: View {
                     }
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle(languageManager.string("Bookmarks"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(doneLabel) { onDismiss() }
+                    Button(languageManager.string("Done")) { onDismiss() }
                 }
             }
         }
@@ -76,30 +68,20 @@ struct DisappearingMessagePickerSheet: View {
     let onDismiss: () -> Void
     @Environment(LanguageManager.self) private var languageManager
 
-    private func loc(ko: String, en: String, ja: String, zh: String, es: String) -> String {
-        languageManager.localize(ko: ko, en: en, ja: ja, zh: zh, es: es)
-    }
-
     private var options: [(label: String, seconds: Int)] {
         [
-            (loc(ko: "끄기", en: "Off", ja: "オフ", zh: "关闭", es: "Desactivar"), 0),
-            (loc(ko: "15초", en: "15 seconds", ja: "15秒", zh: "15秒", es: "15 segundos"), 15),
-            (loc(ko: "1분", en: "1 minute", ja: "1分", zh: "1分钟", es: "1 minuto"), 60),
-            (loc(ko: "10분", en: "10 minutes", ja: "10分", zh: "10分钟", es: "10 minutos"), 600),
-            (loc(ko: "30분", en: "30 minutes", ja: "30分", zh: "30分钟", es: "30 minutos"), 1800)
+            (languageManager.string(LocalizedStringResource("Off", comment: "Disappearing-messages timer: messages don't disappear")), 0),
+            (languageManager.string("15 seconds"), 15),
+            (languageManager.string("1 minute"), 60),
+            (languageManager.string("10 minutes"), 600),
+            (languageManager.string("30 minutes"), 1800)
         ]
     }
 
     var body: some View {
         NavigationStack {
             List {
-                Section(header: Text(loc(
-                    ko: "새 메시지가 전송 후 자동으로 삭제됩니다",
-                    en: "New messages will be deleted after being sent",
-                    ja: "新しいメッセージは送信後に自動削除されます",
-                    zh: "新消息发送后将自动删除",
-                    es: "Los mensajes nuevos se eliminarán tras enviarse"
-                ))) {
+                Section(header: Text(languageManager.string("New messages will be deleted after being sent"))) {
                     ForEach(options, id: \.seconds) { option in
                         Button {
                             chatRoom.disappearingDuration = option.seconds
@@ -118,11 +100,11 @@ struct DisappearingMessagePickerSheet: View {
                     }
                 }
             }
-            .navigationTitle(loc(ko: "자폭 메시지", en: "Disappearing Messages", ja: "自動削除メッセージ", zh: "阅后即焚", es: "Mensajes temporales"))
+            .navigationTitle(languageManager.string("Disappearing Messages"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(loc(ko: "완료", en: "Done", ja: "完了", zh: "完成", es: "Listo")) { onDismiss() }
+                    Button(languageManager.string("Done")) { onDismiss() }
                 }
             }
         }
@@ -139,10 +121,6 @@ struct ScheduledSendSheet: View {
     let onCancel: () -> Void
     @Environment(LanguageManager.self) private var languageManager
 
-    private func loc(ko: String, en: String, ja: String, zh: String, es: String) -> String {
-        languageManager.localize(ko: ko, en: en, ja: ja, zh: zh, es: es)
-    }
-
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
@@ -150,13 +128,7 @@ struct ScheduledSendSheet: View {
                     .font(.system(size: 48))
                     .foregroundStyle(.appPrimaryText)
 
-                Text(loc(
-                    ko: "메시지를 보낼 시간을 선택하세요",
-                    en: "Choose when to send this message",
-                    ja: "送信する時間を選択してください",
-                    zh: "选择发送消息的时间",
-                    es: "Elige cuándo enviar este mensaje"
-                ))
+                Text(languageManager.string("Choose when to send this message"))
                 .font(.subheadline)
                 .foregroundStyle(Color.secondary)
                 .multilineTextAlignment(.center)
@@ -173,14 +145,14 @@ struct ScheduledSendSheet: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle(loc(ko: "예약 발송", en: "Schedule Send", ja: "予約送信", zh: "定时发送", es: "Envío programado"))
+            .navigationTitle(languageManager.string("Schedule Send"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(loc(ko: "취소", en: "Cancel", ja: "キャンセル", zh: "取消", es: "Cancelar")) { onCancel() }
+                    Button(languageManager.string("Cancel")) { onCancel() }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(loc(ko: "예약", en: "Schedule", ja: "予約", zh: "定时", es: "Programar")) {
+                    Button(languageManager.string(LocalizedStringResource("Schedule", comment: "Button that schedules the message for the chosen time"))) {
                         onConfirm(scheduledDate)
                     }
                     .fontWeight(.semibold)

@@ -20,7 +20,7 @@ extension ChatView {
             if let replyingTo = replyingToMessage {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(String(format: localizedText("replying_to"), replyingTo.isFromCurrentUser ? localizedText("me") : chatRoom.name))
+                        Text(languageManager.string("Replying to \(replyingTo.isFromCurrentUser ? meAsSender : chatRoom.name)"))
                             .font(.caption)
                             .foregroundStyle(Color.secondary)
                         Text(replyingTo.text)
@@ -29,7 +29,7 @@ extension ChatView {
                             .lineLimit(2)
                     }
                     Spacer()
-                    Button(localizedText("cancel")) {
+                    Button(languageManager.string("Cancel")) {
                         replyingToMessage = nil
                     }
                     .font(.caption)
@@ -50,19 +50,19 @@ extension ChatView {
                     Button {
                         openPhotosAttachment()
                     } label: {
-                        Label(localizedText("photos_videos"), systemImage: "photo.on.rectangle")
+                        Label(languageManager.string("Photos/Videos"), systemImage: "photo.on.rectangle")
                     }
 
                     Button {
                         showingDocumentPicker = true
                     } label: {
-                        Label(localizedText("file"), systemImage: "doc")
+                        Label(languageManager.string(LocalizedStringResource("File", comment: "Names a file message or attachment")), systemImage: "doc")
                     }
 
                     Button {
                         sendLocation()
                     } label: {
-                        Label(languageManager.localize(ko: "위치 공유", en: "Share Location", ja: "位置情報を共有", zh: "共享位置", es: "Compartir ubicación"), systemImage: "location")
+                        Label(languageManager.string("Share Location"), systemImage: "location")
                     }
                 } label: {
                     Image(systemName: "plus.circle.fill")
@@ -70,11 +70,11 @@ extension ChatView {
                         .font(.title)
                         .minimumHitTarget(visibleSize: 28)
                 }
-                .accessibilityLabel(localizedText("attach_file"))
+                .accessibilityLabel(languageManager.string("Attach file or media"))
 
                 // Glass like the toolbar buttons, so the field reads on any room background, plain
                 // or a photo, without a solid panel behind the bar.
-                TextField(localizedText("message_input_placeholder"), text: $inputText)
+                TextField(languageManager.string("Type a message"), text: $inputText)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
                     .glassEffect(.regular.interactive(), in: .capsule)
@@ -96,7 +96,7 @@ extension ChatView {
                             .font(.title2)
                             .minimumHitTarget(visibleSize: 22)
                     }
-                    .accessibilityLabel(languageManager.localize(ko: "예약 발송", en: "Schedule send", ja: "予約送信", zh: "定时发送", es: "Envío programado"))
+                    .accessibilityLabel(languageManager.string("Schedule send"))
                     .transition(.scale.combined(with: .opacity))
 
                     Button {
@@ -109,7 +109,7 @@ extension ChatView {
                             .clipShape(Circle())
                             .minimumHitTarget(visibleSize: 32)
                     }
-                    .accessibilityLabel(localizedText("send_message"))
+                    .accessibilityLabel(languageManager.string("Send message"))
                     .transition(.scale.combined(with: .opacity))
                 } else {
                     micButton(viewModel: viewModel)
@@ -129,14 +129,14 @@ extension ChatView {
                 .frame(width: 8, height: 8)
                 .opacity(voiceService.isRecording ? 1 : 0)
                 .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: voiceService.isRecording)
-            Text(languageManager.localize(ko: "녹음 중...", en: "Recording...", ja: "録音中...", zh: "录音中...", es: "Grabando..."))
+            Text(languageManager.string("Recording..."))
                 .font(.caption)
                 .foregroundStyle(.red)
             Spacer()
             Text(formatRecordingDuration(voiceService.recordingDuration))
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(Color.secondary)
-            Button(languageManager.localize(ko: "취소", en: "Cancel", ja: "キャンセル", zh: "取消", es: "Cancelar")) {
+            Button(languageManager.string("Cancel")) {
                 voiceService.cancelRecording()
             }
             .font(.caption)
@@ -160,8 +160,8 @@ extension ChatView {
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: voiceService.isRecording)
             .minimumHitTarget(visibleSize: 32)
             .accessibilityLabel(voiceService.isRecording
-                ? languageManager.localize(ko: "녹음 멈추고 보내기", en: "Stop and send voice message", ja: "録音を停止して送信", zh: "停止录音并发送", es: "Detener y enviar mensaje de voz")
-                : languageManager.localize(ko: "음성 메시지 녹음 (길게 누르기)", en: "Hold to record voice message", ja: "長押しで録音", zh: "长按录音", es: "Mantén para grabar"))
+                ? languageManager.string("Stop and send voice message")
+                : languageManager.string("Hold to record voice message"))
             .accessibilityAddTraits(.isButton)
             // VoiceOver and Switch Control can't hold a finger down: activating starts the
             // recording, and activating again stops it and sends it.
@@ -215,14 +215,14 @@ extension ChatView {
                         viewModel.clearReplySuggestions()
                     }
                     .buttonStyle(.glass)
-                    .accessibilityHint(languageManager.localize(ko: "메시지 입력란에 넣습니다", en: "Puts this reply in the message field", ja: "メッセージ欄に入力します", zh: "填入消息输入框", es: "La pone en el campo de mensaje"))
+                    .accessibilityHint(languageManager.string("Puts this reply in the message field"))
                 }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel(languageManager.localize(ko: "추천 답장", en: "Suggested replies", ja: "返信の提案", zh: "回复建议", es: "Respuestas sugeridas"))
+        .accessibilityLabel(languageManager.string("Suggested replies"))
     }
 
     func sendMessage(viewModel: ChatViewModel) {

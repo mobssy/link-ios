@@ -38,44 +38,43 @@ extension ChatView {
             isFromCurrentUser: message.isFromCurrentUser,
             sender: message.sender,
             roomName: chatRoom.name,
-            meLabel: localizedText("me")
+            meLabel: meAsSender
         )
         let time = Self.timeFormatter.string(from: message.timestamp)
-        let lang: Language = languageManager.currentLanguage.asLocalizationLanguage
-        let svc = LocalizationService.shared
 
         let contentLabel: String
         switch message.messageType {
         case .text:
             // The translation is part of the message, so it is read with it, while it is shown.
+            let translatedLabel = languageManager.string(LocalizedStringResource("Translated", comment: "Says a message is shown translated"))
             contentLabel = translatedTexts[message.id].flatMap { translation(for: message) == nil ? nil : $0 }.map {
-                "\(message.text). \(svc.text(for: .translated, language: lang)): \($0)"
+                "\(message.text). \(translatedLabel): \($0)"
             } ?? message.text
         case .image:
-            contentLabel = [svc.text(for: .photoMessage, language: lang), message.imageDescription]
+            contentLabel = [languageManager.string(LocalizedStringResource("Photo", comment: "VoiceOver name for a photo message")), message.imageDescription]
                 .compactMap { $0 }
                 .joined(separator: ": ")
         case .video:
-            contentLabel = svc.text(for: .videoMessage, language: lang)
+            contentLabel = languageManager.string(LocalizedStringResource("Video", comment: "Names a video message or attachment"))
         case .audio:
             // The row's label replaces its children's, so the transcript has to be read out here.
-            contentLabel = [svc.text(for: .audioMessageLabel, language: lang), message.transcript]
+            contentLabel = [languageManager.string("Audio message"), message.transcript]
                 .compactMap { $0 }
                 .joined(separator: ": ")
         case .file:
-            let fileName = message.fileName ?? svc.text(for: .fileMessage, language: lang)
-            contentLabel = "\(svc.text(for: .fileMessage, language: lang)): \(fileName)"
+            let fileLabel = languageManager.string(LocalizedStringResource("File", comment: "Names a file message or attachment"))
+            contentLabel = "\(fileLabel): \(message.fileName ?? fileLabel)"
         case .deleted:
-            contentLabel = svc.text(for: .deletedMessageLabel, language: lang)
+            contentLabel = languageManager.string("Deleted message")
         case .location:
-            contentLabel = svc.text(for: .locationMessageLabel, language: lang)
+            contentLabel = languageManager.string(LocalizedStringResource("Location shared", comment: "VoiceOver name for a location message"))
         }
 
         let readStatus: String
         if message.isFromCurrentUser {
             readStatus = message.isRead
-                ? ", \(svc.text(for: .messageRead, language: lang))"
-                : ", \(svc.text(for: .messageUnread, language: lang))"
+                ? ", \(languageManager.string(LocalizedStringResource("Read", comment: "VoiceOver: the other person has read this message")))"
+                : ", \(languageManager.string(LocalizedStringResource("Unread", comment: "VoiceOver: the other person hasn't read this message yet")))"
         } else {
             readStatus = ""
         }
@@ -118,13 +117,7 @@ extension ChatView {
         viewModel?.addReaction(emoji, to: message, from: currentUserId)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
 
-        let announcement = languageManager.localize(
-            ko: "반응 \(emoji)를 추가했습니다",
-            en: "Added reaction \(emoji)",
-            ja: "リアクション \(emoji) を追加しました",
-            zh: "添加了反应 \(emoji)",
-            es: "Reacción \(emoji) añadida"
-        )
+        let announcement = languageManager.string("Added reaction \(emoji)")
         UIAccessibility.post(notification: .announcement, argument: announcement)
     }
 
@@ -133,8 +126,8 @@ extension ChatView {
     func toggleBookmark(_ message: Message) {
         viewModel?.toggleBookmark(message)
         let label = message.isBookmarked
-            ? languageManager.localize(ko: "북마크 추가됨", en: "Bookmarked", ja: "ブックマーク済み", zh: "已收藏", es: "Marcado")
-            : languageManager.localize(ko: "북마크 해제됨", en: "Bookmark removed", ja: "ブックマーク解除", zh: "已取消收藏", es: "Marcador eliminado")
+            ? languageManager.string("Bookmarked")
+            : languageManager.string("Bookmark removed")
         UIAccessibility.post(notification: .announcement, argument: label)
     }
 
@@ -184,7 +177,7 @@ extension ChatView {
     func generateMeetingNotes() {
         let snapshot = (viewModel?.messages ?? []).map(SummaryMessage.init)
         let language = appLanguageCode()
-        let me = languageManager.localize(ko: "나", en: "Me", ja: "自分", zh: "我", es: "Yo")
+        let me = languageManager.string(LocalizedStringResource("Me", comment: "Names the reader as the writer of their own messages"))
         aiResults.meetingNotes = nil
         aiResults.isMeetingNotesLoading = true
         showingMeetingNotes = true
@@ -216,9 +209,12 @@ extension ChatView {
         }
     }
 
-    func localizedText(_ key: String) -> String {
-        guard let locKey = LocalizationKey(rawValue: key) else { return key }
-        let language: Language = languageManager.currentLanguage.asLocalizationLanguage
-        return LocalizationService.shared.text(for: locKey, language: language)
+    /// The reader, as VoiceOver and the reply bar name them. Its own key: Japanese says it
+    /// differently here than in the bookmarks and meeting notes.
+    var meAsSender: String {
+        languageManager.string(LocalizedStringResource(
+            "chat.me", defaultValue: "Me",
+            comment: "Names the reader when VoiceOver reads their message or they reply to it"
+        ))
     }
 }

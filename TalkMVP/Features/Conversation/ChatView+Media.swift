@@ -31,7 +31,7 @@ extension ChatView {
             pendingAttachment = .document(data, fileName, fileSize, fileExtension)
             showingAttachmentPreview = true
         } catch {
-            viewModel?.errorMessage = languageManager.localize(ko: "파일을 열지 못했습니다.", en: "Failed to open file.", ja: "ファイルを開けませんでした。", zh: "无法打开文件。", es: "No se pudo abrir el archivo.")
+            viewModel?.errorMessage = languageManager.string("Failed to open file.")
         }
     }
 
@@ -59,7 +59,7 @@ extension ChatView {
                     fileURL: storedPath
                 )
             } catch {
-                viewModel?.errorMessage = languageManager.localize(ko: "파일 저장에 실패했습니다.", en: "Failed to save file.", ja: "ファイルの保存に失敗しました。", zh: "保存文件失败。", es: "Error al guardar el archivo.")
+                viewModel?.errorMessage = languageManager.string("Failed to save file.")
             }
         }
 
@@ -79,7 +79,7 @@ extension ChatView {
             item.itemProvider.loadFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { url, error in
                 guard let url = url, error == nil else {
                     Task { @MainActor in
-                        self.viewModel?.errorMessage = self.languageManager.localize(ko: "동영상 로드에 실패했습니다.", en: "Failed to load video.", ja: "動画の読み込みに失敗しました。", zh: "加载视频失败。", es: "Error al cargar el vídeo.")
+                        self.viewModel?.errorMessage = self.languageManager.string("Failed to load video.")
                     }
                     return
                 }
@@ -92,7 +92,7 @@ extension ChatView {
                     }
                 } catch {
                     Task { @MainActor in
-                        self.viewModel?.errorMessage = self.languageManager.localize(ko: "동영상 데이터를 읽지 못했습니다.", en: "Failed to read video data.", ja: "動画データの読み取りに失敗しました。", zh: "无法读取视频数据。", es: "Error al leer datos de vídeo.")
+                        self.viewModel?.errorMessage = self.languageManager.string("Failed to read video data.")
                     }
                 }
             }
@@ -100,7 +100,7 @@ extension ChatView {
             item.itemProvider.loadObject(ofClass: UIImage.self) { reading, error in
                 if error != nil {
                     Task { @MainActor in
-                        self.viewModel?.errorMessage = self.languageManager.localize(ko: "이미지 로드에 실패했습니다.", en: "Failed to load image.", ja: "画像の読み込みに失敗しました。", zh: "加载图片失败。", es: "Error al cargar la imagen.")
+                        self.viewModel?.errorMessage = self.languageManager.string("Failed to load image.")
                     }
                     return
                 }

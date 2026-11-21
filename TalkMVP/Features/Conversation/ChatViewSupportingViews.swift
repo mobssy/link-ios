@@ -97,7 +97,7 @@ struct ReactionPickerView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text(LocalizationService.shared.text(for: .addReaction, language: currentLanguage))
+            Text(languageManager.string("Add Reaction"))
                 .font(.headline)
                 .foregroundStyle(Color.secondary)
 
@@ -112,22 +112,13 @@ struct ReactionPickerView: View {
                             .glassEffect(.regular.interactive(), in: .circle)
                     }
                     .buttonStyle(PlainButtonStyle())
-                    .accessibilityLabel(reactionLabel(emoji))
+                    .accessibilityLabel(languageManager.string("Reaction: \(emoji)"))
                 }
             }
         }
         .padding()
         .glassEffect(.regular, in: .rect(cornerRadius: 20))
         .padding()
-    }
-
-    private var currentLanguage: Language {
-        languageManager.currentLanguage.asLocalizationLanguage
-    }
-
-    private func reactionLabel(_ emoji: String) -> String {
-        let prefix = currentLanguage == .korean ? "반응: " : "Reaction: "
-        return prefix + emoji
     }
 }
 
@@ -190,14 +181,12 @@ struct TranslatedTextView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Label(LocalizationService.shared.text(for: .translated, language: currentLanguage), systemImage: "translate")
+            Label(languageManager.string(LocalizedStringResource("Translated", comment: "Says a message is shown translated")), systemImage: "translate")
                 .font(.caption)
                 .foregroundStyle(Color.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             // Only a real translation reads as the message; waiting and failing stay quiet.
-            Text(isLoading
-                 ? LocalizationService.shared.text(for: .translatingEllipsis, language: currentLanguage)
-                 : translated ?? LocalizationService.shared.text(for: .translationUnavailable, language: currentLanguage))
+            Text(isLoading ? languageManager.string("Translating...") : translated ?? unavailableText)
                 .foregroundStyle(!isLoading && translated != nil ? Color.primary : Color.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -205,8 +194,8 @@ struct TranslatedTextView: View {
         .onChange(of: text) { _, _ in translate() }
     }
 
-    private var currentLanguage: Language {
-        languageManager.currentLanguage.asLocalizationLanguage
+    private var unavailableText: String {
+        languageManager.string("Couldn't translate")
     }
 
     private func translate() {
@@ -216,7 +205,7 @@ struct TranslatedTextView: View {
             await MainActor.run {
                 self.translated = result
                 self.isLoading = false
-                onResult?(result ?? LocalizationService.shared.text(for: .translationUnavailable, language: currentLanguage))
+                onResult?(result ?? unavailableText)
             }
         }
     }
@@ -249,7 +238,7 @@ struct MiniProfileSheet: View {
                         .font(.subheadline)
                         .foregroundStyle(Color.secondary)
                 } else if standing == .stranger, let onAddFriend {
-                    Button(languageManager.localize(ko: "친구 추가", en: "Add Friend", ja: "友だち追加", zh: "添加好友", es: "Agregar amigo"), systemImage: "person.badge.plus") {
+                    Button(languageManager.string("Add Friend"), systemImage: "person.badge.plus") {
                         do {
                             try onAddFriend()
                             requestSent = true
@@ -264,18 +253,14 @@ struct MiniProfileSheet: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle(LocalizationService.shared.text(for: .profile, language: currentLanguage))
+            .navigationTitle(languageManager.string("Profile"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(LocalizationService.shared.text(for: .close, language: currentLanguage)) { dismiss() }
+                    Button(languageManager.string("Close")) { dismiss() }
                 }
             }
         }
-    }
-
-    private var currentLanguage: Language {
-        languageManager.currentLanguage.asLocalizationLanguage
     }
 }
 
@@ -305,7 +290,7 @@ struct AttachmentPreviewView: View {
                             .foregroundStyle(.white)
                             .frame(width: 44, height: 44)
                     }
-                    .accessibilityLabel(LocalizationService.shared.text(for: .cancelAttachment, language: currentLanguage))
+                    .accessibilityLabel(languageManager.string("Cancel attachment"))
 
                     Spacer()
                 }
@@ -326,7 +311,7 @@ struct AttachmentPreviewView: View {
                     bottomInputView
                 } else {
                     Spacer()
-                    Text(LocalizationService.shared.text(for: .noAttachment, language: currentLanguage))
+                    Text(languageManager.string("No Attachment"))
                         .foregroundStyle(.white.opacity(0.7))
                     Spacer()
                 }
@@ -354,7 +339,7 @@ struct AttachmentPreviewView: View {
                         .font(.system(size: 80))
                         .foregroundStyle(.white)
 
-                    Text(LocalizationService.shared.text(for: .video, language: currentLanguage))
+                    Text(languageManager.string(LocalizedStringResource("Video", comment: "Names a video message or attachment")))
                         .font(.title2)
                         .foregroundStyle(.white)
                 }
@@ -399,7 +384,7 @@ struct AttachmentPreviewView: View {
                 // 텍스트 입력 필드
                 ZStack(alignment: .leading) {
                     if captionText.isEmpty {
-                        Text(LocalizationService.shared.text(for: .addCaption, language: currentLanguage))
+                        Text(languageManager.string("Add a caption..."))
                             .foregroundStyle(.white.opacity(0.5))
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
@@ -423,16 +408,12 @@ struct AttachmentPreviewView: View {
                         .foregroundStyle(.appPrimaryText)
                 }
                 .frame(width: 44, height: 44)
-                .accessibilityLabel(LocalizationService.shared.text(for: .sendAttachment, language: currentLanguage))
+                .accessibilityLabel(languageManager.string("Send attachment"))
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(Color.black.opacity(0.9))
         }
-    }
-
-    private var currentLanguage: Language {
-        languageManager.currentLanguage.asLocalizationLanguage
     }
 }
 
