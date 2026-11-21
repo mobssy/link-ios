@@ -3048,6 +3048,16 @@ struct TestModeStatusTests {
 
 @Suite("Screen centering")
 struct ScreenCenteringTests {
+    @Test("A status bar down one side counts as a side strip; a notch on both sides does not")
+    func statusStripOnOneSide() {
+        let duoLandscape = ScreenSafeArea(insets: EdgeInsets(top: 24, leading: 0, bottom: 20, trailing: 84))
+        let notchLandscape = ScreenSafeArea(insets: EdgeInsets(top: 0, leading: 59, bottom: 21, trailing: 59))
+        let portrait = ScreenSafeArea(insets: EdgeInsets(top: 59, leading: 0, bottom: 34, trailing: 0))
+        #expect(duoLandscape.hasStatusStripOnOneSide)
+        #expect(!notchLandscape.hasStatusStripOnOneSide)
+        #expect(!portrait.hasStatusStripOnOneSide)
+    }
+
     @Test("Even insets add nothing")
     func evenInsets() {
         let padding = ScreenCentering.extraPadding(for: EdgeInsets(top: 0, leading: 59, bottom: 0, trailing: 59))

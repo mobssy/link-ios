@@ -18,6 +18,7 @@ import UIKit
 struct ChatView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.screenSafeArea) private var screenSafeArea
     @Environment(\.prefersReducedMotion) var reduceMotion
     @Environment(\.openURL) private var openURL
     @Environment(LanguageManager.self) var languageManager
@@ -198,6 +199,18 @@ struct ChatView: View {
         .modifier(ChatBackgroundColorScheme(scheme: backgroundColorScheme))
         .task(id: chatRoom.backgroundAppearanceKey) {
             backgroundColorScheme = chatRoom.backgroundColorScheme
+        }
+        .safeAreaInset(edge: .top) {
+            if showsTitleAboveMessages {
+                Button(action: openTitle) {
+                    titleView
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 8)
+                }
+                .buttonStyle(.plain)
+                .glassEffect(.regular.interactive(), in: .capsule)
+                .padding(.top, 8)
+            }
         }
         .navigationTitle(chatRoom.name)
         .navigationBarTitleDisplayMode(.inline)
@@ -486,6 +499,13 @@ struct ChatView: View {
     }
 
     // MARK: - Title
+
+    /// With the status bar down one side of a wide screen (iPhone Duo open, in landscape) the
+    /// system stacks the toolbar under it and leaves out the principal item, so the chat would
+    /// have no name. The title then sits above the messages instead.
+    private var showsTitleAboveMessages: Bool {
+        horizontalSizeClass == .regular && screenSafeArea.hasStatusStripOnOneSide
+    }
 
     /// The name, and under it what the app knows about the chat: a group's members, or the
     /// language the other person writes in.

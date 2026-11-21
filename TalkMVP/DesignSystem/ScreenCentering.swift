@@ -51,6 +51,12 @@ enum ScreenCentering {
 nonisolated struct ScreenSafeArea: Equatable {
     var insets = EdgeInsets()
     var frame = CGRect.zero
+
+    /// Whether the status bar runs down one side of the screen, as on iPhone Duo's open screen
+    /// in landscape. A notch in landscape insets both sides alike, so it does not count.
+    var hasStatusStripOnOneSide: Bool {
+        abs(insets.leading - insets.trailing) > 1
+    }
 }
 
 extension EnvironmentValues {
