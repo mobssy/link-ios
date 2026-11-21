@@ -20,7 +20,7 @@ struct TypingIndicatorView: View {
                     .foregroundStyle(Color.secondary)
 
                 HStack {
-                    Text(languageManager.localize(ko: "타이핑 중", en: "Typing", ja: "入力中", zh: "正在输入", es: "Escribiendo"))
+                    Text(languageManager.string(LocalizedStringResource("Typing", comment: "Shown while the other person is writing a message.")))
                         .font(.subheadline)
                         .foregroundStyle(Color.secondary)
 

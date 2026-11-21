@@ -17,7 +17,7 @@ struct MeetingNotesView: View {
             VStack(spacing: 16) {
                 ProgressView()
                     .scaleEffect(1.5)
-                Text(text(ko: "회의 노트 정리 중...", en: "Writing meeting notes...", ja: "会議メモを作成中...", zh: "正在整理会议记录...", es: "Preparando notas..."))
+                Text(languageManager.string("Writing meeting notes..."))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -71,30 +71,26 @@ struct MeetingNotesView: View {
                 Section {
                 } footer: {
                     Text(notes.generatedByModel
-                        ? text(ko: "기기 안의 Apple Intelligence로 정리했어요.", en: "Written on device by Apple Intelligence.", ja: "デバイス上のApple Intelligenceで作成しました。", zh: "由设备上的 Apple Intelligence 整理。", es: "Redactado en el dispositivo con Apple Intelligence.")
-                        : text(ko: "Apple Intelligence로 정리하지 못해 규칙으로 뽑았어요.", en: "Apple Intelligence couldn't write these notes, so they were picked out by rules.", ja: "Apple Intelligenceで作成できなかったため、ルールで抽出しました。", zh: "Apple Intelligence 无法整理，因此按规则提取。", es: "Apple Intelligence no pudo redactarlas, así que se extrajeron con reglas."))
+                        ? languageManager.string("Written on device by Apple Intelligence.")
+                        : languageManager.string("Apple Intelligence couldn't write these notes, so they were picked out by rules."))
                 }
             }
         } else {
             ContentUnavailableView(
-                text(ko: "정리할 내용이 아직 없어요", en: "Nothing to note yet", ja: "まだメモする内容がありません", zh: "暂时没有可整理的内容", es: "Aún no hay nada que anotar"),
+                languageManager.string("Nothing to note yet"),
                 systemImage: "note.text",
-                description: Text(text(ko: "대화에 결정 사항, 할 일, 일정이 나오면 여기에 정리돼요.", en: "Decisions, tasks and dates from the chat will show up here.", ja: "決定事項、タスク、日程が会話に出るとここにまとまります。", zh: "聊天中出现决定、任务和日程时会整理在这里。", es: "Aquí aparecerán las decisiones, tareas y fechas del chat."))
+                description: Text(languageManager.string("Decisions, tasks and dates from the chat will show up here."))
             )
         }
     }
 
     static func labels(_ languageManager: LanguageManager) -> MeetingNotes.Labels {
         MeetingNotes.Labels(
-            title: languageManager.localize(ko: "회의 노트", en: "Meeting Notes", ja: "会議メモ", zh: "会议记录", es: "Notas de reunión"),
-            decisions: languageManager.localize(ko: "결정 사항", en: "Decisions", ja: "決定事項", zh: "决定", es: "Decisiones"),
-            actionItems: languageManager.localize(ko: "할 일", en: "Action Items", ja: "タスク", zh: "待办事项", es: "Tareas"),
-            schedule: languageManager.localize(ko: "일정", en: "Schedule", ja: "日程", zh: "日程", es: "Fechas"),
-            openQuestions: languageManager.localize(ko: "남은 질문", en: "Open Questions", ja: "未解決の質問", zh: "待解决的问题", es: "Preguntas abiertas")
+            title: languageManager.string("Meeting Notes"),
+            decisions: languageManager.string("Decisions"),
+            actionItems: languageManager.string("Action Items"),
+            schedule: languageManager.string(LocalizedStringResource("Schedule", comment: "Meeting notes heading over the dates and times mentioned in the chat.")),
+            openQuestions: languageManager.string("Open Questions")
         )
-    }
-
-    private func text(ko: String, en: String, ja: String, zh: String, es: String) -> String {
-        languageManager.localize(ko: ko, en: en, ja: ja, zh: zh, es: es)
     }
 }

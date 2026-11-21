@@ -35,12 +35,12 @@ struct ChatRoomBackgroundSettings: View {
         case gradient
         case image
 
-        func title(languageManager: LanguageManager) -> String {
+        var title: LocalizedStringResource {
             switch self {
-            case .default: return languageManager.localize(ko: "기본", en: "Default", ja: "デフォルト", zh: "默认", es: "Predeterminado")
-            case .color: return languageManager.localize(ko: "단색", en: "Solid Color", ja: "単色", zh: "纯色", es: "Color sólido")
-            case .gradient: return languageManager.localize(ko: "그라디언트", en: "Gradient", ja: "グラデーション", zh: "渐变", es: "Degradado")
-            case .image: return languageManager.localize(ko: "이미지", en: "Image", ja: "画像", zh: "图片", es: "Imagen")
+            case .default: LocalizedStringResource("Default", comment: "Chat background type: the system's own background.")
+            case .color: "Solid Color"
+            case .gradient: LocalizedStringResource("Gradient", comment: "Chat background type: a blend of two colors.")
+            case .image: LocalizedStringResource("Image", comment: "Chat background type: a photo picked by the user.")
             }
         }
 
@@ -76,24 +76,6 @@ struct ChatRoomBackgroundSettings: View {
         }
     }
 
-    private func localizedText(_ key: String) -> String {
-        switch key {
-        case "chat_background": return languageManager.localize(ko: "채팅 배경", en: "Chat Background", ja: "チャット背景", zh: "聊天背景", es: "Fondo del chat")
-        case "background_type": return languageManager.localize(ko: "배경 타입", en: "Background Type", ja: "背景タイプ", zh: "背景类型", es: "Tipo de fondo")
-        case "choose_color": return languageManager.localize(ko: "색상 선택", en: "Choose Color", ja: "色を選択", zh: "选择颜色", es: "Elegir color")
-        case "gradient_start": return languageManager.localize(ko: "그라디언트 시작", en: "Gradient Start", ja: "グラデーション開始", zh: "渐变起始", es: "Inicio del degradado")
-        case "gradient_end": return languageManager.localize(ko: "그라디언트 끝", en: "Gradient End", ja: "グラデーション終了", zh: "渐变结束", es: "Fin del degradado")
-        case "choose_image": return languageManager.localize(ko: "이미지 선택", en: "Choose Image", ja: "画像を選択", zh: "选择图片", es: "Elegir imagen")
-        case "preview": return languageManager.localize(ko: "미리보기", en: "Preview", ja: "プレビュー", zh: "预览", es: "Vista previa")
-        case "save": return languageManager.localize(ko: "저장", en: "Save", ja: "保存", zh: "保存", es: "Guardar")
-        case "cancel": return languageManager.localize(ko: "취소", en: "Cancel", ja: "キャンセル", zh: "取消", es: "Cancelar")
-        case "reset": return languageManager.localize(ko: "초기화", en: "Reset", ja: "リセット", zh: "重置", es: "Restablecer")
-        case "reset_confirm": return languageManager.localize(ko: "배경을 기본값으로 초기화하시겠습니까?", en: "Reset background to default?", ja: "背景をデフォルトにリセットしますか？", zh: "将背景重置为默认值？", es: "¿Restablecer el fondo a los valores predeterminados?")
-        case "sample_message": return languageManager.localize(ko: "안녕하세요! 이것은 샘플 메시지입니다.", en: "Hello! This is a sample message.", ja: "こんにちは！これはサンプルメッセージです。", zh: "你好！这是一条示例消息。", es: "¡Hola! Este es un mensaje de muestra.")
-        default: return key
-        }
-    }
-
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -121,16 +103,16 @@ struct ChatRoomBackgroundSettings: View {
                 }
                 .padding()
             }
-            .navigationTitle(localizedText("chat_background"))
+            .navigationTitle(languageManager.string("Chat Background"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(localizedText("cancel")) {
+                    Button(languageManager.string("Cancel")) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(localizedText("save")) {
+                    Button(languageManager.string("Save")) {
                         saveSettings()
                     }
                 }
@@ -145,7 +127,7 @@ struct ChatRoomBackgroundSettings: View {
     // MARK: - Preview Section
     private var previewSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(localizedText("preview"))
+            Text(languageManager.string(LocalizedStringResource("Preview", comment: "Heading over a sample of how the chat background will look.")))
                 .font(.headline)
                 .padding(.horizontal, 4)
 
@@ -159,14 +141,14 @@ struct ChatRoomBackgroundSettings: View {
 
                     // Received message
                     HStack {
-                        messageBubble(text: localizedText("sample_message"), isFromCurrentUser: false)
+                        messageBubble(text: languageManager.string("Hello! This is a sample message."), isFromCurrentUser: false)
                         Spacer()
                     }
 
                     // Sent message
                     HStack {
                         Spacer()
-                        messageBubble(text: localizedText("sample_message"), isFromCurrentUser: true)
+                        messageBubble(text: languageManager.string("Hello! This is a sample message."), isFromCurrentUser: true)
                     }
                 }
                 .padding()
@@ -216,7 +198,7 @@ struct ChatRoomBackgroundSettings: View {
     // MARK: - Background Type Section
     private var backgroundTypeSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(localizedText("background_type"))
+            Text(languageManager.string("Background Type"))
                 .font(.headline)
                 .padding(.horizontal, 4)
 
@@ -230,7 +212,7 @@ struct ChatRoomBackgroundSettings: View {
                                 .foregroundStyle(.appPrimaryText)
                                 .frame(width: 24)
 
-                            Text(type.title(languageManager: languageManager))
+                            Text(languageManager.string(type.title))
                                 .foregroundStyle(Color.primary)
 
                             Spacer()
@@ -263,7 +245,7 @@ struct ChatRoomBackgroundSettings: View {
             HStack {
                 Image(systemName: "info.circle.fill")
                     .foregroundStyle(.tint)
-                Text(languageManager.localize(ko: "시스템 기본 배경을 사용합니다", en: "Using system default background", ja: "システムのデフォルト背景を使用します", zh: "使用系统默认背景", es: "Usando el fondo predeterminado del sistema"))
+                Text(languageManager.string("Using system default background"))
                     .font(.subheadline)
                     .foregroundStyle(Color.secondary)
             }
@@ -276,11 +258,11 @@ struct ChatRoomBackgroundSettings: View {
     // MARK: - Color Picker Section
     private var colorPickerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(localizedText("choose_color"))
+            Text(languageManager.string("Choose Color"))
                 .font(.headline)
                 .padding(.horizontal, 4)
 
-            ColorPicker(localizedText("choose_color"), selection: $selectedColor, supportsOpacity: false)
+            ColorPicker(languageManager.string("Choose Color"), selection: $selectedColor, supportsOpacity: false)
                 .padding()
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -290,20 +272,20 @@ struct ChatRoomBackgroundSettings: View {
     // MARK: - Gradient Picker Section
     private var gradientPickerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(localizedText("gradient_start"))
+            Text(languageManager.string("Gradient Start"))
                 .font(.headline)
                 .padding(.horizontal, 4)
 
-            ColorPicker(localizedText("gradient_start"), selection: $gradientStart, supportsOpacity: false)
+            ColorPicker(languageManager.string("Gradient Start"), selection: $gradientStart, supportsOpacity: false)
                 .padding()
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
-            Text(localizedText("gradient_end"))
+            Text(languageManager.string("Gradient End"))
                 .font(.headline)
                 .padding(.horizontal, 4)
 
-            ColorPicker(localizedText("gradient_end"), selection: $gradientEnd, supportsOpacity: false)
+            ColorPicker(languageManager.string("Gradient End"), selection: $gradientEnd, supportsOpacity: false)
                 .padding()
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -313,7 +295,7 @@ struct ChatRoomBackgroundSettings: View {
     // MARK: - Image Picker Section
     private var imagePickerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(localizedText("choose_image"))
+            Text(languageManager.string("Choose Image"))
                 .font(.headline)
                 .padding(.horizontal, 4)
 
@@ -323,7 +305,7 @@ struct ChatRoomBackgroundSettings: View {
                 HStack {
                     Image(systemName: "photo.fill")
                         .foregroundStyle(.appPrimaryText)
-                    Text(localizedText("choose_image"))
+                    Text(languageManager.string("Choose Image"))
                         .foregroundStyle(Color.primary)
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -344,7 +326,7 @@ struct ChatRoomBackgroundSettings: View {
         } label: {
             HStack {
                 Image(systemName: "arrow.counterclockwise")
-                Text(localizedText("reset"))
+                Text(languageManager.string("Reset"))
             }
             .frame(maxWidth: .infinity)
             .padding()
@@ -352,13 +334,13 @@ struct ChatRoomBackgroundSettings: View {
             .foregroundStyle(.red)
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
-        .alert(localizedText("reset"), isPresented: $showingResetConfirmation) {
-            Button(localizedText("cancel"), role: .cancel) {}
-            Button(localizedText("reset"), role: .destructive) {
+        .alert(languageManager.string("Reset"), isPresented: $showingResetConfirmation) {
+            Button(languageManager.string("Cancel"), role: .cancel) {}
+            Button(languageManager.string("Reset"), role: .destructive) {
                 resetToDefault()
             }
         } message: {
-            Text(localizedText("reset_confirm"))
+            Text(languageManager.string("Reset background to default?"))
         }
     }
 

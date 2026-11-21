@@ -35,13 +35,13 @@ struct FriendBannerView: View {
     var body: some View {
         if banner != .none {
             HStack(spacing: 12) {
-                Text(String(format: languageManager.localize(ko: "%@님은 친구가 아닙니다", en: "%@ isn't your friend", ja: "%@さんは友だちではありません", zh: "%@ 不是你的朋友", es: "%@ no es tu amigo"), name))
+                Text(languageManager.string("\(name) isn't your friend"))
                     .font(.footnote)
                     .foregroundStyle(Color.secondary)
                     .lineLimit(2)
                 Spacer(minLength: 0)
                 if banner == .addFriend {
-                    Button(languageManager.localize(ko: "친구 추가", en: "Add Friend", ja: "友だち追加", zh: "添加好友", es: "Agregar amigo"), action: onAddFriend)
+                    Button(languageManager.string("Add Friend"), action: onAddFriend)
                         .font(.footnote.weight(.semibold))
                         .buttonStyle(.bordered)
                         .tint(.appPrimaryText)
@@ -60,6 +60,6 @@ struct FriendBannerView: View {
     }
 
     static func requestSentText(_ languageManager: LanguageManager) -> String {
-        languageManager.localize(ko: "요청 보냄", en: "Request Sent", ja: "リクエスト送信済み", zh: "已发送请求", es: "Solicitud enviada")
+        languageManager.string("Request Sent")
     }
 }

@@ -56,8 +56,8 @@ struct MessageBubbleView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 2)
-        .alert(localizedText("alert"), isPresented: $showingAlert) {
-            Button(localizedText("ok")) {}
+        .alert(languageManager.string(LocalizedStringResource("Alert", comment: "Title of a message's notice, such as a sent friend request.")), isPresented: $showingAlert) {
+            Button(languageManager.string("OK")) {}
         } message: {
             Text(alertMessage)
         }
@@ -146,15 +146,20 @@ struct MessageBubbleView: View {
             if !message.isFromCurrentUser {
                 switch senderStanding {
                 case .stranger:
-                    Button(localizedText("add_friend")) { addFriend() }
+                    Button(languageManager.string(LocalizedStringResource(
+                        "add_friend.avatar_menu", defaultValue: "Add Friend",
+                        comment: "Menu item on a message sender's avatar that sends them a friend request."
+                    ))) { addFriend() }
                 case .requested:
-                    Label(localizedText("request_pending"), systemImage: "clock")
+                    Label(languageManager.string(LocalizedStringResource(
+                        "Pending", comment: "Menu item on a sender's avatar: your friend request awaits their answer."
+                    )), systemImage: "clock")
                 default:
                     EmptyView()
                 }
             }
         }
-        .accessibilityLabel(localizedText("profile_of", message.sender))
+        .accessibilityLabel(languageManager.string("Profile of \(message.sender)"))
     }
 
     @ViewBuilder
@@ -195,12 +200,12 @@ struct MessageBubbleView: View {
                 }
                 .buttonStyle(.plain)
                 // What the photo shows when it has been described, otherwise just that it is one.
-                .accessibilityLabel(message.imageDescription ?? localizedText("photo"))
-                .accessibilityHint(languageManager.localize(ko: "탭하여 전체화면으로 보기", en: "Tap to view full screen", ja: "タップしてフルスクリーンで表示", zh: "点击全屏查看", es: "Toca para ver en pantalla completa"))
+                .accessibilityLabel(message.imageDescription ?? languageManager.string(LocalizedStringResource("Photo", comment: "Spoken label of a photo in a chat bubble.")))
+                .accessibilityHint(languageManager.string("Tap to view full screen"))
             } else {
                 HStack {
                     Image(systemName: "photo")
-                    Text(localizedText("image_load_failed"))
+                    Text(languageManager.string("Unable to load image"))
                 }
                 .foregroundStyle(Color.secondary)
             }
@@ -220,18 +225,18 @@ struct MessageBubbleView: View {
                                 .foregroundStyle(.white)
                         }
 
-                        Text("\(languageManager.localize(ko: "동영상", en: "Video", ja: "動画", zh: "视频", es: "Video")) (\(AttachmentHandler.formatFileSize(videoData.count)))")
+                        Text(languageManager.string("Video (\(AttachmentHandler.formatFileSize(videoData.count)))"))
                             .font(.caption)
                             .foregroundStyle(message.isFromCurrentUser ? ownBubbleContent.opacity(0.9) : .secondary)
                     }
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityHint(localizedText("open_attachment_hint"))
+                .accessibilityHint(languageManager.string("Tap to open"))
             } else {
                 HStack {
                     Image(systemName: "video")
-                    Text(languageManager.localize(ko: "동영상 로드 실패", en: "Unable to load video", ja: "動画を読み込めません", zh: "无法加载视频", es: "No se puede cargar el video"))
+                    Text(languageManager.string("Unable to load video"))
                 }
                 .foregroundStyle(Color.secondary)
             }
@@ -242,7 +247,7 @@ struct MessageBubbleView: View {
                     Image(systemName: AttachmentHandler.fileIcon(for: message.fileExtension ?? ""))
                         .foregroundStyle(message.isFromCurrentUser ? ownBubbleContent : .appPrimaryText)
                     VStack(alignment: .leading) {
-                        Text(message.fileName ?? localizedText("file"))
+                        Text(message.fileName ?? languageManager.string(LocalizedStringResource("File", comment: "Stands in for the name of a sent file that has none.")))
                             .font(.headline)
                         if let fileSize = message.fileSize {
                             Text(AttachmentHandler.formatFileSize(fileSize))
@@ -256,7 +261,7 @@ struct MessageBubbleView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityHint(localizedText("open_attachment_hint"))
+            .accessibilityHint(languageManager.string("Tap to open"))
 
         case .audio:
             VStack(alignment: .leading, spacing: 6) {
@@ -269,8 +274,8 @@ struct MessageBubbleView: View {
                             .foregroundStyle(message.isFromCurrentUser ? ownBubbleContent : .appPrimaryText)
                     }
                     .accessibilityLabel(isPlayingAudio
-                        ? languageManager.localize(ko: "음성 메시지 일시정지", en: "Pause voice message", ja: "音声メッセージを一時停止", zh: "暂停语音消息", es: "Pausar mensaje de voz")
-                        : languageManager.localize(ko: "음성 메시지 재생", en: "Play voice message", ja: "音声メッセージを再生", zh: "播放语音消息", es: "Reproducir mensaje de voz"))
+                        ? languageManager.string("Pause voice message")
+                        : languageManager.string("Play voice message"))
 
                     VStack(alignment: .leading, spacing: 2) {
                         Image(systemName: "waveform")
@@ -294,7 +299,7 @@ struct MessageBubbleView: View {
                         ProgressView()
                             .controlSize(.mini)
                             .tint(message.isFromCurrentUser ? ownBubbleContent : .secondary)
-                        Text(languageManager.localize(ko: "받아쓰는 중…", en: "Transcribing…", ja: "文字起こし中…", zh: "正在转写…", es: "Transcribiendo…"))
+                        Text(languageManager.string("Transcribing…"))
                             .font(.caption)
                             .foregroundStyle(message.isFromCurrentUser ? ownBubbleContent.opacity(0.8) : .secondary)
                     }
@@ -305,7 +310,7 @@ struct MessageBubbleView: View {
             HStack {
                 Image(systemName: "trash")
                     .foregroundStyle(Color.secondary)
-                Text(localizedText("message_deleted"))
+                Text(languageManager.string("Message deleted"))
                     .foregroundStyle(Color.secondary)
                     .italic()
             }
@@ -322,7 +327,7 @@ struct MessageBubbleView: View {
                             .font(.title3)
                             .foregroundStyle(message.isFromCurrentUser ? ownBubbleContent : .appPrimaryText)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(languageManager.localize(ko: "현재 위치", en: "Current Location", ja: "現在地", zh: "当前位置", es: "Ubicación actual"))
+                            Text(languageManager.string("Current Location"))
                                 .font(.subheadline.bold())
                             Text(String(format: "%.5f, %.5f", lat, lon))
                                 .font(.caption2.monospacedDigit())
@@ -332,11 +337,11 @@ struct MessageBubbleView: View {
                     .frame(minWidth: 160)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(languageManager.localize(ko: "위치 공유 - 탭하여 지도 열기", en: "Location shared — tap to open map", ja: "位置情報共有 — タップして地図を開く", zh: "位置共享 — 点击打开地图", es: "Ubicación compartida — toca para abrir el mapa"))
+                .accessibilityLabel(languageManager.string("Location shared — tap to open map"))
             } else {
                 HStack {
                     Image(systemName: "location.slash")
-                    Text(languageManager.localize(ko: "위치 정보 없음", en: "Location unavailable", ja: "位置情報なし", zh: "位置不可用", es: "Ubicación no disponible"))
+                    Text(languageManager.string("Location unavailable"))
                 }
                 .foregroundStyle(Color.secondary)
             }
@@ -373,7 +378,7 @@ struct MessageBubbleView: View {
         } catch {
             bubbleLogger.error("Failed to prepare attachment preview: \(error.localizedDescription, privacy: .public)")
         }
-        alertMessage = localizedText("attachment_unavailable")
+        alertMessage = languageManager.string("This attachment can no longer be opened.")
         showingAlert = true
     }
 
@@ -382,35 +387,10 @@ struct MessageBubbleView: View {
         return String(format: "%d:%02d", s / 60, s % 60)
     }
 
-    private func localizedText(_ key: String, _ param: String = "") -> String {
-        let text: String
-        switch key {
-        case "photo": text = languageManager.localize(ko: "사진", en: "Photo", ja: "写真", zh: "照片", es: "Foto")
-        case "image_load_failed": text = languageManager.localize(ko: "이미지를 불러올 수 없습니다", en: "Unable to load image", ja: "画像を読み込めません", zh: "无法加载图片", es: "No se puede cargar la imagen")
-        case "message_deleted": text = languageManager.localize(ko: "메시지가 삭제되었습니다", en: "Message deleted", ja: "削除されたメッセージ", zh: "已删除的消息", es: "Mensaje eliminado")
-        case "file": text = languageManager.localize(ko: "파일", en: "File", ja: "ファイル", zh: "文件", es: "Archivo")
-        case "open_attachment_hint": text = languageManager.localize(ko: "탭하여 열기", en: "Tap to open", ja: "タップして開く", zh: "点击打开", es: "Toca para abrir")
-        case "attachment_unavailable": text = languageManager.localize(ko: "이 첨부 파일을 더 이상 열 수 없습니다.", en: "This attachment can no longer be opened.", ja: "この添付ファイルは開けなくなりました。", zh: "此附件已无法打开。", es: "Este archivo adjunto ya no se puede abrir.")
-        case "profile_of": text = languageManager.localize(ko: "\(param) 프로필", en: "Profile of \(param)", ja: "\(param)のプロフィール", zh: "\(param)的资料", es: "Perfil de \(param)")
-        case "add_friend": text = languageManager.localize(ko: "친구 추가", en: "Add Friend", ja: "友だちを追加", zh: "添加朋友", es: "Agregar amigo")
-        case "request_pending": text = languageManager.localize(ko: "승인 대기", en: "Pending", ja: "承認待ち", zh: "待确认", es: "Pendiente")
-        case "friend_request_sent": text = languageManager.localize(ko: "친구 요청을 보냈습니다.", en: "Friend request sent.", ja: "友だちリクエストを送りました。", zh: "好友请求已发送。", es: "Solicitud de amistad enviada.")
-        case "alert": text = languageManager.localize(ko: "알림", en: "Alert", ja: "通知", zh: "提示", es: "Alerta")
-        case "ok": text = languageManager.localize(ko: "확인", en: "OK", ja: "OK", zh: "确认", es: "Aceptar")
-        case "user": text = languageManager.localize(ko: "사용자", en: "User", ja: "ユーザー", zh: "用户", es: "Usuario")
-        default: text = key
-        }
-
-        if !param.isEmpty && text.contains("%@") {
-            return text.replacingOccurrences(of: "%@", with: param)
-        }
-        return text
-    }
-
     private func addFriend() {
         do {
             try onAddFriend?()
-            alertMessage = localizedText("friend_request_sent")
+            alertMessage = languageManager.string("Friend request sent.")
             showingAlert = true
         } catch {
             // The repository has logged it; the button stays for another try.

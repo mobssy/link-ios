@@ -27,7 +27,7 @@ struct FullScreenImageView: View {
                     .foregroundStyle(.white, .black.opacity(0.5))
                     .padding(16)
             }
-            .accessibilityLabel(L10n.text("close", languageManager.currentLanguage))
+            .accessibilityLabel(languageManager.string("Close"))
         }
     }
 }

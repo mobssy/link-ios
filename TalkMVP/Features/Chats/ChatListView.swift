@@ -12,24 +12,19 @@ import os
 
 private let chatListLogger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TalkMVP", category: "ChatListView")
 
-// MARK: - Shared localization (fileprivate — used by ChatListView and ChatRoomRow)
-fileprivate func chatListLocalized(_ key: String, using manager: LanguageManager) -> String {
-    switch key {
-    case "new_chat":           return manager.localize(ko: "새 채팅", en: "New Chat", ja: "新しいチャット", zh: "新聊天", es: "Nuevo chat")
-    case "group_chat":         return manager.localize(ko: "그룹 채팅", en: "Group Chat", ja: "グループチャット", zh: "群聊", es: "Chat grupal")
-    case "new_friend":         return manager.localize(ko: "새 친구", en: "New Friend", ja: "新しい友達", zh: "新朋友", es: "Nuevo amigo")
-    case "new_group":          return manager.localize(ko: "새 그룹", en: "New Group", ja: "新しいグループ", zh: "新群组", es: "Nuevo grupo")
-    case "family_group":       return manager.localize(ko: "가족 단톡방", en: "Family Group", ja: "家族グループ", zh: "家庭群组", es: "Grupo familiar")
-    case "work_colleagues":    return manager.localize(ko: "회사 동료", en: "Work Colleagues", ja: "職場の同僚", zh: "工作同事", es: "Colegas de trabajo")
-    case "study_group":        return manager.localize(ko: "스터디 그룹", en: "Study Group", ja: "スタディグループ", zh: "学习小组", es: "Grupo de estudio")
-    case "start_conversation": return manager.localize(ko: "메시지를 시작해보세요", en: "Start a conversation", ja: "会話を始めましょう", zh: "开始对话", es: "Inicia una conversación")
-    case "chats":              return manager.localize(ko: "채팅", en: "Chats", ja: "チャット", zh: "聊天", es: "Chats")
-    case "search":             return manager.localize(ko: "검색", en: "Search", ja: "検索", zh: "搜索", es: "Buscar")
-    case "new_chat_button":    return manager.localize(ko: "새 채팅 만들기", en: "Create new chat", ja: "新しいチャットを作成", zh: "创建新聊天", es: "Crear nuevo chat")
-    case "user":               return manager.localize(ko: "사용자", en: "User", ja: "ユーザー", zh: "用户", es: "Usuario")
-    case "select_chat":        return manager.localize(ko: "채팅을 선택하세요", en: "Select a Chat", ja: "チャットを選択", zh: "选择一个聊天", es: "Selecciona un chat")
-    case "select_chat_hint":   return manager.localize(ko: "왼쪽 목록에서 대화를 고르면 여기에 열립니다.", en: "Pick a conversation from the list to open it here.", ja: "リストから会話を選ぶとここに表示されます。", zh: "从列表中选择一个对话，它会在这里打开。", es: "Elige una conversación de la lista para abrirla aquí.")
-    default: return key
+/// The name of a sample group chat, by the room's key in `SampleChats`. Unlike the sample
+/// messages, the names are UI text, so they come from the String Catalog.
+private enum SampleGroupName: String {
+    case familyGroup = "family_group"
+    case workColleagues = "work_colleagues"
+    case studyGroup = "study_group"
+
+    var resource: LocalizedStringResource {
+        switch self {
+        case .familyGroup: "Family Group"
+        case .workColleagues: "Work Colleagues"
+        case .studyGroup: "Study Group"
+        }
     }
 }
 
@@ -86,21 +81,21 @@ struct ChatListView: View {
             // The selected row is filled with the tint and its text turns white; the
             // regular brand color is too light for that (and hides the row's avatar).
             .tint(.appPrimaryStrong)
-            .navigationTitle(localizedText("chats"))
-            .searchable(text: $searchText, prompt: localizedText("search"))
+            .navigationTitle(languageManager.string("Chats"))
+            .searchable(text: $searchText, prompt: languageManager.string("Search"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button(localizedText("new_chat")) {
+                        Button(languageManager.string("New Chat")) {
                             addNewChatRoom()
                         }
-                        Button(localizedText("group_chat")) {
+                        Button(languageManager.string("Group Chat")) {
                             addGroupChatRoom()
                         }
                     } label: {
                         Image(systemName: "plus")
                     }
-                    .accessibilityLabel(localizedText("new_chat_button"))
+                    .accessibilityLabel(languageManager.string("Create new chat"))
                 }
             }
         } detail: {
@@ -111,9 +106,9 @@ struct ChatListView: View {
                     .id(room.id)
             } else {
                 ContentUnavailableView(
-                    localizedText("select_chat"),
+                    languageManager.string("Select a Chat"),
                     systemImage: "bubble.left.and.bubble.right",
-                    description: Text(localizedText("select_chat_hint"))
+                    description: Text(languageManager.string("Pick a conversation from the list to open it here."))
                 )
                 .screenCentered()
             }
@@ -132,13 +127,13 @@ struct ChatListView: View {
     }
 
     private func addNewChatRoom() {
-        let newRoom = ChatRoom(name: localizedText("new_friend"))
+        let newRoom = ChatRoom(name: languageManager.string("New Friend"))
         modelContext.insert(newRoom)
         do { try modelContext.save() } catch { chatListLogger.error("Failed to save new chat room: \(error.localizedDescription, privacy: .public)") }
     }
 
     private func addGroupChatRoom() {
-        let groupRoom = ChatRoom(name: localizedText("new_group"), profileImage: ChatRoom.groupSymbol)
+        let groupRoom = ChatRoom(name: languageManager.string("New Group"), profileImage: ChatRoom.groupSymbol)
         modelContext.insert(groupRoom)
         do { try modelContext.save() } catch { chatListLogger.error("Failed to save group chat room: \(error.localizedDescription, privacy: .public)") }
     }
@@ -168,7 +163,7 @@ struct ChatListView: View {
         let now = Date()
         for sample in SampleChats.rooms(readerLanguage: LanguageManager.currentLanguageCode) {
             let room = ChatRoom(
-                name: sample.personName ?? localizedText(sample.key),
+                name: sample.personName ?? groupName(forSampleKey: sample.key),
                 profileImage: sample.members.isEmpty ? ChatRoom.personSymbol : ChatRoom.groupSymbol
             )
             room.memberNames = sample.members
@@ -191,8 +186,8 @@ struct ChatListView: View {
         do { try modelContext.save() } catch { chatListLogger.error("Failed to save sample data: \(error.localizedDescription, privacy: .public)") }
     }
 
-    private func localizedText(_ key: String) -> String {
-        chatListLocalized(key, using: languageManager)
+    private func groupName(forSampleKey key: String) -> String {
+        SampleGroupName(rawValue: key).map { languageManager.string($0.resource) } ?? key
     }
 }
 
@@ -249,7 +244,7 @@ struct ChatRoomRow: View {
                 HStack {
                     // A hierarchical style rather than the fixed gray, so the text turns
                     // light on a selected (filled) row instead of fading into it.
-                    Text(room.lastMessage.isEmpty ? localizedText("start_conversation") : room.lastMessage)
+                    Text(room.lastMessage.isEmpty ? languageManager.string("Start a conversation") : room.lastMessage)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -276,23 +271,13 @@ struct ChatRoomRow: View {
 
     private var combinedAccessibilityLabel: String {
         let lastMsg = room.lastMessage.isEmpty
-            ? languageManager.localize(ko: "메시지를 시작해보세요", en: "Start a conversation", ja: "会話を始めましょう", zh: "开始对话", es: "Inicia una conversación")
+            ? languageManager.string("Start a conversation")
             : room.lastMessage
-        var label = "\(room.name), \(lastMsg)"
+        var parts = [room.name, lastMsg]
         if room.unreadCount > 0 {
-            label += languageManager.localize(
-                ko: ", 읽지 않은 메시지 \(room.unreadCount)개",
-                en: ", \(room.unreadCount) unread messages",
-                ja: ", 未読メッセージ \(room.unreadCount)件",
-                zh: ", \(room.unreadCount) 条未读消息",
-                es: ", \(room.unreadCount) mensajes no leídos"
-            )
+            parts.append(languageManager.string("\(room.unreadCount) unread messages"))
         }
-        return label
-    }
-
-    private func localizedText(_ key: String) -> String {
-        chatListLocalized(key, using: languageManager)
+        return parts.joined(separator: ", ")
     }
 }
 

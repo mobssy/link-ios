@@ -37,7 +37,7 @@ struct GroupInfoSheet: View {
                     .listRowBackground(Color.clear)
                 }
 
-                Section(String(format: languageManager.localize(ko: "멤버 %d명", en: "%d Members", ja: "メンバー %d人", zh: "%d 位成员", es: "%d miembros"), members.count)) {
+                Section(languageManager.string("\(members.count) Members")) {
                     ForEach(members, id: \.self) { member in
                         row(for: member)
                     }
@@ -48,7 +48,7 @@ struct GroupInfoSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(languageManager.localize(ko: "완료", en: "Done", ja: "完了", zh: "完成", es: "Listo")) { dismiss() }
+                    Button(languageManager.string("Done")) { dismiss() }
                 }
             }
         }
@@ -63,7 +63,7 @@ struct GroupInfoSheet: View {
             Spacer()
             switch requested.contains(member) ? .requested : (standings[member] ?? .stranger) {
             case .friend:
-                Text(languageManager.localize(ko: "친구", en: "Friend", ja: "友だち", zh: "好友", es: "Amigo"))
+                Text(languageManager.string(LocalizedStringResource("Friend", comment: "Beside a group member who is already your friend.")))
                     .font(.subheadline)
                     .foregroundStyle(Color.secondary)
             case .requested:
@@ -71,7 +71,7 @@ struct GroupInfoSheet: View {
                     .font(.subheadline)
                     .foregroundStyle(Color.secondary)
             case .stranger:
-                Button(languageManager.localize(ko: "친구 추가", en: "Add Friend", ja: "友だち追加", zh: "添加好友", es: "Agregar amigo")) {
+                Button(languageManager.string("Add Friend")) {
                     do {
                         try onAddFriend(member)
                         requested.insert(member)
