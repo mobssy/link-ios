@@ -59,10 +59,10 @@ struct MyProfileRow: View {
     private func localizedDisplayName() -> String {
         let raw = (authManager.currentUser?.displayName ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         if raw.isEmpty {
-            return L10n.text("user", languageManager.currentLanguage)
+            return languageManager.string(.userPlaceholderName)
         }
         if raw == "테스터" || raw == "Tester" {
-            return languageManager.localize(ko: "테스터", en: "Tester", ja: "テスター", zh: "测试员", es: "Tester")
+            return languageManager.string(LocalizedStringResource("Tester", comment: "Name of the test-mode account"))
         }
         return raw
     }
@@ -70,15 +70,9 @@ struct MyProfileRow: View {
     private func localizedStatusMessage() -> String {
         let raw = (authManager.currentUser?.statusMessage ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         if raw.isEmpty {
-            return L10n.text("status_message", languageManager.currentLanguage)
+            return languageManager.string("Status Message")
         }
-        return TestData.statusMessage(raw, testModeStatus: languageManager.localize(
-            ko: "테스트 모드로 체험 중입니다",
-            en: "Experiencing in test mode",
-            ja: "テストモードで体験中です",
-            zh: "正在以测试模式体验",
-            es: "Experimentando en modo de prueba"
-        ))
+        return TestData.statusMessage(raw, testModeStatus: languageManager.string("Experiencing in test mode"))
     }
 }
 
@@ -120,8 +114,8 @@ struct FriendRow: View {
             } label: {
                 Label(
                     friendship.isFavorite
-                        ? L10n.text("unfavorite", languageManager.appLanguage)
-                        : L10n.text("favorite", languageManager.appLanguage),
+                        ? languageManager.string("Remove from Favorites")
+                        : languageManager.string("Add to Favorites"),
                     systemImage: friendship.isFavorite ? "star.slash.fill" : "star.fill"
                 )
             }
@@ -133,8 +127,8 @@ struct FriendRow: View {
             } label: {
                 Label(
                     friendship.notificationsEnabled
-                        ? L10n.text("mute_notifications", languageManager.appLanguage)
-                        : L10n.text("unmute_notifications", languageManager.appLanguage),
+                        ? languageManager.string("Mute Notifications")
+                        : languageManager.string("Unmute Notifications"),
                     systemImage: friendship.notificationsEnabled ? "bell.slash.fill" : "bell.fill"
                 )
             }
@@ -176,14 +170,14 @@ struct ReceivedRequestRow: View {
                     .font(.headline)
                     .foregroundStyle(Color.primary)
 
-                Text(L10n.text("friend_request", languageManager.appLanguage))
+                Text(languageManager.string("Friend Request"))
                     .font(.caption)
                     .foregroundStyle(Color.secondary)
             }
 
             Spacer()
 
-            Button(L10n.text("accept", languageManager.appLanguage)) {
+            Button(languageManager.string(LocalizedStringResource("Accept", comment: "Button that accepts a friend request"))) {
                 acceptFriendRequest()
             }
             .buttonStyle(.borderedProminent)
@@ -219,14 +213,14 @@ struct PendingRequestRow: View {
                     .font(.headline)
                     .foregroundStyle(Color.primary)
 
-                Text(L10n.text("request_pending", languageManager.appLanguage))
+                Text(languageManager.string("Request Pending"))
                     .font(.caption)
                     .foregroundStyle(Color.secondary)
             }
 
             Spacer()
 
-            Text(L10n.text("pending_short", languageManager.appLanguage))
+            Text(languageManager.string(FriendshipStatus.pending.title))
                 .font(.caption)
                 .foregroundStyle(Color.secondary)
         }

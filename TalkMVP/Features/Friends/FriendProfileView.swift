@@ -56,7 +56,7 @@ struct FriendProfileView: View {
                 // 프로필 정보
                 VStack(spacing: 16) {
                     ProfileInfoCard(
-                        title: localizedText("joined"),
+                        title: languageManager.string(LocalizedStringResource("Joined", comment: "Title of the card showing when a friend joined")),
                         value: formatDate(friendship.createdAt),
                         icon: "calendar"
                     )
@@ -64,7 +64,7 @@ struct FriendProfileView: View {
                     // Shown only when there's something to show, never as "No Info".
                     if lastActivityEnabled && friendship.status == .accepted, let lastActiveText {
                         ProfileInfoCard(
-                            title: localizedText("last_active"),
+                            title: languageManager.string("Last Active"),
                             value: lastActiveText,
                             icon: "clock"
                         )
@@ -76,7 +76,7 @@ struct FriendProfileView: View {
                     if friendship.status == .accepted {
                         // 채팅하기 버튼
                         Button(action: startChat) {
-                            Label(localizedText("start_chat"), systemImage: "bubble.left.and.bubble.right.fill")
+                            Label(languageManager.string("Start Chat"), systemImage: "bubble.left.and.bubble.right.fill")
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color.appPrimary)
@@ -90,7 +90,7 @@ struct FriendProfileView: View {
                     case .accepted:
                         // Blocking is rare and asks first, so it stays a plain button rather
                         // than a second large one competing with Start Chat.
-                        Button(localizedText("block"), systemImage: "hand.raised", role: .destructive) {
+                        Button(languageManager.string(Self.blockTitle), systemImage: "hand.raised", role: .destructive) {
                             showingBlockAlert = true
                         }
                         .padding(.top, 8)
@@ -98,7 +98,7 @@ struct FriendProfileView: View {
                         Button {
                             showingUnblockAlert = true
                         } label: {
-                            Label(localizedText("unblock"), systemImage: "hand.raised.slash")
+                            Label(languageManager.string(.unblockAction), systemImage: "hand.raised.slash")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.bordered)
@@ -107,13 +107,13 @@ struct FriendProfileView: View {
                         Button {
                             unhideFriend()
                         } label: {
-                            Label(localizedText("unhide"), systemImage: "eye")
+                            Label(languageManager.string(.unhideAction), systemImage: "eye")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.bordered)
                         .controlSize(.large)
                     case .pending:
-                        Text(localizedText("request_pending"))
+                        Text(languageManager.string(LocalizedStringResource("Pending", comment: "A friend request waiting for the other person to accept")))
                             .foregroundStyle(Color.secondary)
                             .padding(.top, 8)
                     }
@@ -123,12 +123,12 @@ struct FriendProfileView: View {
             .padding()
             .screenCentered()
         }
-        .navigationTitle(localizedText("profile"))
+        .navigationTitle(languageManager.string(LocalizedStringResource("Profile", comment: "Title of a person's profile screen")))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if showsCloseButton {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(localizedText("close")) {
+                    Button(languageManager.string("Close")) {
                         dismiss()
                     }
                 }
@@ -136,52 +136,54 @@ struct FriendProfileView: View {
 
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Button(localizedText("share_profile")) {
+                    Button(languageManager.string("Share Profile")) {
                         shareProfile()
                     }
 
                     Divider()
 
-                    Button(localizedText("report"), role: .destructive) {
+                    Button(languageManager.string(Self.reportTitle), role: .destructive) {
                         reportUser()
                     }
                 } label: {
                     Image(systemName: "ellipsis")
-                        .accessibilityLabel(languageManager.localize(ko: "더 보기", en: "More options", ja: "その他のオプション", zh: "更多选项", es: "Más opciones"))
+                        .accessibilityLabel(languageManager.string("More options"))
                 }
             }
         }
-        .alert(languageManager.localize(ko: "채팅을 열 수 없습니다", en: "Couldn't open the chat", ja: "チャットを開けません", zh: "无法打开聊天", es: "No se pudo abrir el chat"), isPresented: $showingChatOpenFailed) {
-            Button(localizedText("close"), role: .cancel) {}
+        .alert(languageManager.string("Couldn't open the chat"), isPresented: $showingChatOpenFailed) {
+            Button(languageManager.string("Close"), role: .cancel) {}
         }
-        .alert(localizedText("block_friend"), isPresented: $showingBlockAlert) {
-            Button(localizedText("cancel"), role: .cancel) { }
-            Button(localizedText("block"), role: .destructive) {
+        .alert(languageManager.string("Block Friend"), isPresented: $showingBlockAlert) {
+            Button(languageManager.string("Cancel"), role: .cancel) { }
+            Button(languageManager.string(Self.blockTitle), role: .destructive) {
                 blockFriend()
             }
         } message: {
-            Text(String(format: localizedText("block_message"), friendship.friendName))
+            Text(languageManager.string("Block \(friendship.friendName)? Blocked friends can no longer send you messages."))
         }
-        .alert(localizedText("unblock_friend"), isPresented: $showingUnblockAlert) {
-            Button(localizedText("cancel"), role: .cancel) { }
-            Button(localizedText("unblock")) {
+        .alert(languageManager.string(LocalizedStringResource(
+            "friend.profile.unblockFriend",
+            defaultValue: "Unblock Friend",
+            comment: "Title of the alert that unblocks a friend, on their profile"
+        )), isPresented: $showingUnblockAlert) {
+            Button(languageManager.string("Cancel"), role: .cancel) { }
+            Button(languageManager.string(.unblockAction)) {
                 unblockFriend()
             }
         } message: {
-            Text(String(format: localizedText("unblock_message"), friendship.friendName))
+            Text(languageManager.string(LocalizedStringResource(
+                "friend.profile.unblockMessage",
+                defaultValue: "Unblock \(friendship.friendName)?",
+                comment: "Message of the alert that unblocks a friend, on their profile; the argument is their name"
+            )))
         }
         .onAppear { computeLastActivity() }
-        .alert(localizedText("report"), isPresented: $showingReportConfirm) {
-            Button(localizedText("cancel"), role: .cancel) {}
-            Button(localizedText("report"), role: .destructive) {}
+        .alert(languageManager.string(Self.reportTitle), isPresented: $showingReportConfirm) {
+            Button(languageManager.string("Cancel"), role: .cancel) {}
+            Button(languageManager.string(Self.reportTitle), role: .destructive) {}
         } message: {
-            Text(languageManager.localize(
-                ko: "\(friendship.friendName)님을 신고하시겠습니까?",
-                en: "Report \(friendship.friendName)?",
-                ja: "\(friendship.friendName)さんを報告しますか？",
-                zh: "举报\(friendship.friendName)？",
-                es: "¿Reportar a \(friendship.friendName)?"
-            ))
+            Text(languageManager.string("Report \(friendship.friendName)?"))
         }
     }
 
@@ -243,17 +245,17 @@ struct FriendProfileView: View {
 
         if interval < hour {
             let mins = max(1, Int(interval / minute))
-            return languageManager.localize(ko: "\(mins)분 전", en: "\(mins)m ago", ja: "\(mins)分前", zh: "\(mins)分钟前", es: "hace \(mins)m")
+            return languageManager.string("\(mins)m ago")
         } else if interval < day {
             let hours = max(1, Int(interval / hour))
-            return languageManager.localize(ko: "\(hours)시간 전", en: "\(hours)h ago", ja: "\(hours)時間前", zh: "\(hours)小时前", es: "hace \(hours)h")
+            return languageManager.string("\(hours)h ago")
         } else {
             let days = Int(interval / day)
             if days == 1 {
-                return languageManager.localize(ko: "어제", en: "Yesterday", ja: "昨日", zh: "昨天", es: "Ayer")
+                return languageManager.string("Yesterday")
             }
             if days < 7 {
-                return languageManager.localize(ko: "\(days)일 전", en: "\(days)d ago", ja: "\(days)日前", zh: "\(days)天前", es: "hace \(days)d")
+                return languageManager.string("\(days)d ago")
             }
             // 1주 이상이면 날짜 표기
             return formatDate(date)
@@ -323,56 +325,45 @@ struct FriendProfileView: View {
         showingReportConfirm = true
     }
 
-    private func localizedText(_ key: String) -> String {
-        switch key {
-        case "joined":
-            return languageManager.localize(ko: "가입일", en: "Joined", ja: "参加日", zh: "加入日期", es: "Fecha de registro")
-        case "last_active":
-            return languageManager.localize(ko: "마지막 활동", en: "Last Active", ja: "最終アクティブ", zh: "最后活跃", es: "Última actividad")
-        case "start_chat":
-            return languageManager.localize(ko: "채팅하기", en: "Start Chat", ja: "チャットを始める", zh: "开始聊天", es: "Iniciar chat")
-        case "block":
-            return languageManager.localize(ko: "차단하기", en: "Block", ja: "ブロック", zh: "屏蔽", es: "Bloquear")
-        case "unblock":
-            return languageManager.localize(ko: "차단 해제", en: "Unblock", ja: "ブロック解除", zh: "解除屏蔽", es: "Desbloquear")
-        case "unhide":
-            return languageManager.localize(ko: "숨김 해제", en: "Unhide", ja: "非表示解除", zh: "取消隐藏", es: "Mostrar")
-        case "request_pending":
-            return languageManager.localize(ko: "승인 대기", en: "Pending", ja: "承認待ち", zh: "待确认", es: "Pendiente")
-        case "profile":
-            return languageManager.localize(ko: "프로필", en: "Profile", ja: "プロフィール", zh: "个人资料", es: "Perfil")
-        case "close":
-            return languageManager.localize(ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar")
-        case "share_profile":
-            return languageManager.localize(ko: "프로필 공유", en: "Share Profile", ja: "プロフィールを共有", zh: "分享资料", es: "Compartir perfil")
-        case "report":
-            return languageManager.localize(ko: "신고하기", en: "Report", ja: "報告", zh: "举报", es: "Reportar")
-        case "block_friend":
-            return languageManager.localize(ko: "친구 차단", en: "Block Friend", ja: "友だちをブロック", zh: "屏蔽朋友", es: "Bloquear amigo")
-        case "unblock_friend":
-            return languageManager.localize(ko: "차단 해제", en: "Unblock Friend", ja: "ブロック解除", zh: "解除屏蔽", es: "Desbloquear amigo")
-        case "block_message":
-            return languageManager.localize(
-                ko: "%@님을 차단하시겠습니까? 차단된 친구는 더 이상 메시지를 보낼 수 없습니다.",
-                en: "Block %@? Blocked friends can no longer send you messages.",
-                ja: "%@さんをブロックしますか？ブロックした友だちはメッセージを送れなくなります。",
-                zh: "屏蔽%@？被屏蔽的朋友将无法再向您发送消息。",
-                es: "¿Bloquear a %@? Los amigos bloqueados ya no podrán enviarte mensajes."
+    /// On the button and in its alert. Its own key: the profile says "차단하기" where the
+    /// Friends list's swipe action says "차단".
+    private static let blockTitle = LocalizedStringResource(
+        "friend.profile.block",
+        defaultValue: "Block",
+        comment: "Button on a friend's profile, and in its alert, that blocks them"
+    )
+
+    /// In the menu, and as the title and button of the alert that asks first.
+    private static let reportTitle = LocalizedStringResource("Report", comment: "Reports a user for abuse")
+}
+
+// MARK: - Text shared by the Friends screens
+
+extension LocalizedStringResource {
+    /// Unblocks a friend, on their profile and in the blocked list.
+    static let unblockAction = LocalizedStringResource("Unblock", comment: "Button that unblocks a friend")
+    /// Shows a hidden friend again, on their profile and in the hidden list.
+    static let unhideAction = LocalizedStringResource("Unhide", comment: "Button that shows a hidden friend again")
+    /// The name for someone who hasn't set one.
+    static let userPlaceholderName = LocalizedStringResource("User", comment: "Name shown for someone who has not set one")
+}
+
+extension FriendshipStatus {
+    /// The status as a badge or a row shows it.
+    var title: LocalizedStringResource {
+        switch self {
+        case .pending:
+            LocalizedStringResource(
+                "friendship.status.pending",
+                defaultValue: "Pending",
+                comment: "Status of a friend request that is not answered yet, on a badge or a row"
             )
-        case "unblock_message":
-            return languageManager.localize(
-                ko: "%@님의 차단을 해제하시겠습니까?",
-                en: "Unblock %@?",
-                ja: "%@さんのブロックを解除しますか？",
-                zh: "解除对%@的屏蔽？",
-                es: "¿Desbloquear a %@?"
-            )
-        case "cancel":
-            return languageManager.localize(ko: "취소", en: "Cancel", ja: "キャンセル", zh: "取消", es: "Cancelar")
-        case "pending_short":
-            return languageManager.localize(ko: "대기", en: "Pending", ja: "保留中", zh: "待处理", es: "Pendiente")
-        default:
-            return key
+        case .accepted:
+            LocalizedStringResource("Friend", comment: "Status of someone who is your friend")
+        case .hidden:
+            LocalizedStringResource("Hidden", comment: "Status of a friend you hid")
+        case .blocked:
+            LocalizedStringResource("Blocked", comment: "Status of a friend you blocked")
         }
     }
 }
@@ -388,7 +379,7 @@ struct StatusBadge: View {
                 .fill(statusColor)
                 .frame(width: 8, height: 8)
 
-            Text(statusDisplayName)
+            Text(languageManager.string(status.title))
                 .font(.caption)
                 .fontWeight(.medium)
         }
@@ -397,19 +388,6 @@ struct StatusBadge: View {
         .background(statusColor.opacity(0.15))
         .foregroundStyle(statusColor)
         .clipShape(.rect(cornerRadius: 20))
-    }
-
-    private var statusDisplayName: String {
-        switch status {
-        case .pending:
-            return languageManager.localize(ko: "대기중", en: "Pending", ja: "保留中", zh: "待处理", es: "Pendiente")
-        case .accepted:
-            return languageManager.localize(ko: "친구", en: "Friend", ja: "友だち", zh: "朋友", es: "Amigo")
-        case .hidden:
-            return languageManager.localize(ko: "숨김", en: "Hidden", ja: "非表示", zh: "已隐藏", es: "Oculto")
-        case .blocked:
-            return languageManager.localize(ko: "차단됨", en: "Blocked", ja: "ブロック済み", zh: "已屏蔽", es: "Bloqueado")
-        }
     }
 
     private var statusColor: Color {

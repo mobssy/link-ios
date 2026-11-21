@@ -124,7 +124,7 @@ struct FriendsView: View {
                 }
 
                 if showNewFriendsSection && newFriendsCount > 0 {
-                    Section(header: Text(String(format: L10n.text("new_friends", languageManager.currentLanguage), newFriendsCount))) {
+                    Section(header: Text(languageManager.string("New Friends (\(newFriendsCount))"))) {
                         ForEach(newFriends, id: \.id) { friendship in
                             FriendRow(friendship: friendship, onDataChanged: loadFriendships)
                         }
@@ -134,7 +134,7 @@ struct FriendsView: View {
 
                 // Received Friend Requests
                 if !receivedRequests.isEmpty {
-                    Section(String(format: L10n.text("received_requests", languageManager.currentLanguage), receivedRequests.count)) {
+                    Section(languageManager.string("Received Requests (\(receivedRequests.count))")) {
                         ForEach(receivedRequests, id: \.id) { friendship in
                             ReceivedRequestRow(
                                 friendship: friendship,
@@ -160,7 +160,7 @@ struct FriendsView: View {
                     } header: {
                         HStack(spacing: 6) {
                             Image(systemName: "person.badge.plus")
-                            Text(String(format: L10n.text("sent_requests", languageManager.currentLanguage), pendingRequests.count))
+                            Text(languageManager.string("Sent Requests (\(pendingRequests.count))"))
                         }
                     }
                     .headerProminence(.increased)
@@ -176,19 +176,19 @@ struct FriendsView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "star.fill")
                                 .foregroundStyle(.yellow)
-                            Text(L10n.text("favorites", languageManager.currentLanguage))
+                            Text(languageManager.string("Favorites"))
                         }
                     }
                     .headerProminence(.increased)
                 }
 
                 // Friends List
-                Section(String(format: L10n.text("friends_list", languageManager.currentLanguage), regularFriends.count)) {
+                Section(languageManager.string("Friends List")) {
                     if regularFriends.isEmpty && !searchText.isEmpty {
                         ContentUnavailableView(
-                            L10n.text("no_search_results", languageManager.currentLanguage),
+                            languageManager.string("No Search Results"),
                             systemImage: "magnifyingglass",
-                            description: Text(String(format: L10n.text("no_match_for", languageManager.currentLanguage), searchText))
+                            description: Text(languageManager.string("No matches for '\(searchText)'"))
                         )
                     } else if regularFriends.isEmpty {
                         VStack(spacing: 20) {
@@ -196,12 +196,12 @@ struct FriendsView: View {
                                 .font(.system(size: 60))
                                 .foregroundStyle(Color.secondary)
 
-                            Text(L10n.text("no_friends_yet", languageManager.currentLanguage))
+                            Text(languageManager.string("No Friends Yet"))
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(Color.primary)
 
-                            Text(L10n.text("add_friends_suggestion", languageManager.currentLanguage))
+                            Text(languageManager.string("Try adding friends by email"))
                                 .font(.subheadline)
                                 .foregroundStyle(Color.secondary)
 
@@ -210,7 +210,7 @@ struct FriendsView: View {
                             }) {
                                 HStack {
                                     Image(systemName: "person.badge.plus")
-                                    Text(L10n.text("add_friend_by_email", languageManager.currentLanguage))
+                                    Text(languageManager.string("Add Friend by Email"))
                                 }
                                 .font(.headline)
                                 .foregroundStyle(.onAppPrimary)
@@ -229,13 +229,13 @@ struct FriendsView: View {
                                     Button {
                                         setStatus(.hidden, of: friendship)
                                     } label: {
-                                        Label(L10n.text("hide", languageManager.currentLanguage), systemImage: "eye.slash")
+                                        Label(languageManager.string(LocalizedStringResource("Hide", comment: "Swipe action that hides a friend from the list")), systemImage: "eye.slash")
                                     }.tint(.gray)
 
                                     Button(role: .destructive) {
                                         setStatus(.blocked, of: friendship)
                                     } label: {
-                                        Label(L10n.text("block", languageManager.currentLanguage), systemImage: "person.fill.xmark")
+                                        Label(languageManager.string(LocalizedStringResource("Block", comment: "Swipe action that blocks a friend")), systemImage: "person.fill.xmark")
                                     }
                                 }
                         }
@@ -247,8 +247,8 @@ struct FriendsView: View {
             .listStyle(.insetGrouped)
             // As in the chat list: the regular brand color is too light for a selected row.
             .tint(.appPrimaryStrong)
-            .navigationTitle(L10n.text("friends", languageManager.currentLanguage))
-            .searchable(text: $searchText, prompt: L10n.text("search_friends_placeholder", languageManager.currentLanguage))
+            .navigationTitle(languageManager.string(LocalizedStringResource("Friends", comment: "Title of the Friends tab")))
+            .searchable(text: $searchText, prompt: languageManager.string("Search by name"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -256,20 +256,24 @@ struct FriendsView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
-                    .accessibilityLabel(L10n.text("add_friend", languageManager.currentLanguage))
+                    .accessibilityLabel(languageManager.string("Add Friend"))
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button {
                             activeSheet = .manageHiddenBlocked
                         } label: {
-                            Label(L10n.text("manage_hidden_blocked", languageManager.currentLanguage), systemImage: "eye.slash")
+                            Label(languageManager.string("Manage Hidden/Blocked"), systemImage: "eye.slash")
                         }
                     } label: {
                         // A "more" button, not a gear: the Settings tab already shows the gear.
                         Image(systemName: "ellipsis")
                     }
-                    .accessibilityLabel(LocalizationService.shared.text(for: .moreOptions, language: languageManager.currentLanguage.asLocalizationLanguage))
+                    .accessibilityLabel(languageManager.string(LocalizedStringResource(
+                        "friends.moreOptions",
+                        defaultValue: "More options",
+                        comment: "Accessibility label of the Friends tab's \"more\" menu"
+                    )))
                 }
             }
         } detail: {
@@ -279,9 +283,9 @@ struct FriendsView: View {
                     .id(friend.id)
             } else {
                 ContentUnavailableView(
-                    L10n.text("select_friend", languageManager.currentLanguage),
+                    languageManager.string("Select a Friend"),
                     systemImage: "person.2",
-                    description: Text(L10n.text("select_friend_hint", languageManager.currentLanguage))
+                    description: Text(languageManager.string("Pick a friend from the list to see their profile here."))
                 )
                 .screenCentered()
             }

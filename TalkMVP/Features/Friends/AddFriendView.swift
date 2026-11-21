@@ -33,7 +33,7 @@ struct AddFriendView: View {
             Form {
                 Section {
                     HStack {
-                        TextField(L10n.text("friend_email_placeholder", languageManager.currentLanguage), text: $friendEmail)
+                        TextField(languageManager.string("Enter friend's email"), text: $friendEmail)
                             .textInputAutocapitalization(.never)
                             .keyboardType(.emailAddress)
                             .focused($isTextFieldFocused)
@@ -41,7 +41,7 @@ struct AddFriendView: View {
                                 searchForUsers()
                             }
 
-                        Button(L10n.text("search", languageManager.currentLanguage)) {
+                        Button(languageManager.string(LocalizedStringResource("Search", comment: "Button that searches for a user by email"))) {
                             searchForUsers()
                         }
                         .buttonStyle(.borderedProminent)
@@ -49,22 +49,22 @@ struct AddFriendView: View {
                         .disabled(friendEmail.isEmpty || isSearching)
                     }
                 } header: {
-                    Text(L10n.text("add_by_email", languageManager.currentLanguage))
+                    Text(languageManager.string("Add by Email"))
                 } footer: {
-                    Text(L10n.text("add_by_email_footer", languageManager.currentLanguage))
+                    Text(languageManager.string("Enter your friend's email address to search"))
                 }
 
                 if isSearching {
-                    Section(L10n.text("searching", languageManager.currentLanguage)) {
+                    Section(languageManager.string("Searching")) {
                         HStack {
                             ProgressView()
                                 .controlSize(.small)
-                            Text(L10n.text("searching_users", languageManager.currentLanguage))
+                            Text(languageManager.string("Searching users..."))
                                 .foregroundStyle(Color.secondary)
                         }
                     }
                 } else if !searchResults.isEmpty {
-                    Section(L10n.text("search_results", languageManager.currentLanguage)) {
+                    Section(languageManager.string("Search Results")) {
                         ForEach(searchResults, id: \.id) { result in
                             UserSearchResultRow(
                                 result: result,
@@ -85,18 +85,18 @@ struct AddFriendView: View {
                     }
                 }
             }
-            .navigationTitle(L10n.text("add_friend", languageManager.currentLanguage))
+            .navigationTitle(languageManager.string("Add Friend"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(L10n.text("cancel", languageManager.currentLanguage)) {
+                    Button(languageManager.string("Cancel")) {
                         dismiss()
                     }
                 }
             }
         }
-        .alert(L10n.text("alert", languageManager.currentLanguage), isPresented: $showingAlert) {
-            Button(L10n.text("ok", languageManager.currentLanguage)) {
+        .alert(languageManager.string(LocalizedStringResource("Alert", comment: "Title of an alert that reports the result of adding a friend")), isPresented: $showingAlert) {
+            Button(languageManager.string("OK")) {
                 if lastActionWasSuccess {
                     // Let the alert finish going away before the sheet does
                     Task {
@@ -118,12 +118,12 @@ struct AddFriendView: View {
     private func searchForUsers() {
         let email = friendEmail.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !email.isEmpty else {
-            alertMessage = L10n.text("enter_email_message", languageManager.currentLanguage)
+            alertMessage = languageManager.string("Please enter an email")
             showingAlert = true
             return
         }
         guard isValidEmail(email) else {
-            alertMessage = L10n.text("invalid_email_format", languageManager.currentLanguage)
+            alertMessage = languageManager.string("Invalid email format")
             showingAlert = true
             return
         }
@@ -141,7 +141,7 @@ struct AddFriendView: View {
             } catch {
                 await MainActor.run {
                     addFriendLogger.error("검색 오류: \(error.localizedDescription, privacy: .public)")
-                    self.alertMessage = L10n.text("search_error_prefix", languageManager.currentLanguage) + error.localizedDescription
+                    self.alertMessage = languageManager.string("Search error: \(error.localizedDescription)")
                     self.showingAlert = true
                     self.isSearching = false
                 }
@@ -178,7 +178,7 @@ struct UserSearchResultRow: View {
 
             Spacer()
 
-            Button(L10n.text("add_friend", languageManager.currentLanguage)) {
+            Button(languageManager.string("Add Friend")) {
                 sendFriendRequest()
             }
             .buttonStyle(.borderedProminent)
@@ -202,12 +202,13 @@ struct UserSearchResultRow: View {
                     defer { isSendingRequest = false }
 
                     guard success else {
-                        onComplete(false, L10n.text("friend_request_failed", languageManager.currentLanguage))
+                        onComplete(false, languageManager.string("Friend request failed"))
                         return
                     }
 
                     guard let me = authManager.currentUser else {
-                        onComplete(false, L10n.text("error_occurred_prefix", languageManager.currentLanguage) + "User not found")
+                        let reason = languageManager.string("User not found")
+                        onComplete(false, languageManager.string("Error occurred: \(reason)"))
                         return
                     }
                     let senderId = me.id.uuidString
@@ -220,23 +221,23 @@ struct UserSearchResultRow: View {
                             to: FriendRequestParty(id: result.id, name: result.displayName, email: result.email)
                         )
                     } catch {
-                        onComplete(false, L10n.text("friend_request_failed", languageManager.currentLanguage))
+                        onComplete(false, languageManager.string("Friend request failed"))
                         return
                     }
 
                     // Schedule a local notification to simulate receiver-side alert
-                    let senderName = authManager.currentUser?.displayName ?? L10n.text("user", languageManager.currentLanguage)
+                    let senderName = authManager.currentUser?.displayName ?? languageManager.string(.userPlaceholderName)
                     let senderEmail = authManager.currentUser?.email ?? ""
                     Task { await notificationManager.scheduleFriendRequestNotification(from: senderName, email: senderEmail) }
 
                     NotificationCenter.default.post(name: .friendshipPendingCreated, object: nil, userInfo: ["friendId": result.id])
 
-                    onComplete(true, L10n.text("friend_request_sent", languageManager.currentLanguage))
+                    onComplete(true, languageManager.string("Friend request sent"))
                 }
             } catch {
                 await MainActor.run {
                     addFriendLogger.error("Friend request failed: \(error.localizedDescription, privacy: .public)")
-                    onComplete(false, L10n.text("error_occurred_prefix", languageManager.currentLanguage) + error.localizedDescription)
+                    onComplete(false, languageManager.string("Error occurred: \(error.localizedDescription)"))
                     isSendingRequest = false
                 }
             }

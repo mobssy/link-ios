@@ -20,9 +20,9 @@ struct BlockedFriendsView: View {
             List {
                 if blockedFriends.isEmpty {
                     ContentUnavailableView(
-                        L10n.text("no_blocked_friends", languageManager.currentLanguage),
+                        languageManager.string("No Blocked Friends"),
                         systemImage: "person.slash",
-                        description: Text(L10n.text("no_blocked_friends", languageManager.currentLanguage))
+                        description: Text(languageManager.string("No Blocked Friends"))
                     )
                 } else {
                     ForEach(blockedFriends, id: \.id) { friendship in
@@ -30,11 +30,11 @@ struct BlockedFriendsView: View {
                     }
                 }
             }
-            .navigationTitle(L10n.text("blocked_list", languageManager.currentLanguage))
+            .navigationTitle(languageManager.string("Blocked List"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(L10n.text("close", languageManager.currentLanguage)) {
+                    Button(languageManager.string("Close")) {
                         dismiss()
                     }
                 }
@@ -62,27 +62,27 @@ struct BlockedFriendRow: View {
                     .font(.headline)
                     .foregroundStyle(Color.primary)
 
-                Text(L10n.text("blocked", languageManager.currentLanguage))
+                Text(languageManager.string(FriendshipStatus.blocked.title))
                     .font(.caption)
                     .foregroundStyle(.red)
             }
 
             Spacer()
 
-            Button(L10n.text("unblock", languageManager.currentLanguage)) {
+            Button(languageManager.string(.unblockAction)) {
                 showingUnblockAlert = true
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
         }
         .padding(.vertical, 4)
-        .alert(L10n.text("unblock_friend", languageManager.currentLanguage), isPresented: $showingUnblockAlert) {
-            Button(L10n.text("cancel", languageManager.currentLanguage), role: .cancel) { }
-            Button(L10n.text("unblock", languageManager.currentLanguage), role: .destructive) {
+        .alert(languageManager.string("Unblock Friend"), isPresented: $showingUnblockAlert) {
+            Button(languageManager.string("Cancel"), role: .cancel) { }
+            Button(languageManager.string(.unblockAction), role: .destructive) {
                 unblockFriend()
             }
         } message: {
-            Text(String(format: L10n.text("unblock_message", languageManager.currentLanguage), friendship.friendName))
+            Text(languageManager.string("Unblock \(friendship.friendName)?"))
         }
     }
 
@@ -102,12 +102,12 @@ struct ManageFriendsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(header: Text(L10n.text("hidden_list", languageManager.currentLanguage))) {
+                Section(header: Text(languageManager.string("Hidden List"))) {
                     if hiddenFriends.isEmpty {
                         ContentUnavailableView(
-                            L10n.text("no_hidden_friends", languageManager.currentLanguage),
+                            languageManager.string("No Hidden Friends"),
                             systemImage: "eye.slash",
-                            description: Text(L10n.text("no_hidden_friends", languageManager.currentLanguage))
+                            description: Text(languageManager.string("No Hidden Friends"))
                         )
                     } else {
                         ForEach(hiddenFriends, id: \.id) { friendship in
@@ -116,12 +116,12 @@ struct ManageFriendsView: View {
                     }
                 }
 
-                Section(header: Text(L10n.text("blocked_list", languageManager.currentLanguage))) {
+                Section(header: Text(languageManager.string("Blocked List"))) {
                     if blockedFriends.isEmpty {
                         ContentUnavailableView(
-                            L10n.text("no_blocked_friends", languageManager.currentLanguage),
+                            languageManager.string("No Blocked Friends"),
                             systemImage: "hand.raised.slash",
-                            description: Text(L10n.text("no_blocked_friends", languageManager.currentLanguage))
+                            description: Text(languageManager.string("No Blocked Friends"))
                         )
                     } else {
                         ForEach(blockedFriends, id: \.id) { friendship in
@@ -130,11 +130,11 @@ struct ManageFriendsView: View {
                     }
                 }
             }
-            .navigationTitle(L10n.text("manage_hidden_blocked", languageManager.currentLanguage))
+            .navigationTitle(languageManager.string("Manage Hidden/Blocked"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(L10n.text("close", languageManager.currentLanguage)) {
+                    Button(languageManager.string("Close")) {
                         dismiss()
                     }
                 }
@@ -161,27 +161,27 @@ struct HiddenFriendRow: View {
                     .font(.headline)
                     .foregroundStyle(Color.primary)
 
-                Text(L10n.text("hidden", languageManager.currentLanguage))
+                Text(languageManager.string(FriendshipStatus.hidden.title))
                     .font(.caption)
                     .foregroundStyle(.gray)
             }
 
             Spacer()
 
-            Button(L10n.text("unhide", languageManager.currentLanguage)) {
+            Button(languageManager.string(.unhideAction)) {
                 showingUnhideAlert = true
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
         }
         .padding(.vertical, 4)
-        .alert(L10n.text("unhide_friend", languageManager.currentLanguage), isPresented: $showingUnhideAlert) {
-            Button(L10n.text("cancel", languageManager.currentLanguage), role: .cancel) { }
-            Button(L10n.text("unhide", languageManager.currentLanguage), role: .destructive) {
+        .alert(languageManager.string("Unhide Friend"), isPresented: $showingUnhideAlert) {
+            Button(languageManager.string("Cancel"), role: .cancel) { }
+            Button(languageManager.string(.unhideAction), role: .destructive) {
                 unhideFriend()
             }
         } message: {
-            Text(String(format: L10n.text("unhide_message", languageManager.currentLanguage), friendship.friendName))
+            Text(languageManager.string("Unhide \(friendship.friendName)?"))
         }
     }
 
