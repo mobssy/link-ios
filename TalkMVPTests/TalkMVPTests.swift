@@ -3201,3 +3201,36 @@ struct ChatBackgroundAppearanceTests {
         #expect(ChatBackgroundAppearance.colorScheme(imageData: Data([1, 2, 3])) == nil)
     }
 }
+
+// MARK: - App localization
+
+@Suite("App localization")
+struct AppLocalizationTests {
+    @Test("Text comes in the language asked for, not the system's")
+    func picksLanguage() {
+        #expect(AppLocalization.string("Send Message", languageCode: "ko") == "메시지 보내기")
+        #expect(AppLocalization.string("Send Message", languageCode: "ja") == "メッセージを送信")
+        #expect(AppLocalization.string("Send Message", languageCode: "en") == "Send Message")
+    }
+
+    @Test("A language the app doesn't have falls back to English")
+    func fallsBackToEnglish() {
+        #expect(AppLocalization.string("Send Message", languageCode: "fr") == "Send Message")
+    }
+
+    @Test("The picked language wins over the system's")
+    func languageCode() throws {
+        let defaults = try #require(UserDefaults(suiteName: "AppLocalizationTests-\(UUID().uuidString)"))
+        defaults.set(["es-MX"], forKey: "AppleLanguages")
+        #expect(AppLocalization.languageCode(defaults: defaults) == "es-MX")
+        defaults.set("ja", forKey: AppLocalization.languageKey)
+        #expect(AppLocalization.languageCode(defaults: defaults) == "ja")
+    }
+
+    @Test("The region's formats stay when the language changes")
+    func keepsRegion() {
+        let locale = AppLocalization.locale(languageCode: "ko", base: Locale(identifier: "en_GB"))
+        #expect(locale.language.languageCode == "ko")
+        #expect(locale.region == "GB")
+    }
+}

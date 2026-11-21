@@ -68,6 +68,8 @@ struct LinkMVPApp: App {
                 .environment(authManager)
                 .environment(appLock)
                 .environment(languageManager)
+                // Text, dates and numbers in the language picked in Settings.
+                .environment(\.locale, languageManager.locale)
                 .tint(.appPrimaryText)
                 .preferredColorScheme(themeMode == "light" ? .light : (themeMode == "dark" ? .dark : nil))
                 .accessibilityPreferences()
