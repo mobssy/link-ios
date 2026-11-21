@@ -18,7 +18,8 @@ struct SecuritySettingsView: View {
                 .accessibilityHint(languageManager.string("Require Face ID/Touch ID to unlock the app"))
             }
         }
-        .navigationTitle(languageManager.string("Security"))
+        // The same name as the Settings row that opens it.
+        .navigationTitle(languageManager.string("App Lock"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }
