@@ -7,12 +7,13 @@ struct TranslationSettingsView: View {
 
     var body: some View {
         Form {
-            Section(header: Text(localizedText("translation")), footer: Text(localizedText("translation_footer"))) {
+            Section(footer: Text(localizedText("translation_footer"))) {
                 Toggle(isOn: $translationEnabled) {
-                    HStack(spacing: 12) {
+                    Label {
+                        Text(localizedText("translation_enable"))
+                    } icon: {
                         Image(systemName: "character.bubble")
                             .foregroundStyle(.teal)
-                        Text(localizedText("translation_enable"))
                     }
                 }
                 Picker(localizedText("translation_target"), selection: $translationTargetLanguage) {

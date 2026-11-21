@@ -11,35 +11,37 @@ struct AISettingsView: View {
         Form {
             Section {
                 Toggle(isOn: $aiSummaryEnabled) {
-                    HStack(spacing: 12) {
+                    Label {
+                        Text(localizedText("ai_summary"))
+                    } icon: {
                         Image(systemName: "sparkles")
                             .foregroundStyle(.pink)
-                        Text(localizedText("ai_summary"))
                     }
                 }
                 Toggle(isOn: $aiSearchEnabled) {
-                    HStack(spacing: 12) {
+                    Label {
+                        Text(localizedText("ai_search"))
+                    } icon: {
                         Image(systemName: "magnifyingglass")
                             .foregroundStyle(.blue)
-                        Text(localizedText("ai_search"))
                     }
                 }
                 Toggle(isOn: $aiAutoMeetingNotesEnabled) {
-                    HStack(spacing: 12) {
+                    Label {
+                        Text(localizedText("ai_meeting_notes"))
+                    } icon: {
                         Image(systemName: "note.text")
                             .foregroundStyle(.green)
-                        Text(localizedText("ai_meeting_notes"))
                     }
                 }
                 Toggle(isOn: $aiReplySuggestionsEnabled) {
-                    HStack(spacing: 12) {
+                    Label {
+                        Text(localizedText("ai_reply_suggestions"))
+                    } icon: {
                         Image(systemName: "text.bubble")
                             .foregroundStyle(.orange)
-                        Text(localizedText("ai_reply_suggestions"))
                     }
                 }
-            } header: {
-                Text(localizedText("ai_features"))
             } footer: {
                 Text(localizedText("ai_features_footer"))
             }

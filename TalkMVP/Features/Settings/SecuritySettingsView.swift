@@ -8,10 +8,11 @@ struct SecuritySettingsView: View {
         Form {
             Section {
                 Toggle(isOn: $appLockEnabled) {
-                    HStack(spacing: 12) {
+                    Label {
+                        Text(localizedText("app_lock"))
+                    } icon: {
                         Image(systemName: "lock.fill")
                             .foregroundStyle(.purple)
-                        Text(localizedText("app_lock"))
                     }
                 }
                 .accessibilityHint(localizedText("app_lock_hint"))

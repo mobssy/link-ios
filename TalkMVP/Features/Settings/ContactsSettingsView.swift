@@ -10,12 +10,13 @@ struct ContactsSettingsView: View {
 
     var body: some View {
         Form {
-            Section(header: Text(loc("contacts"))) {
+            Section {
                 Toggle(isOn: $contactsSyncEnabled) {
-                    HStack(spacing: 12) {
+                    Label {
+                        Text(loc("enable_sync"))
+                    } icon: {
                         Image(systemName: "person.crop.circle.badge.plus")
                             .foregroundStyle(.green)
-                        Text(loc("enable_sync"))
                     }
                 }
                 .onChange(of: contactsSyncEnabled) { _, newValue in
@@ -25,10 +26,11 @@ struct ContactsSettingsView: View {
                 }
 
                 Button(action: { Task { await requestAndSyncNow() } }) {
-                    HStack(spacing: 12) {
+                    Label {
+                        Text(isSyncing ? loc("syncing") : loc("sync_now"))
+                    } icon: {
                         Image(systemName: "arrow.triangle.2.circlepath")
                             .foregroundStyle(.tint)
-                        Text(isSyncing ? loc("syncing") : loc("sync_now"))
                     }
                 }
                 .disabled(isSyncing)
