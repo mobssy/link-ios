@@ -10,6 +10,10 @@ import SwiftUI
 /// in what is left then looks pushed to the left. Padding the other side by the same amount
 /// centers it again and still keeps it clear of the strip.
 ///
+/// It only acts at regular width. iPhone Duo's folded screen has the same strip, but it is
+/// narrow: matching the strip on the other side would cost the content a fifth of its width,
+/// so compact layouts keep the safe area as it is, like the system's own lists.
+///
 /// Only the screen's own insets count, and only on the edges the view reaches. A split view's
 /// detail column also has a leading inset as wide as the sidebar floating over it, and a sheet
 /// in the middle of the screen reaches neither edge; balancing those would pull content off
@@ -68,12 +72,15 @@ private struct ScreenSafeAreaReader: ViewModifier {
 private struct ScreenCenteredModifier: ViewModifier {
     @Environment(\.screenSafeArea) private var screen
     @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var frame = CGRect.zero
 
     func body(content: Content) -> some View {
-        let insets = ScreenCentering.screenInsets(
-            screen.insets, screen: screen.frame, view: frame, layoutDirection: layoutDirection
-        )
+        let insets = horizontalSizeClass == .regular
+            ? ScreenCentering.screenInsets(
+                screen.insets, screen: screen.frame, view: frame, layoutDirection: layoutDirection
+            )
+            : EdgeInsets()
         let padding = ScreenCentering.extraPadding(for: insets)
         content
             .padding(.leading, padding.leading)
