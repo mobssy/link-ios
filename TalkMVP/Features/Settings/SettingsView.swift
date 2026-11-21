@@ -210,6 +210,7 @@ struct SettingsView: View {
                 systemImage: "gearshape",
                 description: Text(languageManager.localize(ko: "왼쪽 목록에서 항목을 고르면 여기에 열립니다.", en: "Pick an item from the list to open it here.", ja: "リストから項目を選ぶとここに表示されます。", zh: "从列表中选择一项，它会在这里打开。", es: "Elige un elemento de la lista para abrirlo aquí."))
             )
+            .screenCentered()
         }
         .preferredColorScheme(themeMode == "light" ? .light : (themeMode == "dark" ? .dark : nil))
     }

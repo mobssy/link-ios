@@ -283,6 +283,7 @@ struct FriendsView: View {
                     systemImage: "person.2",
                     description: Text(L10n.text("select_friend_hint", languageManager.currentLanguage))
                 )
+                .screenCentered()
             }
         }
         .onChange(of: selectedFriendID) {

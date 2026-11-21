@@ -115,6 +115,7 @@ struct ChatListView: View {
                     systemImage: "bubble.left.and.bubble.right",
                     description: Text(localizedText("select_chat_hint"))
                 )
+                .screenCentered()
             }
         }
         .onAppear {

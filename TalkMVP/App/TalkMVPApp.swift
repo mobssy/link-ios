@@ -72,6 +72,7 @@ struct LinkMVPApp: App {
                 .preferredColorScheme(themeMode == "light" ? .light : (themeMode == "dark" ? .dark : nil))
                 .accessibilityPreferences()
                 .inAppTextSize()
+                .readsScreenSafeArea()
                 .fullScreenCover(isPresented: Binding(get: { appLock.isLocked }, set: { _ in })) {
                     AppLockView()
                         .environment(appLock)
