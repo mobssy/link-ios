@@ -75,10 +75,10 @@ link-ios/
 │   ├── Intents/                 # ChatIntents, ChatIntentActions (Siri and Shortcuts)
 │   ├── Models/                  # ChatRoom, Message, User (SwiftData)
 │   ├── Repositories/            # SwiftData access behind protocols, attachment files, cleanup, the test account
-│   ├── Localization/            # L10n, LanguageManager (+Extensions), LocalizationService
+│   ├── Localization/            # LanguageManager (the in-app language picker), AppLocalization (catalog lookup in that language)
 │   ├── DesignSystem/            # Brand colors, text size and accessibility preferences, touch targets
-│   ├── AppShortcuts.xcstrings   # Siri phrases, in the app's five languages
-│   ├── Localizable.xcstrings    # Siri and Shortcuts strings, in the same languages (the UI is localized in code)
+│   ├── AppShortcuts.xcstrings   # Siri phrases, in English, Korean, Japanese, Simplified Chinese and Spanish
+│   ├── Localizable.xcstrings    # Every UI string, in the app's six languages (English source)
 │   ├── AppIcon.icon/            # The app icon (Icon Composer): one glass bubble layer, light and dark backgrounds
 │   └── Assets.xcassets/         # Color sets, image assets
 ├── TalkMVPTests/

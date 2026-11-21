@@ -31,7 +31,7 @@ iOS 26 already translates Messages as you read them. L!NK works on what comes af
 - **Inline translation**: every message, translated on device, across seven languages.
 - **On-device AI**: chat summaries, meeting notes with owners and dates, reply suggestions, search by meaning across languages, and photo descriptions on iOS 27.
 - **Messaging**: voice messages with transcripts, photos, files, locations, reactions, and disappearing and scheduled messages.
-- **Easy for everyone**: Dynamic Type up to the largest sizes, VoiceOver that reads each translation with its message, high-contrast bubbles, the same face for each person everywhere, five app languages, Siri and Shortcuts, and App Lock.
+- **Easy for everyone**: Dynamic Type up to the largest sizes, VoiceOver that reads each translation with its message, high-contrast bubbles, the same face for each person everywhere, six app languages (Chinese in both Simplified and Traditional), Siri and Shortcuts, and App Lock.
 - **Any screen**: iPhone, iPad, and iPhone Duo folded or open.
 
 ## Screenshots
