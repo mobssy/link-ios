@@ -77,9 +77,13 @@ nonisolated enum SampleChats {
         ]
     }
 
-    /// "zh-Hans" and "zh-Hant" share the Chinese lines; other codes go by their language.
+    /// Traditional Chinese ("zh-Hant", or a Taiwan or Hong Kong code) has its own lines; other codes
+    /// go by their language, so "zh-Hans" and "zh" share the Simplified ones.
     private static func languageKey(_ code: String) -> String {
-        String(code.lowercased().prefix(2))
+        let lowered = code.lowercased()
+        let traditional = ["zh-hant", "zh-tw", "zh-hk", "zh-mo"]
+        if traditional.contains(where: { lowered.hasPrefix($0) }) { return "zh-Hant" }
+        return String(lowered.prefix(2))
     }
 
     /// The reader's lines in each room, by language.
@@ -107,6 +111,12 @@ nonisolated enum SampleChats {
             "family_group": ["周六我可以，我来带甜点。"],
             "minji": ["敏智你好！很高兴收到你的消息。"],
             "work_colleagues": ["谢谢，我今晚会看的。", "好的，明天十点见。"],
+        ],
+        "zh-Hant": [
+            "study_group": ["週六下午三點我可以！"],
+            "family_group": ["週六我可以，我來帶甜點。"],
+            "minji": ["敏智你好！很高興收到你的訊息。"],
+            "work_colleagues": ["謝謝，我今晚會看的。", "好的，明天十點見。"],
         ],
         "es": [
             "study_group": ["¡El sábado a las tres me viene bien!"],

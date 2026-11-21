@@ -2954,8 +2954,17 @@ struct SenderAvatarTests {
 @Suite("Sample chats")
 struct SampleChatsTests {
     private static let languages: [(code: String, language: NLLanguage)] = [
-        ("ko", .korean), ("en", .english), ("ja", .japanese), ("zh-Hans", .simplifiedChinese), ("es", .spanish),
+        ("ko", .korean), ("en", .english), ("ja", .japanese), ("zh-Hans", .simplifiedChinese),
+        ("zh-Hant", .traditionalChinese), ("es", .spanish),
     ]
+
+    @Test("A Traditional Chinese reader writes Traditional, not Simplified, Chinese")
+    func traditionalChineseReaderHasOwnLines() {
+        let own = { (code: String) in SampleChats.rooms(readerLanguage: code).flatMap(\.lines).filter { $0.speaker == .reader } }
+        #expect(own("zh-Hant") != own("zh-Hans"))
+        #expect(own("zh-Hant").contains { $0.text.contains("週六") })
+        #expect(own("zh-Hans") == own("zh"))
+    }
 
     @Test("Each sample room's reader writes in the app's language, so answers come back in it", arguments: languages.map(\.code))
     func readerLinesAreInTheAppLanguage(code: String) throws {
