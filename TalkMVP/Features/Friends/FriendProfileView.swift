@@ -121,6 +121,7 @@ struct FriendProfileView: View {
                 .padding(.horizontal)
             }
             .padding()
+            .screenCentered()
         }
         .navigationTitle(localizedText("profile"))
         .navigationBarTitleDisplayMode(.inline)

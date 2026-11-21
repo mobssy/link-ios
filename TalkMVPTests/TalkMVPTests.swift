@@ -3129,6 +3129,28 @@ struct ScreenCenteringTests {
         #expect(padding.trailing == 0)
     }
 
+    @Test("Only the edges a view reaches count")
+    func reachedEdges() {
+        let screen = CGRect(x: 0, y: 0, width: 951, height: 669)
+        let insets = EdgeInsets(top: 24, leading: 0, bottom: 20, trailing: 84)
+        // A detail column running to the right edge feels the status bar strip.
+        let detail = ScreenCentering.screenInsets(insets, screen: screen, view: CGRect(x: 0, y: 0, width: 951, height: 669), layoutDirection: .leftToRight)
+        #expect(detail.trailing == 84)
+        // A sheet in the middle of the screen reaches neither side.
+        let sheet = ScreenCentering.screenInsets(insets, screen: screen, view: CGRect(x: 200, y: 60, width: 540, height: 600), layoutDirection: .leftToRight)
+        #expect(sheet.leading == 0)
+        #expect(sheet.trailing == 0)
+    }
+
+    @Test("Right to left, the right edge is the leading one")
+    func rightToLeft() {
+        let screen = CGRect(x: 0, y: 0, width: 951, height: 669)
+        let insets = EdgeInsets(top: 0, leading: 84, bottom: 0, trailing: 0)
+        let view = ScreenCentering.screenInsets(insets, screen: screen, view: CGRect(x: 400, y: 0, width: 551, height: 669), layoutDirection: .rightToLeft)
+        #expect(view.leading == 84)
+        #expect(view.trailing == 0)
+    }
+
     @Test("A wider left inset is matched on the right")
     func leadingInset() {
         let padding = ScreenCentering.extraPadding(for: EdgeInsets(top: 0, leading: 62, bottom: 0, trailing: 20))
