@@ -35,4 +35,8 @@ Built with SwiftUI, SwiftData, Foundation Models, and the Translation and Speech
 
 Designed and built solo by David Song. Questions and feedback are welcome through [@mobssy](https://github.com/mobssy).
 
-Copyright © 2025–2026 David Song. All rights reserved. Published for portfolio purposes; see [LICENSE](LICENSE).
+## License
+
+**All rights reserved. This is not open source.**
+
+Copyright © 2025–2026 David Song. This repository is public only so the work can be seen. No permission is given to use, copy, modify, or distribute the code, the design, the icon, or the images, in whole or in part, including as training data for AI models, without prior written permission. See [LICENSE](LICENSE).
