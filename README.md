@@ -17,13 +17,13 @@ You write in Korean, they answer in Japanese, and you both read your own languag
 
 ## iPhone Duo
 
-Open, the chat list stays beside the conversation. These are from a real iPhone Duo.
+On a real iPhone Duo, open: the chat list stays beside the conversation, and every message is translated on the device.
 
-![A group chat in Japanese and Spanish, translated into English, beside the chat list on an open iPhone Duo](docs/screenshots/duo-chat.png)
+![A group chat in Japanese and Spanish, translated into English inside each bubble, beside the chat list on an open iPhone Duo](docs/screenshots/duo-chat.png)
 
-| Friends | Settings |
-| --- | --- |
-| ![The friends list on an open iPhone Duo](docs/screenshots/duo-friends.png) | ![Translation settings beside the settings list on an open iPhone Duo](docs/screenshots/duo-settings.png) |
+The summary and the meeting notes are written on the device too, by Apple Intelligence, from a chat in three languages.
+
+![A conversation summary and meeting notes with decisions, each in a sheet over the chat on an open iPhone Duo](docs/screenshots/duo-ai.png)
 
 ## Try it
 
