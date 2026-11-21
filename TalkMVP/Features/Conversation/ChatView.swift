@@ -36,6 +36,8 @@ struct ChatView: View {
 
     // MARK: - Message Actions
     @State var reactionToMessage: Message?
+    /// The appearance this chat's own background calls for; see `ChatBackgroundAppearance`.
+    @State private var backgroundColorScheme: ColorScheme?
     /// What each translated message's translation says once shown, for reading it out.
     @State var translatedTexts: [UUID: String] = [:]
     @State var showingReactionPicker = false
@@ -192,6 +194,10 @@ struct ChatView: View {
             }
 
             mainContentView
+        }
+        .modifier(ChatBackgroundColorScheme(scheme: backgroundColorScheme))
+        .task(id: chatRoom.backgroundAppearanceKey) {
+            backgroundColorScheme = chatRoom.backgroundColorScheme
         }
         .navigationTitle(chatRoom.name)
         .navigationBarTitleDisplayMode(.inline)

@@ -3158,3 +3158,46 @@ struct ScreenCenteringTests {
         #expect(padding.trailing == 42)
     }
 }
+
+// MARK: - Chat background appearance
+
+@Suite("Chat background appearance")
+struct ChatBackgroundAppearanceTests {
+    @Test("White and black sit at the ends of the scale")
+    func luminanceEnds() {
+        #expect(ChatBackgroundAppearance.relativeLuminance(red: 1, green: 1, blue: 1) == 1)
+        #expect(ChatBackgroundAppearance.relativeLuminance(red: 0, green: 0, blue: 0) == 0)
+    }
+
+    @Test("The default gradient is bright enough for dark text")
+    func defaultGradientIsLight() throws {
+        // #4A90E2 → #50E3C2, the gradient the background settings start from.
+        let scheme = try #require(ChatBackgroundAppearance.colorScheme(gradientFrom: "#4A90E2", to: "#50E3C2"))
+        #expect(scheme == .light)
+    }
+
+    @Test("A dark color keeps light text")
+    func darkColorIsDark() {
+        #expect(ChatBackgroundAppearance.colorScheme(color: "#1C1C3A") == .dark)
+        #expect(ChatBackgroundAppearance.colorScheme(color: "#FFFFFF") == .light)
+    }
+
+    @Test("A color it can't read leaves the system's choice")
+    func unreadableColor() {
+        #expect(ChatBackgroundAppearance.colorScheme(color: nil) == nil)
+        #expect(ChatBackgroundAppearance.colorScheme(color: "not a color") == nil)
+    }
+
+    @Test("A photo's brightness is its average")
+    func photo() throws {
+        func photo(_ color: UIColor) -> Data {
+            UIGraphicsImageRenderer(size: CGSize(width: 40, height: 40)).pngData { context in
+                color.setFill()
+                context.fill(CGRect(x: 0, y: 0, width: 40, height: 40))
+            }
+        }
+        #expect(ChatBackgroundAppearance.colorScheme(imageData: photo(.white)) == .light)
+        #expect(ChatBackgroundAppearance.colorScheme(imageData: photo(.black)) == .dark)
+        #expect(ChatBackgroundAppearance.colorScheme(imageData: Data([1, 2, 3])) == nil)
+    }
+}
