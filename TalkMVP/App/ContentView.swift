@@ -149,7 +149,7 @@ struct TestModeButtonView: View {
 
 // MARK: - Test Data
 
-enum TestData {
+nonisolated enum TestData {
     static let friends: [(name: String, email: String)] = [
         ("권지용", "peaceminusone@example.com"),
         ("한소희", "sohee@example.com"),
