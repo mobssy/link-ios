@@ -79,7 +79,7 @@ link-ios/
 │   ├── DesignSystem/            # Brand colors, text size and accessibility preferences, touch targets
 │   ├── AppShortcuts.xcstrings   # Siri phrases, in English, Korean, Japanese, Simplified Chinese and Spanish
 │   ├── Localizable.xcstrings    # Every UI string, in the app's six languages (English source)
-│   ├── AppIcon.icon/            # The app icon (Icon Composer): one glass bubble layer, light and dark backgrounds
+│   ├── AppIcon.icon/            # The app icon (Icon Composer): one glass bubble layer on one dark background, the same in light and dark
 │   └── Assets.xcassets/         # Color sets, image assets
 ├── TalkMVPTests/
 │   └── TalkMVPTests.swift       # Swift Testing suites
