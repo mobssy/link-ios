@@ -221,6 +221,9 @@ extension ChatView {
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
         }
+        // A scroll view draws past the safe area; clipped, the replies stop at the edge and
+        // don't run under a tab bar or status bar at the side of the screen.
+        .clipped()
         .accessibilityElement(children: .contain)
         .accessibilityLabel(languageManager.string("Suggested replies"))
     }
