@@ -106,7 +106,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@發送了好友請求"
+            "value" : "%@傳送了交友邀請"
           }
         }
       }
@@ -241,7 +241,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld 條未讀訊息"
+            "value" : "%lld 則未讀訊息"
           }
         }
       }
@@ -381,7 +381,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ 已刪除的帳戶無法恢復，所有對話將被永久刪除。"
+            "value" : "⚠️ 已刪除的帳號無法復原，所有對話將被永久刪除。"
           }
         }
       }
@@ -449,7 +449,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. 設定您的資料（姓名、照片）"
+            "value" : "1. 設定您的個人資料（姓名、照片）"
           }
         }
       }
@@ -689,7 +689,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重置連結將發送到您的註冊郵箱。"
+            "value" : "重設連結將傳送到您註冊的電子郵件。"
           }
         }
       }
@@ -798,7 +798,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輔助功能"
+            "value" : "輔助使用"
           }
         }
       }
@@ -833,7 +833,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "帳戶"
+            "value" : "帳號"
           }
         }
       }
@@ -867,7 +867,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "帳戶與設定"
+            "value" : "帳號與設定"
           }
         }
       }
@@ -901,7 +901,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "帳戶資訊"
+            "value" : "帳號資訊"
           }
         }
       }
@@ -935,7 +935,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "致謝佔位文本"
+            "value" : "致謝佔位文字"
           }
         }
       }
@@ -1108,7 +1108,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通過郵箱新增"
+            "value" : "透過電子郵件新增"
           }
         }
       }
@@ -1177,7 +1177,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通過郵箱新增朋友"
+            "value" : "透過電子郵件新增朋友"
           }
         }
       }
@@ -1529,7 +1529,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apple登入時發生錯誤。"
+            "value" : "使用 Apple 登入時發生錯誤。"
           }
         }
       }
@@ -1565,7 +1565,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "登入時發生錯誤: %@"
+            "value" : "登入時發生錯誤：%@"
           }
         }
       }
@@ -1601,7 +1601,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "註冊時發生錯誤: %@"
+            "value" : "註冊時發生錯誤：%@"
           }
         }
       }
@@ -1635,7 +1635,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用資訊"
+            "value" : "App 資訊"
           }
         }
       }
@@ -1671,7 +1671,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用語言"
+            "value" : "App 語言"
           }
         }
       }
@@ -1707,7 +1707,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用鎖定"
+            "value" : "App 鎖定"
           }
         }
       }
@@ -1741,7 +1741,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用鎖已開啟。請先開啟應用解鎖。"
+            "value" : "App 鎖定已開啟。請先開啟 App 解鎖。"
           }
         }
       }
@@ -1777,7 +1777,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用鎖定螢幕"
+            "value" : "App 鎖定畫面"
           }
         }
       }
@@ -1813,7 +1813,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用名稱"
+            "value" : "App 名稱"
           }
         }
       }
@@ -1849,7 +1849,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用版本"
+            "value" : "App 版本"
           }
         }
       }
@@ -1885,7 +1885,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apple Intelligence 無法整理，因此按規則提取。"
+            "value" : "Apple Intelligence 無法整理，因此依規則擷取。"
           }
         }
       }
@@ -1921,7 +1921,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即將此大小應用於應用中的所有文字，而不是使用 iOS 設定。"
+            "value" : "立即將此大小套用到 App 中的所有文字，而不使用 iOS 設定。"
           }
         }
       }
@@ -2062,7 +2062,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "請使用面容 ID、觸控 ID 或裝置密碼進行驗證"
+            "value" : "請使用 Face ID、Touch ID 或裝置密碼進行驗證"
           }
         }
       }
@@ -2096,7 +2096,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "解鎖應用需要進行身份驗證。"
+            "value" : "解鎖 App 需要進行身分驗證。"
           }
         }
       }
@@ -2132,7 +2132,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此裝置上無法使用身份驗證。"
+            "value" : "此裝置上無法使用身分驗證。"
           }
         }
       }
@@ -2270,7 +2270,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "封鎖%@？被封鎖的朋友將無法再向您發送訊息。"
+            "value" : "封鎖%@？被封鎖的朋友將無法再傳訊息給您。"
           }
         }
       }
@@ -2441,7 +2441,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "粗體文本"
+            "value" : "粗體文字"
           }
         }
       }
@@ -2578,7 +2578,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書簽"
+            "value" : "書籤"
           }
         }
       }
@@ -2614,7 +2614,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "可以刪除已發送的訊息嗎？"
+            "value" : "可以刪除已傳送的訊息嗎？"
           }
         }
       }
@@ -2891,7 +2891,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@的聊天介面"
+            "value" : "與%@的聊天"
           }
         }
       }
@@ -2994,7 +2994,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "檢查設定 → 通知，確保L!NK的通知已啟用。"
+            "value" : "檢查設定 → 通知，確認 L!NK 的通知已開啟。"
           }
         }
       }
@@ -3028,7 +3028,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "檢查您的網路連接（Wi-Fi或移動資料）"
+            "value" : "檢查您的網路連線（Wi-Fi 或行動數據）"
           }
         }
       }
@@ -3134,7 +3134,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選擇發送訊息的時間"
+            "value" : "選擇傳送訊息的時間"
           }
         }
       }
@@ -3240,7 +3240,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "聯繫支援"
+            "value" : "聯絡支援"
           }
         }
       }
@@ -3447,7 +3447,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "創建新聊天"
+            "value" : "建立新聊天"
           }
         }
       }
@@ -3481,7 +3481,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "當前位置"
+            "value" : "目前位置"
           }
         }
       }
@@ -3515,7 +3515,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在應用中設定文字大小"
+            "value" : "在 App 中設定文字大小"
           }
         }
       }
@@ -3692,7 +3692,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "刪除帳戶"
+            "value" : "刪除帳號"
           }
         }
       }
@@ -4150,7 +4150,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "郵箱"
+            "value" : "電子郵件"
           }
         }
       }
@@ -4184,7 +4184,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "郵件支援"
+            "value" : "電子郵件支援"
           }
         }
       }
@@ -4292,7 +4292,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸入朋友的郵箱"
+            "value" : "輸入朋友的電子郵件"
           }
         }
       }
@@ -4326,7 +4326,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輸入朋友的郵箱地址進行搜尋"
+            "value" : "輸入朋友的電子郵件地址進行搜尋"
           }
         }
       }
@@ -4394,7 +4394,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發生錯誤: %@"
+            "value" : "發生錯誤：%@"
           }
         }
       }
@@ -4775,7 +4775,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未能收到認證碼。"
+            "value" : "未能收到驗證碼。"
           }
         }
       }
@@ -4845,7 +4845,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "儲存定時訊息失敗。"
+            "value" : "儲存排程訊息失敗。"
           }
         }
       }
@@ -4881,7 +4881,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送定時訊息失敗。"
+            "value" : "傳送排程訊息失敗。"
           }
         }
       }
@@ -4915,7 +4915,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送檔案失敗。"
+            "value" : "傳送檔案失敗。"
           }
         }
       }
@@ -4949,7 +4949,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送好友請求失敗，請重試。"
+            "value" : "傳送交友邀請失敗，請重試。"
           }
         }
       }
@@ -4985,7 +4985,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送圖片失敗。"
+            "value" : "傳送圖片失敗。"
           }
         }
       }
@@ -5019,7 +5019,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送位置失敗。"
+            "value" : "傳送位置失敗。"
           }
         }
       }
@@ -5055,7 +5055,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送訊息失敗。"
+            "value" : "傳送訊息失敗。"
           }
         }
       }
@@ -5089,7 +5089,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送影片失敗。"
+            "value" : "傳送影片失敗。"
           }
         }
       }
@@ -5125,7 +5125,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送語音訊息失敗。"
+            "value" : "傳送語音訊息失敗。"
           }
         }
       }
@@ -5263,7 +5263,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "反饋已發送"
+            "value" : "意見回饋已傳送"
           }
         }
       }
@@ -5332,7 +5332,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通過通訊錄更快找到朋友"
+            "value" : "透過通訊錄更快找到朋友"
           }
         }
       }
@@ -5366,7 +5366,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "跟隨 iOS 設定 → 輔助功能 → 顯示與文字大小 中的文字大小。"
+            "value" : "跟隨 iOS 設定 → 輔助使用 → 螢幕顯示與文字大小 中的文字大小。"
           }
         }
       }
@@ -5400,7 +5400,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "強制退出應用並重新啟動。"
+            "value" : "強制結束 App 並重新啟動。"
           }
         }
       }
@@ -5464,7 +5464,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "找到 %lld 個匹配的使用者。"
+            "value" : "找到 %lld 位符合的使用者。"
           }
         }
       }
@@ -5533,7 +5533,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "好友請求"
+            "value" : "交友邀請"
           }
         }
       }
@@ -5569,7 +5569,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "好友請求失敗"
+            "value" : "交友邀請失敗"
           }
         }
       }
@@ -5603,7 +5603,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已發送好友請求"
+            "value" : "已傳送交友邀請"
           }
         }
       }
@@ -5639,7 +5639,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "好友請求已發送。"
+            "value" : "交友邀請已傳送。"
           }
         }
       }
@@ -5786,7 +5786,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "朋友標籤頁 → +按鈕 → 按郵箱搜尋併發送好友請求。"
+            "value" : "朋友標籤頁 → +按鈕 → 依電子郵件搜尋並傳送交友邀請。"
           }
         }
       }
@@ -5863,7 +5863,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通用"
+            "value" : "一般"
           }
         }
       }
@@ -5899,7 +5899,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在生成摘要..."
+            "value" : "正在產生摘要..."
           }
         }
       }
@@ -5971,7 +5971,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "需要配置Google登入。請在GoogleOAuthConfig中設定Client ID。"
+            "value" : "尚未設定 Google 登入。請在 GoogleOAuthConfig 中設定 Client ID。"
           }
         }
       }
@@ -6006,7 +6006,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "漸變"
+            "value" : "漸層"
           }
         }
       }
@@ -6042,7 +6042,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "漸變結束"
+            "value" : "漸層結束"
           }
         }
       }
@@ -6076,7 +6076,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "漸變起始"
+            "value" : "漸層起點"
           }
         }
       }
@@ -6112,7 +6112,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "群聊"
+            "value" : "群組聊天"
           }
         }
       }
@@ -6146,7 +6146,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你好！這是一條預覽訊息。"
+            "value" : "你好！這是一則預覽訊息。"
           }
         }
       }
@@ -6180,7 +6180,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你好！這是一條示例訊息。"
+            "value" : "你好！這是一則範例訊息。"
           }
         }
       }
@@ -6216,7 +6216,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "幫助"
+            "value" : "輔助說明"
           }
         }
       }
@@ -6389,7 +6389,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "高對比度氣泡"
+            "value" : "高對比氣泡"
           }
         }
       }
@@ -6601,7 +6601,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如何刪除我的帳戶？"
+            "value" : "如何刪除我的帳號？"
           }
         }
       }
@@ -6707,7 +6707,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如何發送照片/影片？"
+            "value" : "如何傳送照片/影片？"
           }
         }
       }
@@ -6743,7 +6743,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如何設定我的資料？"
+            "value" : "如何設定我的個人資料？"
           }
         }
       }
@@ -6916,7 +6916,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用內設定"
+            "value" : "App 內設定"
           }
         }
       }
@@ -6987,7 +6987,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無效的認證URL。"
+            "value" : "無效的驗證 URL。"
           }
         }
       }
@@ -7021,7 +7021,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "郵箱格式無效"
+            "value" : "電子郵件格式無效"
           }
         }
       }
@@ -7057,7 +7057,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無效的令牌。"
+            "value" : "無效的權杖。"
           }
         }
       }
@@ -7517,7 +7517,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最後活躍"
+            "value" : "上次上線"
           }
         }
       }
@@ -7552,7 +7552,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "許可證"
+            "value" : "授權條款"
           }
         }
       }
@@ -7588,7 +7588,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "許可證佔位文本"
+            "value" : "授權條款佔位文字"
           }
         }
       }
@@ -7691,7 +7691,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "緊急呼叫需要位置訪問權限。請在設定中允許。"
+            "value" : "撥打緊急電話需要位置存取權限。請在設定中允許。"
           }
         }
       }
@@ -7762,7 +7762,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "位置共享"
+            "value" : "已分享位置"
           }
         }
       }
@@ -7796,7 +7796,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "位置共享 — 點擊開啟地圖"
+            "value" : "已分享位置 — 點一下開啟地圖"
           }
         }
       }
@@ -7830,7 +7830,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "位置不可用"
+            "value" : "無法取得位置"
           }
         }
       }
@@ -7866,7 +7866,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "長按訊息並選擇「刪除」。您只能刪除自己發送的訊息。"
+            "value" : "長按訊息並選擇「刪除」。您只能刪除自己傳送的訊息。"
           }
         }
       }
@@ -7968,7 +7968,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "確保您使用的是最新版本。如果問題持續，請聯繫支援。"
+            "value" : "請確認您使用的是最新版本。如果問題持續，請聯絡支援。"
           }
         }
       }
@@ -8144,7 +8144,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "會議記錄會整理聊天中的決定、任務、日程和待解決的問題，可從聊天選單開啟。收到訊息時，回覆建議會在輸入框上方提供簡短回覆。開啟按含義搜尋後，搜尋“晚飯約會”也能找到“dinner tonight”。這些功能都使用裝置上的 Apple Intelligence。"
+            "value" : "會議記錄會整理聊天中的決定、任務、日程和待解決的問題，可從聊天選單開啟。收到訊息時，回覆建議會在輸入框上方提供簡短回覆。開啟依語意搜尋後，搜尋「晚餐約會」也能找到「dinner tonight」。這些功能都使用裝置上的 Apple Intelligence。"
           }
         }
       }
@@ -8430,7 +8430,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "訊息發送不出去"
+            "value" : "訊息傳送不出去"
           }
         }
       }
@@ -8673,7 +8673,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新的好友請求"
+            "value" : "新的交友邀請"
           }
         }
       }
@@ -8777,7 +8777,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新訊息發送後將自動刪除"
+            "value" : "新訊息傳送後將自動刪除"
           }
         }
       }
@@ -8919,7 +8919,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "沒有書簽訊息"
+            "value" : "沒有書籤訊息"
           }
         }
       }
@@ -9021,7 +9021,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "'%@'沒有匹配結果"
+            "value" : "「%@」沒有符合的結果"
           }
         }
       }
@@ -9055,7 +9055,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未找到匹配的使用者。"
+            "value" : "找不到符合的使用者。"
           }
         }
       }
@@ -9262,7 +9262,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "確認"
+            "value" : "好"
           }
         }
       }
@@ -9367,7 +9367,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "或者"
+            "value" : "或"
           }
         }
       }
@@ -9539,7 +9539,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將永久刪除您的帳戶。"
+            "value" : "將永久刪除您的帳號。"
           }
         }
       }
@@ -9573,7 +9573,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "電話號碼/郵箱經過哈希處理後發送至伺服器。"
+            "value" : "電話號碼/電子郵件經過雜湊處理後才傳送至伺服器。"
           }
         }
       }
@@ -9642,7 +9642,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送了照片"
+            "value" : "傳送了照片"
           }
         }
       }
@@ -9850,7 +9850,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "請在設定中允許訪問通訊錄。"
+            "value" : "請在設定中允許取用通訊錄。"
           }
         }
       }
@@ -9886,7 +9886,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "請輸入您的問題:\n\n應用版本: %@"
+            "value" : "請輸入您的問題：\n\nApp 版本：%@"
           }
         }
       }
@@ -9920,7 +9920,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "請輸入郵箱"
+            "value" : "請輸入電子郵件"
           }
         }
       }
@@ -9997,7 +9997,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "共享了位置"
+            "value" : "分享了位置"
           }
         }
       }
@@ -10074,7 +10074,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隱私政策說明瞭為保護使用者而收集、使用、儲存和銷毀個人資訊的原則。\n我們會安全地管理使用者的個人資料，並在向第三方提供前徵得明確同意。\n與個人資訊相關的權利受適用法律保護。"
+            "value" : "隱私政策說明了為保護使用者而收集、使用、儲存和銷毀個人資訊的原則。\n我們會安全地管理使用者的個人資料，並在向第三方提供前徵得明確同意。\n與個人資訊相關的權利受適用法律保護。"
           }
         }
       }
@@ -10466,7 +10466,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "減少動效"
+            "value" : "減少動態效果"
           }
         }
       }
@@ -10744,7 +10744,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "舉報"
+            "value" : "檢舉"
           }
         }
       }
@@ -10778,7 +10778,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "舉報%@？"
+            "value" : "檢舉%@？"
           }
         }
       }
@@ -10812,7 +10812,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已舉報%@"
+            "value" : "已檢舉%@"
           }
         }
       }
@@ -10880,7 +10880,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已發送請求"
+            "value" : "已傳送請求"
           }
         }
       }
@@ -10914,7 +10914,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開啟應用時需要Face ID/Touch ID驗證"
+            "value" : "開啟 App 時需要 Face ID/Touch ID 驗證"
           }
         }
       }
@@ -10948,7 +10948,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重置"
+            "value" : "重設"
           }
         }
       }
@@ -10984,7 +10984,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將背景重置為預設值？"
+            "value" : "將背景重設為預設值？"
           }
         }
       }
@@ -11018,7 +11018,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重啟您的裝置。"
+            "value" : "重新啟動您的裝置。"
           }
         }
       }
@@ -11087,7 +11087,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "定時"
+            "value" : "排程"
           }
         }
       }
@@ -11121,7 +11121,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "定時發送"
+            "value" : "排程傳送"
           }
         }
       }
@@ -11155,7 +11155,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "定時發送"
+            "value" : "排程傳送"
           }
         }
       }
@@ -11191,7 +11191,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "上下滾動查看訊息"
+            "value" : "上下捲動查看訊息"
           }
         }
       }
@@ -11260,7 +11260,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按含義搜尋"
+            "value" : "依語意搜尋"
           }
         }
       }
@@ -11294,7 +11294,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按名字搜尋"
+            "value" : "依名稱搜尋"
           }
         }
       }
@@ -11364,7 +11364,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "搜尋錯誤: %@"
+            "value" : "搜尋錯誤：%@"
           }
         }
       }
@@ -11468,7 +11468,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在按含義搜尋…"
+            "value" : "正在依語意搜尋…"
           }
         }
       }
@@ -11538,7 +11538,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "安全"
+            "value" : "安全性"
           }
         }
       }
@@ -11572,7 +11572,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在登入螢幕選擇「重置密碼」。"
+            "value" : "在登入畫面選擇「重設密碼」。"
           }
         }
       }
@@ -11709,7 +11709,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送"
+            "value" : "傳送"
           }
         }
       }
@@ -11743,7 +11743,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "向${chat}發送${message}"
+            "value" : "傳送${message}給${chat}"
           }
         }
       }
@@ -11777,7 +11777,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送附件"
+            "value" : "傳送附件"
           }
         }
       }
@@ -11811,7 +11811,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送反饋"
+            "value" : "傳送意見回饋"
           }
         }
       }
@@ -11847,7 +11847,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送訊息"
+            "value" : "傳送訊息"
           }
         }
       }
@@ -11881,7 +11881,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送訊息"
+            "value" : "傳送訊息"
           }
         }
       }
@@ -11915,7 +11915,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "向你的某個聊天發送訊息。"
+            "value" : "傳送訊息到你的某個聊天。"
           }
         }
       }
@@ -11949,7 +11949,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送了一個檔案"
+            "value" : "傳送了一個檔案"
           }
         }
       }
@@ -11983,7 +11983,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發送了一個影片"
+            "value" : "傳送了一部影片"
           }
         }
       }
@@ -12017,7 +12017,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "發出的請求 (%lld)"
+            "value" : "已送出的請求 (%lld)"
           }
         }
       }
@@ -12051,7 +12051,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已發送到%@。"
+            "value" : "已傳送到%@。"
           }
         }
       }
@@ -12122,7 +12122,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定 → 刪除帳戶。"
+            "value" : "設定 → 刪除帳號。"
           }
         }
       }
@@ -12194,7 +12194,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定 → 主題 → 選擇亮色/暗色/系統模式。"
+            "value" : "設定 → 主題 → 選擇淺色/深色/系統模式。"
           }
         }
       }
@@ -12228,7 +12228,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "共享位置"
+            "value" : "分享位置"
           }
         }
       }
@@ -12296,7 +12296,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "請分享您的反饋..."
+            "value" : "請分享您的意見回饋..."
           }
         }
       }
@@ -12364,7 +12364,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "請先登入應用。"
+            "value" : "請先登入 App。"
           }
         }
       }
@@ -12434,7 +12434,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通過 Google 登入"
+            "value" : "使用 Google 登入"
           }
         }
       }
@@ -12468,7 +12468,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "退出登入"
+            "value" : "登出"
           }
         }
       }
@@ -12502,7 +12502,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "從當前帳戶退出登入。"
+            "value" : "登出目前的帳號。"
           }
         }
       }
@@ -12785,7 +12785,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停止錄音併發送"
+            "value" : "停止錄音並傳送"
           }
         }
       }
@@ -13027,7 +13027,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在列表中左滑好友，選擇「封鎖」。"
+            "value" : "在列表中左滑朋友，選擇「封鎖」。"
           }
         }
       }
@@ -13097,7 +13097,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "右滑好友並新增星標，即可顯示在收藏區域。"
+            "value" : "右滑朋友並加上星號，即可顯示在收藏區域。"
           }
         }
       }
@@ -13201,7 +13201,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "點擊訊息輸入框左側的+按鈕選擇照片/影片。"
+            "value" : "點一下訊息輸入框左側的+按鈕選擇照片/影片。"
           }
         }
       }
@@ -13235,7 +13235,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "點擊聊天右上角的鈴鐺圖示來切換通知。"
+            "value" : "點一下聊天右上角的鈴鐺圖示來切換通知。"
           }
         }
       }
@@ -13269,7 +13269,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "點擊聊天頂部的搜尋圖示，按關鍵詞搜尋。"
+            "value" : "點一下聊天頂部的搜尋圖示，依關鍵字搜尋。"
           }
         }
       }
@@ -13303,7 +13303,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "點擊開啟"
+            "value" : "點一下開啟"
           }
         }
       }
@@ -13337,7 +13337,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "點擊全螢幕查看"
+            "value" : "點一下以全螢幕檢視"
           }
         }
       }
@@ -13373,7 +13373,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在朋友標籤頁點擊您的資料，即可更改姓名、狀態訊息和大頭貼。"
+            "value" : "在朋友標籤頁點一下您的個人資料，即可更改姓名、狀態訊息和大頭貼。"
           }
         }
       }
@@ -13484,7 +13484,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本條款規定了服務的使用條件。使用者須理解並同意本條款後方可使用本服務。\n本條款詳細說明瞭服務提供者的權利與義務以及使用者的責任與義務。\n使用服務過程中出現的所有問題均受本條款約束。"
+            "value" : "本條款規定了服務的使用條件。使用者須理解並同意本條款後方可使用本服務。\n本條款詳細說明了服務提供者的權利與義務以及使用者的責任與義務。\n使用服務過程中出現的所有問題均受本條款約束。"
           }
         }
       }
@@ -13621,7 +13621,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "感謝您的寶貴反饋！"
+            "value" : "感謝您的寶貴意見！"
           }
         }
       }
@@ -13691,7 +13691,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用經常崩潰"
+            "value" : "App 經常當機"
           }
         }
       }
@@ -13727,7 +13727,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用執行緩慢"
+            "value" : "App 執行緩慢"
           }
         }
       }
@@ -13899,7 +13899,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "沒有可發送的內容。"
+            "value" : "沒有可傳送的內容。"
           }
         }
       }
@@ -13935,7 +13935,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定會立即生效。應用也會遵循你的 iOS 輔助功能設定，例如旁白、更大字體和減弱動態效果。"
+            "value" : "設定會立即生效。App 也會遵循你的 iOS 輔助使用設定，例如旁白、更大字體和減少動態效果。"
           }
         }
       }
@@ -14003,7 +14003,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "令牌交換失敗。"
+            "value" : "權杖交換失敗。"
           }
         }
       }
@@ -14037,7 +14037,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在轉寫…"
+            "value" : "正在轉錄…"
           }
         }
       }
@@ -14245,7 +14245,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "故障排除"
+            "value" : "疑難排解"
           }
         }
       }
@@ -14279,7 +14279,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "試著通過郵箱新增朋友"
+            "value" : "試著透過電子郵件新增朋友"
           }
         }
       }
@@ -14313,7 +14313,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "嘗試重新啟動應用"
+            "value" : "嘗試重新啟動 App"
           }
         }
       }
@@ -15007,7 +15007,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用者名"
+            "value" : "使用者名稱"
           }
         }
       }
@@ -15041,7 +15041,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用者名稱或郵箱"
+            "value" : "使用者名稱或電子郵件"
           }
         }
       }
@@ -15111,7 +15111,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "不能使用以 apple_ 或 google_ 開頭的使用者名。"
+            "value" : "使用者名稱不能以 apple_ 或 google_ 開頭。"
           }
         }
       }
@@ -15179,7 +15179,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版本 / 構建"
+            "value" : "版本 / 建置"
           }
         }
       }
@@ -15318,7 +15318,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我們對您通訊錄中的電話/郵箱進行安全哈希處理，與伺服器進行匹配。"
+            "value" : "我們會將您通訊錄中的電話號碼/電子郵件安全地雜湊處理，再與伺服器比對。"
           }
         }
       }
@@ -15354,7 +15354,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "什麼是收藏好友？"
+            "value" : "什麼是收藏的朋友？"
           }
         }
       }
@@ -15388,7 +15388,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要發送什麼？"
+            "value" : "要傳送什麼？"
           }
         }
       }
