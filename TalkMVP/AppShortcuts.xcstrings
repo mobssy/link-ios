@@ -48,6 +48,15 @@
               "用${applicationName}给${chat}发消息"
             ]
           }
+        },
+        "zh-Hant" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "用${applicationName}傳訊息",
+              "用${applicationName}傳訊息給${chat}"
+            ]
+          }
         }
       }
     },
@@ -96,6 +105,15 @@
             "values" : [
               "在${applicationName}中总结聊天",
               "在${applicationName}中总结${chat}"
+            ]
+          }
+        },
+        "zh-Hant" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "在${applicationName}中總結聊天",
+              "在${applicationName}中總結${chat}"
             ]
           }
         }
