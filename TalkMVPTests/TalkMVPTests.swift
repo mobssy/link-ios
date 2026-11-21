@@ -3045,6 +3045,19 @@ struct TestModeStatusTests {
     }
 }
 
+// MARK: - Sign-in layout
+
+@Suite("Sign-in layout")
+struct AuthLayoutTests {
+    @Test("A short window tightens the page; a tall or unknown one does not")
+    func shortWindow() {
+        #expect(AuthLayout.isShort(windowHeight: 669))   // iPhone Duo open, landscape
+        #expect(AuthLayout.isShort(windowHeight: 402))   // an iPhone on its side
+        #expect(!AuthLayout.isShort(windowHeight: 874))  // an iPhone upright
+        #expect(!AuthLayout.isShort(windowHeight: 0))    // not measured yet
+    }
+}
+
 // MARK: - Screen centering
 
 @Suite("Screen centering")

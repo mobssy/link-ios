@@ -16,6 +16,7 @@ struct AuthView<Footer: View>: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(LanguageManager.self) private var languageManager
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.screenSafeArea) private var screenSafeArea
     @State private var isSignUp = false
     @State private var username = ""
     @State private var displayName = ""
@@ -36,6 +37,13 @@ struct AuthView<Footer: View>: View {
         return str
     }
 
+    /// A screen too short for the whole page at its usual spacing: iPhone Duo open in landscape,
+    /// or any iPhone on its side. The page tightens so the footer still shows without scrolling
+    /// where it can. It goes by the window, not the keyboard, so typing does not move the logo.
+    private var isShortScreen: Bool {
+        AuthLayout.isShort(windowHeight: screenSafeArea.frame.height)
+    }
+
     // Scrolls when the content does not fit (landscape, a large text size, the keyboard
     // up) and keeps the portrait layout otherwise: the content is at least as tall as
     // the screen, so the spacers still push the form to the middle. The view respects
@@ -45,7 +53,7 @@ struct AuthView<Footer: View>: View {
         NavigationStack {
             GeometryReader { geometry in
                 ScrollView {
-                    VStack(spacing: 30) {
+                    VStack(spacing: isShortScreen ? 14 : 30) {
                         // 로고 영역
                         VStack(spacing: 16) {
                             // The app icon's glass bubble without its background, so it sits on the
@@ -53,7 +61,7 @@ struct AuthView<Footer: View>: View {
                             Image("LoginBubble")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 80, height: 80)
+                                .frame(width: isShortScreen ? 56 : 80, height: isShortScreen ? 56 : 80)
                                 .accessibilityHidden(true)
 
                             Text(appTitle)
@@ -61,7 +69,7 @@ struct AuthView<Footer: View>: View {
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color.primary)
                         }
-                        .padding(.top, 50)
+                        .padding(.top, isShortScreen ? 12 : 50)
 
                         Spacer(minLength: 0)
 
@@ -84,7 +92,7 @@ struct AuthView<Footer: View>: View {
                         Spacer(minLength: 0)
 
                         footer
-                            .padding(.bottom, 24)
+                            .padding(.bottom, isShortScreen ? 12 : 24)
                     }
                     .frame(maxWidth: .infinity, minHeight: geometry.size.height)
                 }
@@ -261,5 +269,16 @@ struct CustomTextField: View {
             .environment(LanguageManager())
     } else {
         Text(verbatim: "Preview unavailable")
+    }
+}
+
+/// When the sign-in page uses its tighter spacing.
+nonisolated enum AuthLayout {
+    /// The page at its usual spacing needs about this much height.
+    static let comfortableHeight: CGFloat = 780
+
+    /// Whether a window this tall is too short. A height of zero means it is not known yet.
+    static func isShort(windowHeight: CGFloat) -> Bool {
+        windowHeight > 0 && windowHeight < comfortableHeight
     }
 }
