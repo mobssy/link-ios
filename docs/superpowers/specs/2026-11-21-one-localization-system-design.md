@@ -124,3 +124,21 @@ people to use. Both point to one system, the platform's own: String Catalogs.
   (`%1$@`) wherever the order changes.
 - **UI tests that match English text.** They launch with `-selectedLanguage en`, so they keep
   working.
+
+## Outcome (2026-11-21)
+
+Done in nine commits on main (2e0e130..b5659b6): the spec, the foundation (16d343f), six
+migration groups (e057ceb..22b2e68) and the cleanup (b5659b6).
+
+- `L10n`, `LocalizationService`, `AppLanguage`, `Language` and `LanguageManager.localize` are gone.
+  Views use `languageManager.string`, other code `AppLocalization.string`.
+- `Localizable.xcstrings` has 449 keys, each in ko, ja, zh-Hans, zh-Hant and es. The keys the
+  compiler extracts match the catalog exactly, and an Xcode IDE build leaves it unchanged.
+- App Info, Terms & Policies and the lock screen now have ja, zh and es text. Traditional Chinese
+  is its own translation.
+- Found on the way and fixed: English plurals ("1 unread message"), the language screen saying the
+  app restarts, and the old name TalkMVP in Help.
+- Checked: iOS 27 unit tests (230) and UI tests (17 pass, 3 skipped by design), and screenshots of
+  sign-in, Friends, Chats, a chat and Settings in ko, ja, zh-Hant and es.
+- Left as is: sample chats are still written in Simplified Chinese for a Traditional Chinese
+  reader (sample content was a non-goal).
