@@ -25,6 +25,14 @@ The summary and the meeting notes are written on the device too, by Apple Intell
 
 ![A conversation summary and meeting notes with decisions, each in a sheet over the chat on an open iPhone Duo](docs/screenshots/duo-ai.png)
 
+Folded, it works as a phone: sign in or try test mode, find every chat tool in one menu, and change the settings.
+
+![Sign-in, a family chat with its menu open, and the settings, on a folded iPhone Duo](docs/screenshots/duo-folded.png)
+
+Open, each list stays beside what you picked from it, like a friend's profile or the AI settings.
+
+![A friend's profile beside the friends list, and the AI feature switches beside the settings, on an open iPhone Duo](docs/screenshots/duo-open.png)
+
 ## Try it
 
 Open `TalkMVP.xcodeproj` in Xcode 27 or later, run it on iOS 26 or later, and tap **Try Test Mode**.
