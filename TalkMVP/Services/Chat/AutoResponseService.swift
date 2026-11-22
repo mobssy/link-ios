@@ -25,7 +25,7 @@ final class AutoResponseService: AutoResponding {
         /// The least time "typing…" shows, even when the reply is ready sooner.
         var minimumTyping: ClosedRange<Double>
 
-        static let natural = Pacing(reading: 1.0...2.5, minimumTyping: 1.0...2.0)
+        static let natural = Pacing(reading: 1.2...2.7, minimumTyping: 0.9...2.1)
         static let immediate = Pacing(reading: 0...0, minimumTyping: 0...0)
     }
 

@@ -65,12 +65,12 @@ nonisolated enum SampleChats {
                 line("한소희", "그럼 토요일 7시에 우리 집에서 봐요 🍲"),
             ]),
             Room(key: "minji", personName: "김민지", members: [], minutesAgo: 180, lines: [
-                line("김민지", "안녕하세요! 지난주 스터디 모임에서 만난 민지예요 😊"),
+                line("김민지", "안녕하세요! 지난주 합정 북카페 스터디에서 만난 민지예요 😊"),
                 reader("minji", 0),
                 line("김민지", "다음 모임에도 오실 거예요?"),
             ]),
             Room(key: "work_colleagues", personName: nil, members: TestData.groupMembers["work_colleagues"] ?? [], minutesAgo: 20 * 60, lines: [
-                line("유재석", "내일 회의 자료 방금 공유했어요."),
+                line("유재석", "내일 회의 자료 방금 공유했어요. 7쪽부터 보시면 돼요."),
                 reader("work_colleagues", 0),
                 line("조세호", "발표는 제가 먼저 할게요."),
                 reader("work_colleagues", 1),
