@@ -913,6 +913,36 @@ struct AuthManagerTests {
         #expect(try context.fetchCount(FetchDescriptor<Friendship>()) == 2)
     }
 
+    @Test("A changed sample list replaces the tester's old sample friends but keeps hand-added ones")
+    func testModeSyncsChangedSampleFriends() throws {
+        let context = try makeContext()
+        let manager = makeManager(context)
+        manager.startTestSession(
+            displayName: "Tester", statusMessage: "Hi",
+            friends: [(name: "A", email: "a@example.com"), (name: "B", email: "b@example.com")]
+        )
+        let testerID = try #require(manager.currentUser?.id.uuidString)
+        context.insert(Friendship(userId: testerID, friendId: UUID().uuidString, friendName: "Pat", friendEmail: "pat@mail.test", status: .accepted))
+        try context.save()
+
+        manager.refreshTestFriends([(name: "A2", email: "a@example.com"), (name: "C", email: "c@example.com")])
+
+        let friends = try context.fetch(FetchDescriptor<Friendship>(predicate: #Predicate { $0.ownerUserId == testerID }))
+        #expect(Set(friends.map(\.friendName)) == ["A2", "C", "Pat"])
+    }
+
+    @Test("Refreshing sample friends leaves a real account alone")
+    func refreshTestFriendsIgnoresRealAccounts() async throws {
+        let context = try makeContext()
+        let manager = makeManager(context)
+        await manager.signUp(username: "jordan", displayName: "Jordan", email: "jordan@example.com", password: "secret1")
+        let before = try context.fetch(FetchDescriptor<Friendship>()).map(\.friendName).sorted()
+
+        manager.refreshTestFriends([(name: "C", email: "c@example.com")])
+
+        #expect(try context.fetch(FetchDescriptor<Friendship>()).map(\.friendName).sorted() == before)
+    }
+
     @Test("Entering test mode removes tester accounts left behind earlier, but not real accounts")
     func testModeClearsLeftoverTesters() async throws {
         let context = try makeContext()

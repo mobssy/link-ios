@@ -21,6 +21,7 @@ struct ContentView: View {
         mainContent()
             .environment(router)
             .tint(.appPrimaryText)
+            .task { authManager.refreshTestFriends(TestData.friends) }
             .sheet(isPresented: $showContactsOnboarding, onDismiss: {
                 contactsOnboardingShown = true
             }) {

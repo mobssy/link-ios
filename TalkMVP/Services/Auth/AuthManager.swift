@@ -159,7 +159,7 @@ class AuthManager {
             let tester = try TestAccount.all(in: modelContext).first
                 ?? newTestAccount(displayName: displayName, statusMessage: statusMessage)
             try TestAccount.removeAll(except: tester, in: modelContext)
-            try addMissingFriends(friends, to: tester)
+            try TestAccount.syncSampleFriends(friends, for: tester, in: modelContext)
             try activate(tester)
         } catch {
             authLogger.error("Failed to start test session: \(error.localizedDescription, privacy: .public)")
@@ -178,20 +178,15 @@ class AuthManager {
         return tester
     }
 
-    /// Gives the tester each sample friend it does not already have, matched by email.
-    private func addMissingFriends(_ friends: [(name: String, email: String)], to tester: User) throws {
-        let testerID = tester.id.uuidString
-        let existing = Set(try modelContext.fetch(FetchDescriptor<Friendship>(
-            predicate: #Predicate { $0.ownerUserId == testerID }
-        )).map(\.friendEmail))
-        for friend in friends where !existing.contains(friend.email) {
-            modelContext.insert(Friendship(
-                userId: testerID,
-                friendId: UUID().uuidString,
-                friendName: friend.name,
-                friendEmail: friend.email,
-                status: .accepted
-            ))
+    /// Brings a signed-in tester's sample friends up to date with `friends`, for a build whose
+    /// sample list changed since test mode was entered. Does nothing for any other account.
+    func refreshTestFriends(_ friends: [(name: String, email: String)]) {
+        guard let user = currentUser, TestAccount.isTester(user) else { return }
+        do {
+            try TestAccount.syncSampleFriends(friends, for: user, in: modelContext)
+            if modelContext.hasChanges { try modelContext.save() }
+        } catch {
+            authLogger.error("Failed to refresh test friends: \(error.localizedDescription, privacy: .public)")
         }
     }
 

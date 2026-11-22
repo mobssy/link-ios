@@ -30,6 +30,44 @@ enum TestAccount {
         return accounts.filter(\.isCurrentUser) + accounts.filter { !$0.isCurrentUser }
     }
 
+    /// Whether `user` is the test-mode account.
+    static func isTester(_ user: User) -> Bool {
+        user.username == username && user.email == email
+    }
+
+    /// The domain sample people's addresses use. A friend at any other address was added by hand
+    /// and is never touched by `syncSampleFriends`.
+    static let sampleDomain = "@example.com"
+
+    /// Makes the tester's sample friends match `friends`, by email: adds the missing ones, renames
+    /// the ones whose name changed, and removes sample friends no longer listed, so a build that
+    /// changes the sample list shows the new one without deleting the account. Does not save.
+    static func syncSampleFriends(_ friends: [(name: String, email: String)], for tester: User, in context: ModelContext) throws {
+        let testerID = tester.id.uuidString
+        let names = Dictionary(friends.map { ($0.email, $0.name) }, uniquingKeysWith: { first, _ in first })
+        var present = Set<String>()
+        for friendship in try context.fetch(FetchDescriptor<Friendship>(
+            predicate: #Predicate { $0.ownerUserId == testerID }
+        )) {
+            if let name = names[friendship.friendEmail] {
+                if friendship.friendName != name { friendship.friendName = name }
+                present.insert(friendship.friendEmail)
+            } else if friendship.friendEmail.hasSuffix(sampleDomain) {
+                context.delete(friendship)
+            }
+        }
+        for friend in friends where !present.contains(friend.email) {
+            present.insert(friend.email)
+            context.insert(Friendship(
+                userId: testerID,
+                friendId: UUID().uuidString,
+                friendName: friend.name,
+                friendEmail: friend.email,
+                status: .accepted
+            ))
+        }
+    }
+
     /// Deletes every test account except `keep`, together with the friendships that belong to
     /// them. Does not save.
     /// - Returns: How many accounts were deleted.
