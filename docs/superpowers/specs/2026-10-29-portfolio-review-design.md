@@ -44,7 +44,7 @@ Goals: the conversation is the loudest thing on a chat screen; a translation rea
 
 - Remove the random online status and its polling.
 - Under a one-to-one chat's title: the other person's language, when it is not the reader's, and that their messages are translated ("Japanese · Translated"). Nothing when it's the same language or not known yet.
-- Under a group's title: its members' names ("강호동, 한소희"), shortened to the first names plus a count when long.
+- Under a group's title: its members' names ("강민재, 한서연"), shortened to the first names plus a count when long.
 
 ### 5-6 Who speaks what in a group
 

@@ -34,7 +34,7 @@
 
 ### Task 2 (B): Sample chats that say something
 
-- [ ] Unit tests for `SampleChats.rooms(readerLanguage:)`: four rooms; the reader's lines are in the given language for ko/en/ja/zh-Hans/es; unread = trailing others; members match `TestData.groupMembers`; `TestData.language(of: "강호동") == "ko"`. FAIL first.
+- [ ] Unit tests for `SampleChats.rooms(readerLanguage:)`: four rooms; the reader's lines are in the given language for ko/en/ja/zh-Hans/es; unread = trailing others; members match `TestData.groupMembers`; `TestData.language(of: "강민재") == "ko"`. FAIL first.
 - [ ] Remove random messages, `OpenChatRooms`, `.newMessageReceived`; `ChatListView.createSampleDataIfNeeded` inserts `SampleChats` rooms and messages; the Korean friends get `"ko"` in `memberLanguages`. Fix UI tests that waited for a first message.
 - [ ] Unit + UI; commit `fix: start the sample chats with real conversations, not random hellos`.
 

@@ -2884,7 +2884,7 @@ struct ChatSubtitleTests {
 
     @Test("A group shows who is in it, shortened when there are many")
     func groupMembers() {
-        #expect(subtitle(isGroup: true, members: ["강호동", "한소희"]) == "강호동, 한소희")
+        #expect(subtitle(isGroup: true, members: ["강민재", "한서연"]) == "강민재, 한서연")
         #expect(subtitle(isGroup: true, members: ["A", "B", "C"]) == "A, B, C")
         #expect(subtitle(isGroup: true, members: ["A", "B", "C", "D", "E"]) == "A, B +3")
         #expect(subtitle(isGroup: true, members: []) == nil)
@@ -2924,14 +2924,14 @@ struct SenderLanguageTests {
 struct SenderAvatarTests {
     @Test("The initial is the name's first letter, capitalized")
     func initial() {
-        #expect(SenderAvatar(name: "강호동").initial == "강")
+        #expect(SenderAvatar(name: "강민재").initial == "강")
         #expect(SenderAvatar(name: "lucía").initial == "L")
         #expect(SenderAvatar(name: " ").initial == "?")
     }
 
     @Test("The color comes from the name: the same every time, and not the same for everyone")
     func color() {
-        let names = ["강호동", "한소희", "佐藤ゆき", "Lucía García", "권지용", "Mina"]
+        let names = ["강민재", "한서연", "佐藤ゆき", "Lucía García", "권도윤", "Mina"]
         #expect(names.allSatisfy { SenderAvatar(name: $0).colorIndex == SenderAvatar(name: $0).colorIndex })
         #expect(names.allSatisfy { (0..<SenderAvatar.paletteCount).contains(SenderAvatar(name: $0).colorIndex) })
         #expect(Set(names.map { SenderAvatar(name: $0).colorIndex }).count > 1)
@@ -2939,7 +2939,7 @@ struct SenderAvatarTests {
 
     @Test("A group is drawn as its first two members' faces")
     func groupFaces() {
-        #expect(GroupAvatar(members: ["강호동", "한소희", "유재석"]).faces.map(\.initial) == ["강", "한"])
+        #expect(GroupAvatar(members: ["강민재", "한서연", "유지훈"]).faces.map(\.initial) == ["강", "한"])
         #expect(GroupAvatar(members: ["佐藤ゆき"]).faces == [SenderAvatar(name: "佐藤ゆき")])
         #expect(GroupAvatar(members: []).faces.isEmpty)
     }

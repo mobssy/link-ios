@@ -79,12 +79,12 @@ final class TalkMVPUITests: XCTestCase {
         sleep(1)
     }
 
-    /// Opens 강호동's profile from the Friends tab and starts the chat from it.
+    /// Opens 강민재's profile from the Friends tab and starts the chat from it.
     private func startChatWithKang() {
         tab("Friends").tap()
         // The row is one button whose label combines the name and status; tapping it
         // hits the middle of the row, which must open the profile too.
-        let friend = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "강호동")).firstMatch
+        let friend = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "강민재")).firstMatch
         XCTAssertTrue(friend.waitForExistence(timeout: 5))
         friend.tap()
         let startChat = app.buttons["Start Chat"]
@@ -103,7 +103,7 @@ final class TalkMVPUITests: XCTestCase {
             startChatWithKang()
 
             // The chat opens in the Chats tab, not in a sheet over the profile.
-            XCTAssertTrue(app.navigationBars.staticTexts["강호동"].waitForExistence(timeout: 10), "the conversation opens")
+            XCTAssertTrue(app.navigationBars.staticTexts["강민재"].waitForExistence(timeout: 10), "the conversation opens")
             XCTAssertFalse(app.buttons["Close"].exists, "the profile is gone")
 
             // Back to the chat list, as a person would before going to Friends again. In a
@@ -118,7 +118,7 @@ final class TalkMVPUITests: XCTestCase {
 
         // The conversation is a real room in the chat list, listed once (the open chat's
         // title, beside the list on iPad, isn't a row).
-        let rooms = app.cells.staticTexts.matching(NSPredicate(format: "label == %@", "강호동"))
+        let rooms = app.cells.staticTexts.matching(NSPredicate(format: "label == %@", "강민재"))
         XCTAssertTrue(rooms.firstMatch.waitForExistence(timeout: 5))
         XCTAssertEqual(rooms.count, 1)
     }
@@ -134,15 +134,15 @@ final class TalkMVPUITests: XCTestCase {
         XCTAssertTrue(input.waitForExistence(timeout: 10))
         input.tap()
         input.typeText("hi\n")
-        let avatar = app.buttons["Profile of 강호동"].firstMatch
-        XCTAssertTrue(avatar.waitForExistence(timeout: 60), "강호동 answers")
+        let avatar = app.buttons["Profile of 강민재"].firstMatch
+        XCTAssertTrue(avatar.waitForExistence(timeout: 60), "강민재 answers")
         avatar.tap()
 
         let startChat = app.buttons["Start Chat"]
         XCTAssertTrue(startChat.waitForExistence(timeout: 5))
         startChat.tap()
         XCTAssertTrue(startChat.waitForNonExistence(timeout: 5), "the profile closes")
-        XCTAssertTrue(app.navigationBars.staticTexts["강호동"].exists, "the same chat is still open")
+        XCTAssertTrue(app.navigationBars.staticTexts["강민재"].exists, "the same chat is still open")
         XCTAssertTrue(input.exists)
     }
 
@@ -335,8 +335,8 @@ final class TalkMVPUITests: XCTestCase {
         app.navigationBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Family Group")).firstMatch.tap()
         let members = app.descendants(matching: .any)["groupMembers"]
         XCTAssertTrue(members.waitForExistence(timeout: 5), "the title opens the group's details")
-        XCTAssertTrue(members.staticTexts["강호동"].exists)
-        XCTAssertTrue(members.staticTexts["한소희"].exists)
+        XCTAssertTrue(members.staticTexts["강민재"].exists)
+        XCTAssertTrue(members.staticTexts["한서연"].exists)
         XCTAssertFalse(app.staticTexts["Profile information is unavailable"].exists)
     }
 
@@ -476,9 +476,9 @@ final class TalkMVPUITests: XCTestCase {
 
         tab("Friends").tap()
         XCTAssertTrue(app.staticTexts["Select a Friend"].waitForExistence(timeout: 5), "no profile is open yet")
-        app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "강호동")).firstMatch.tap()
+        app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "강민재")).firstMatch.tap()
         XCTAssertTrue(app.buttons["Start Chat"].waitForExistence(timeout: 5), "the profile opens beside the list")
-        XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "권지용")).firstMatch.isHittable,
+        XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "권도윤")).firstMatch.isHittable,
                       "the list stays on screen")
         // Blocked from the open profile, the friend leaves the list and the column empties.
         app.buttons["Block"].firstMatch.tap()

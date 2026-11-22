@@ -12,7 +12,7 @@ nonisolated enum ChatSubtitle {
     /// Members named before the rest are counted.
     static let namedMembers = 3
 
-    /// A group's members ("강호동, 한소희", or "A, B +3" when there are more than three), or the
+    /// A group's members ("강민재, 한서연", or "A, B +3" when there are more than three), or the
     /// other person's language when it isn't the reader's, and whether it is translated
     /// ("Japanese · Translated", "Japanese · Original"). Nil when
     /// there is nothing to say.

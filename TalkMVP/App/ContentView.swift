@@ -162,26 +162,26 @@ struct TestModeButtonView: View {
 
 nonisolated enum TestData {
     static let friends: [(name: String, email: String)] = [
-        ("권지용", "peaceminusone@example.com"),
-        ("한소희", "sohee@example.com"),
-        ("강호동", "kang@example.com"),
-        ("유재석", "youquiz@example.com"),
-        ("조세호", "cabbage@example.com")
+        ("권도윤", "doyoon@example.com"),
+        ("한서연", "seoyeon@example.com"),
+        ("강민재", "minjae@example.com"),
+        ("유지훈", "jihoon@example.com"),
+        ("조하린", "harin@example.com")
     ]
 
     /// Who is in each sample group chat, by the group's localization key. Most are test-mode
     /// friends, so their messages carry a name the chat already knows; the study group's are
     /// people abroad, so one sample chat is written in several languages.
     static let groupMembers: [String: [String]] = [
-        "family_group": ["강호동", "한소희"],
-        "work_colleagues": ["유재석", "조세호"],
+        "family_group": ["강민재", "한서연"],
+        "work_colleagues": ["유지훈", "조하린"],
         "study_group": ["佐藤ゆき", "Lucía García"]
     ]
 
     /// The language each sample person writes in, whatever language the chat is in: they answer
     /// in theirs, and the reader sees it translated.
     static let memberLanguages: [String: String] = [
-        "강호동": "ko", "한소희": "ko", "유재석": "ko", "조세호": "ko", "권지용": "ko", "김민지": "ko",
+        "강민재": "ko", "한서연": "ko", "유지훈": "ko", "조하린": "ko", "권도윤": "ko", "김민지": "ko",
         "佐藤ゆき": "ja",
         "Lucía García": "es"
     ]

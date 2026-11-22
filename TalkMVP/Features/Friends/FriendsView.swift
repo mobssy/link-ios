@@ -381,11 +381,11 @@ struct FriendsView: View {
         guard existingMine.isEmpty else { hasSeededNewFriends = true; return }
 
         let samples: [(String, String)] = [
-            ("강호동", "kanghodong@example.com"),
-            ("원빈", "wonbin@example.com"),
-            ("유재석", "yoojaeseok@example.com"),
-            ("아이유", "iu@example.com"),
-            ("손흥민", "son7@example.com")
+            ("강민재", "minjae.minjae@example.com"),
+            ("원예준", "yejun@example.com"),
+            ("유지훈", "jihoon.yoo@example.com"),
+            ("이수아", "sua@example.com"),
+            ("손태윤", "taeyoon@example.com")
         ]
 
         let created = samples.map { s in
