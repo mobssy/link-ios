@@ -4,7 +4,7 @@
 
 ## What took iteration
 
-L!NK has no backend: the other side of every chat is simulated, and every AI feature runs on the device's small on-device model. Most of the work went into making that model's output trustworthy in more than one language, and into keeping one codebase right on both iOS 26 and iOS 27. Each change below was tried on sample chats in Korean and English, with temporary probe tests that print the model's output, before it shipped. The commit messages tell each story in full.
+L!NK has no backend: the other side of every chat is simulated, and every AI feature runs on the device's small on-device model. Most of the work went into making that model's output trustworthy in more than one language. Each change below was tried on sample chats in Korean and English, with temporary probe tests that print the model's output, before it shipped. The commit messages tell each story in full.
 
 ### Making a small on-device model trustworthy
 
@@ -14,17 +14,19 @@ L!NK has no backend: the other side of every chat is simulated, and every AI fea
 - **Replies in the right language.** The simulated other side used to answer from ten canned Korean lines ("Dinner at 7?" got "파일 잘 받았습니다 📄"). Now the on-device model answers what was said. Language detection needed guarding: on its own, "ok" was read as Polish and answered "Dobra.", and told to use "the user's language", the model picked Spanish. Detection is trusted only above 0.8 confidence, a short message is read together with earlier ones, and the app's language is the fallback.
 - **Suggestions from the right side of the chat.** Suggested replies lost track of who was talking: "Congrats! When do you start?" got the suggestion "Congrats!". The transcript now marks Me and Them. An example answer in the prompt fixed it too, but then turned up word for word in unrelated chats, so it went.
 - **Search by meaning across languages.** "저녁 약속" (dinner plans) should find "dinner tonight". Asked for related phrases, the model invented ones no message contains, so it returns single words. Asked for synonyms and translations together, it stayed in the search's language, so translations get a list of their own. And it translated the search as a whole ("dinner appointment"), so translations are matched word by word. The chat shows which words it added, so no match is a mystery.
-- **Photo descriptions on iOS 27.** Asked in English for a Korean description, the model answered in English and then translated itself, so the request is now written in the language it should answer in. On iOS 26, photos work as before.
+- **Photo descriptions on iOS 27.** Asked in English for a Korean description, the model answered in English and then translated itself, so the request is now written in the language it should answer in.
 - **No translation beats a made-up one.** When neither Apple Intelligence nor the Translation framework could translate a message, the app fell back on a short phrasebook and on swapping Korean and English words one at a time, and showed the result as the translation. Now the translation half of the bubble says it couldn't translate.
 
 ### Saying only what's true
 
 - **No made-up state.** A design review of the screenshots asked what "Online" meant under a group's name. It meant nothing: a random 80% chance every 30 seconds, and every friend row said "online" too. Opening a chat also staged a "Connecting..." banner for a server that doesn't exist, and a canned "Hello!" landed in a random room every half minute. All of it is gone. Under a chat's title is what the app knows (a group's members, or the language the other person writes in), and the sample chats start with real conversations in Korean, Japanese and Spanish.
 
-### One codebase, iOS 26 and iOS 27
+### From iOS 26 to iOS 27
 
-- **Swipe to reply.** `swipeActions` only works in a List, and the messages live in a ScrollView, so on iOS 26 a swipe to the right went to the system's swipe-back and left the chat. A SwiftUI drag gesture on the bubbles fixed the swipe but broke scrolling. The answer was a UIKit pan that starts only for a mostly sideways move to the right, which iOS 26's swipe-back waits for: a swipe on a bubble replies, and one beside it still goes back. Both were checked against the original behavior on iOS 26.5.
-- **A test target that wouldn't load.** AppIntentsTesting (iOS 27) links a library iOS 26 doesn't have, and weak linking doesn't help when the framework itself is there, so the whole UI test bundle failed to load on iOS 26. The Siri tests moved to their own target, and the UI tests run on both versions again.
+The app supported iOS 26 and iOS 27 from one codebase until November 2026, and now requires iOS 27.
+
+- **Swipe to reply.** On iOS 26, `swipeActions` only worked in a List, and the messages live in a ScrollView, so a swipe to the right went to the system's swipe-back and left the chat. The workaround was a UIKit pan that started only for a mostly sideways move to the right, which the swipe-back waited for. iOS 27's swipe actions work in a ScrollView, so the pan is gone.
+- **A test target of its own.** AppIntentsTesting links a library iOS 26 doesn't have, and weak linking didn't help, so the whole UI test bundle failed to load there. The Siri tests moved to their own target, where they stay.
 - **Staying on device.** Private Cloud Compute (iOS 27) could read a long chat in one go, but it needs a managed entitlement, and without one the first request crashes the app. Every AI feature stays on the device.
 
 ### SwiftUI state and concurrency
@@ -37,7 +39,7 @@ L!NK has no backend: the other side of every chat is simulated, and every AI fea
 ### Checking what the simulator can't
 
 - Speech recognition doesn't run in the iOS simulator, so the transcription pipeline was checked on macOS with the same code: synthesized English and Korean sentences came back word for word. A test there caught the end of the audio being cut at a 1,024-frame boundary.
-- The UI tests run on iPhone (iOS 26.5 and 27) and iPad, and the Siri actions run end to end through the system with AppIntentsTesting.
+- The UI tests run on iPhone and iPad, and the Siri actions run end to end through the system with AppIntentsTesting.
 
 ## Run on an iPhone
 

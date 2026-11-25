@@ -34,7 +34,7 @@ Success is a reviewer who tries test mode, understands the product in a minute, 
 ## Capabilities and Constraints
 
 - Swift, SwiftUI, SwiftData, Foundation Models, Translation and Speech frameworks.
-- Deployment target iOS 26; iOS 27 features only behind availability checks, with an iOS 26 fallback.
+- Deployment target iOS 27. Features from a later iOS release (such as Siri AI in 27.3) sit behind availability checks.
 - Six app languages; seven translation languages.
 - No backend, no network accounts. Sign in with Apple and Google are local stand-ins.
 - Sample people use invented names. Real public figures must never appear in sample data.

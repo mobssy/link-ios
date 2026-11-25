@@ -35,7 +35,7 @@ Open, each list stays beside what you picked from it, like a friend's profile or
 
 ## Try it
 
-Open `TalkMVP.xcodeproj` in Xcode 27 or later, run it on iOS 26 or later, and tap **Try Test Mode**.
+Open `TalkMVP.xcodeproj` in Xcode 27 or later, run it on iOS 27 or later, and tap **Try Test Mode**.
 
 Built with SwiftUI, SwiftData, Foundation Models, and the Translation and Speech frameworks. More in [docs/ENGINEERING.md](docs/ENGINEERING.md) and [docs/screenshots](docs/screenshots).
 
