@@ -79,6 +79,17 @@ final class TalkMVPUITests: XCTestCase {
         sleep(1)
     }
 
+    /// Opens the chat's menu and picks `item` once it is on screen. The menu opens with an
+    /// animation, and an item further down isn't hittable until it has finished.
+    private func chooseFromChatMenu(_ item: String) {
+        app.buttons["More options"].firstMatch.tap()
+        let entry = app.buttons[item].firstMatch
+        XCTAssertTrue(entry.waitForExistence(timeout: 5), "the menu offers \(item)")
+        let hittable = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isHittable == true"), object: entry)
+        _ = XCTWaiter.wait(for: [hittable], timeout: 3)
+        entry.tap()
+    }
+
     /// Opens 강민재's profile from the Friends tab and starts the chat from it.
     private func startChatWithKang() {
         tab("Friends").tap()
@@ -302,8 +313,7 @@ final class TalkMVPUITests: XCTestCase {
         let search = app.searchFields.matching(NSPredicate(format: "placeholderValue == %@ OR label == %@", "Search conversation", "Search conversation")).firstMatch
         XCTAssertFalse(search.exists, "the conversation has the screen until search is asked for")
 
-        app.buttons["More options"].firstMatch.tap()
-        app.buttons["Search"].firstMatch.tap()
+        chooseFromChatMenu("Search")
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         search.typeText("Saturday")
         // iPhone closes search with an X; on iPad the field takes the title's place with no
@@ -399,8 +409,7 @@ final class TalkMVPUITests: XCTestCase {
             .matching(NSPredicate(format: "identifier BEGINSWITH 'message_' AND label CONTAINS 'Translated'"))
         XCTAssertTrue(translated.firstMatch.waitForExistence(timeout: 60), "translated to begin with")
 
-        app.buttons["More options"].firstMatch.tap()
-        app.buttons["Translate Messages"].firstMatch.tap()
+        chooseFromChatMenu("Translate Messages")
         XCTAssertTrue(translated.firstMatch.waitForNonExistence(timeout: 5), "this chat shows the originals")
         XCTAssertTrue(app.staticTexts["Korean · Original"].waitForExistence(timeout: 5), "and says so under its name")
 
@@ -432,8 +441,7 @@ final class TalkMVPUITests: XCTestCase {
         }
         // The results may not include the message the suggestions answer. On iPad the chat
         // list's search field is on screen too.
-        app.buttons["More options"].firstMatch.tap()
-        app.buttons["Search"].firstMatch.tap()
+        chooseFromChatMenu("Search")
         let search = app.searchFields.matching(NSPredicate(format: "placeholderValue == %@ OR label == %@", "Search conversation", "Search conversation")).firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         search.tap()

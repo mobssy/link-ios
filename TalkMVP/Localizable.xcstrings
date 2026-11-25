@@ -2653,6 +2653,41 @@
         }
       }
     },
+    "Catch up with a summary" : {
+      "comment" : "Offer at the top of a chat with many unread messages; opens the on-device summary.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponte al día con un resumen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要約で追いつく"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요약으로 빠르게 확인하기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用摘要快速了解"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用摘要快速了解"
+          }
+        }
+      }
+    },
     "Cancel attachment" : {
       "localizations" : {
         "es" : {
@@ -3799,41 +3834,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已刪除的訊息"
-          }
-        }
-      }
-    },
-    "Disappearing" : {
-      "comment" : "Menu command that opens the disappearing-messages timer",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mensajes efímeros"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "消えるメッセージ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "자폭 메시지"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "阅后即焚"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "閱後即焚"
           }
         }
       }

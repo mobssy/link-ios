@@ -3293,3 +3293,19 @@ struct MessageRunsTests {
     }
 }
 
+@Suite("Summary offer")
+struct SummaryOfferTests {
+    @Test("A chat opened with many unread messages offers a summary")
+    func offersWhenManyUnread() {
+        #expect(SummaryOffer.shows(unreadAtOpen: SummaryOffer.unreadThreshold, summaryEnabled: true, dismissed: false))
+    }
+
+    @Test("No offer for a few unread, with summaries off, or once closed", arguments: [
+        (SummaryOffer.unreadThreshold - 1, true, false),
+        (SummaryOffer.unreadThreshold, false, false),
+        (SummaryOffer.unreadThreshold, true, true)
+    ])
+    func staysQuiet(unread: Int, enabled: Bool, dismissed: Bool) {
+        #expect(!SummaryOffer.shows(unreadAtOpen: unread, summaryEnabled: enabled, dismissed: dismissed))
+    }
+}

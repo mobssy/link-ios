@@ -75,6 +75,10 @@ struct ChatView: View {
     @State var showingGroupInfo = false
     @State var showingSummarySheet = false
     @State var showingMeetingNotes = false
+    /// Unread messages when the chat opened, before they were marked read: enough of them and
+    /// the chat offers a summary.
+    @State private var unreadAtOpen: Int
+    @State private var summaryOfferDismissed = false
     /// The summary and meeting notes, as the two sheets show them.
     @State var aiResults = ChatAIResults()
 
@@ -134,6 +138,7 @@ struct ChatView: View {
 
     init(chatRoom: ChatRoom, chatService: ChatService? = nil) {
         self.chatRoom = chatRoom
+        self._unreadAtOpen = State(initialValue: chatRoom.unreadCount)
         self._chatService = State(initialValue: chatService ?? ChatService(modelContext: Self.initServiceContext))
     }
 
@@ -196,6 +201,16 @@ struct ChatView: View {
                 showingAddFriendAlert = true
             }
 
+            if SummaryOffer.shows(unreadAtOpen: unreadAtOpen, summaryEnabled: aiSummaryEnabled, dismissed: summaryOfferDismissed) {
+                SummaryOfferView {
+                    summaryOfferDismissed = true
+                    generateSummary()
+                } onClose: {
+                    summaryOfferDismissed = true
+                }
+                .transition(.opacity)
+            }
+
             mainContentView
         }
         .modifier(ChatBackgroundColorScheme(scheme: backgroundColorScheme))
@@ -227,69 +242,81 @@ struct ChatView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Button {
-                        // The message field lets go first, or the two fight over the keyboard
-                        // and the search field never gets it.
-                        isTextFieldFocused = false
-                        isSearchShown = true
-                    } label: {
-                        Label(languageManager.string(LocalizedStringResource("Search", comment: "Menu command that shows the search field")), systemImage: "magnifyingglass")
-                    }
-
-                    Toggle(isOn: translationHereBinding) {
-                        Label(languageManager.string("Translate Messages"), systemImage: "translate")
-                    }
-
-                    Button {
-                        showingBackgroundSettings = true
-                    } label: {
-                        Label(languageManager.string(LocalizedStringResource("Background", comment: "Menu command that opens this chat's background settings")), systemImage: "photo.fill")
-                    }
-
-                    Button {
-                        toggleChatNotifications()
-                    } label: {
-                        Label(
-                            chatRoom.notificationsEnabled ?
-                                languageManager.string(LocalizedStringResource("Mute", comment: "Menu command that turns off this chat's notifications")) :
-                                languageManager.string(LocalizedStringResource("Unmute", comment: "Menu command that turns this chat's notifications back on")),
-                            systemImage: chatRoom.notificationsEnabled ? "bell.slash.fill" : "bell.fill"
-                        )
-                    }
-
-                    Button {
-                        showingBookmarks = true
-                    } label: {
-                        Label(languageManager.string("Bookmarks"), systemImage: "bookmark")
-                    }
-
-                    Button {
-                        showingDisappearingPicker = true
-                    } label: {
-                        Label(languageManager.string(LocalizedStringResource("Disappearing", comment: "Menu command that opens the disappearing-messages timer")), systemImage: "flame")
-                    }
-
-                    if aiSummaryEnabled {
-                        Button {
-                            generateSummary()
-                        } label: {
-                            Label(languageManager.string("Summarize"), systemImage: "text.quote")
+                    // Three groups: what the on-device AI can do with this chat, finding things in
+                    // it, and how this chat behaves. A flat list of eight mixed toggles, sheets and
+                    // actions hid the AI features among the settings.
+                    if aiSummaryEnabled || aiAutoMeetingNotesEnabled {
+                        Section {
+                            if aiSummaryEnabled {
+                                Button {
+                                    generateSummary()
+                                } label: {
+                                    Label(languageManager.string("Summarize"), systemImage: "text.quote")
+                                }
+                            }
+                            if aiAutoMeetingNotesEnabled {
+                                Button {
+                                    generateMeetingNotes()
+                                } label: {
+                                    Label(languageManager.string("Meeting Notes"), systemImage: "note.text")
+                                }
+                            }
                         }
                     }
 
-                    if aiAutoMeetingNotesEnabled {
+                    Section {
                         Button {
-                            generateMeetingNotes()
+                            // The message field lets go first, or the two fight over the keyboard
+                            // and the search field never gets it.
+                            isTextFieldFocused = false
+                            isSearchShown = true
                         } label: {
-                            Label(languageManager.string("Meeting Notes"), systemImage: "note.text")
+                            Label(languageManager.string(LocalizedStringResource("Search", comment: "Menu command that shows the search field")), systemImage: "magnifyingglass")
+                        }
+
+                        Button {
+                            showingBookmarks = true
+                        } label: {
+                            Label(languageManager.string("Bookmarks"), systemImage: "bookmark")
+                        }
+                    }
+
+                    Section {
+                        Toggle(isOn: translationHereBinding) {
+                            Label(languageManager.string("Translate Messages"), systemImage: "translate")
+                        }
+
+                        Button {
+                            toggleChatNotifications()
+                        } label: {
+                            Label(
+                                chatRoom.notificationsEnabled ?
+                                    languageManager.string(LocalizedStringResource("Mute", comment: "Menu command that turns off this chat's notifications")) :
+                                    languageManager.string(LocalizedStringResource("Unmute", comment: "Menu command that turns this chat's notifications back on")),
+                                systemImage: chatRoom.notificationsEnabled ? "bell.slash.fill" : "bell.fill"
+                            )
+                        }
+
+                        Button {
+                            showingDisappearingPicker = true
+                        } label: {
+                            Label(languageManager.string("Disappearing Messages"), systemImage: "flame")
+                        }
+
+                        Button {
+                            showingBackgroundSettings = true
+                        } label: {
+                            Label(languageManager.string(LocalizedStringResource("Background", comment: "Menu command that opens this chat's background settings")), systemImage: "photo.fill")
                         }
                     }
 
                     if isBlocked && chatRoom.otherUserId != nil {
-                        Button {
-                            unblockUser()
-                        } label: {
-                            Label(languageManager.string(LocalizedStringResource("Unblock", comment: "Command that unblocks the other person")), systemImage: "hand.raised.slash")
+                        Section {
+                            Button {
+                                unblockUser()
+                            } label: {
+                                Label(languageManager.string(LocalizedStringResource("Unblock", comment: "Command that unblocks the other person")), systemImage: "hand.raised.slash")
+                            }
                         }
                     }
                 } label: {
