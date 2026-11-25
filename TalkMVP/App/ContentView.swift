@@ -12,6 +12,7 @@ import SwiftData
 struct ContentView: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(LanguageManager.self) private var languageManager
+    @Environment(ChatDraftHandoff.self) private var draftHandoff
     @State private var router = AppRouter()
     @State private var showTestModeAlert = false
     @AppStorage("contactsOnboardingShown") private var contactsOnboardingShown = false
@@ -22,6 +23,10 @@ struct ContentView: View {
             .environment(router)
             .tint(.appPrimaryText)
             .task { authManager.refreshTestFriends(TestData.friends) }
+            // A draft from Siri's Edit in L!NK: open its chat, which takes the draft.
+            .onChange(of: draftHandoff.pending?.roomID, initial: true) { _, roomID in
+                if let roomID { router.openChat(roomID) }
+            }
             .sheet(isPresented: $showContactsOnboarding, onDismiss: {
                 contactsOnboardingShown = true
             }) {
@@ -217,6 +222,7 @@ nonisolated enum TestData {
         ContentView()
             .environment(AuthManager(modelContext: container.mainContext))
             .environment(LanguageManager())
+            .environment(ChatDraftHandoff())
             .modelContainer(container)
     } else {
         Text(verbatim: "Preview unavailable")

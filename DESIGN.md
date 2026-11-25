@@ -183,7 +183,7 @@ Soft, generously rounded forms throughout: bubbles at 20pt, glass panels at 16pt
 - **Friend banner:** a one-to-one chat with someone who isn't a friend shows a glass strip with Add Friend and a close button; closed, it stays away for that chat.
 
 ### Siri Reply Card
-- **When:** Siri shows it while asking to send a reply; Send and Cancel are the system's own confirmation buttons.
+- **When:** Siri shows it while asking to send a reply; Send and Cancel are the system's own confirmation buttons. Under the blocks, a full-width bordered "Edit in L!NK" button (pencil glyph, at least 44pt tall) opens the chat with the reply in its message field, unsent.
 - **Content:** the chat name in headline, "You're sending" in subheadline secondary over the text in body, then one block per language: who reads it ("Emma Kang reads it in English") in subheadline secondary, the translation in body, and the translation back in the sender's language in footnote secondary behind the translate glyph. Readers in the sender's language get one "reads it as written" line; a failed translation says so and shows no text.
 - **Style:** system text styles and semantic colors only, flat on the system's card, tinted `.appPrimaryText` for any action it gains. Each block is one VoiceOver element.
 

@@ -153,6 +153,14 @@ struct ChatIntentActions {
         return try await send(text, to: roomID)
     }
 
+    /// Hands `text` to the chat's message field through `handoff`, for the user to finish in the
+    /// app. Nothing is sent.
+    func handDraft(_ text: String, to roomID: UUID, via handoff: ChatDraftHandoff) throws {
+        try checkAccess()
+        let room = try room(id: roomID)
+        handoff.hand(text, to: room.id)
+    }
+
     /// Who a reply in this chat is for: the members of a group, or the one person otherwise.
     static func recipients(of room: ChatRoom) -> [String] {
         room.isGroup ? room.memberNames : [room.name]

@@ -93,6 +93,41 @@ extension AppIntent {
     }
 }
 
+/// Edit in L!NK on the reply card: opens the chat with the reply in its message field, to change
+/// before sending. It sends nothing. The messages domain's `draftMessage` schema would fit, but the
+/// 27.2 tools reject its `conversation` destination (as for `sendMessage`), and a draft from the
+/// card belongs to one chat, so this names the chat itself.
+struct OpenChatDraftIntent: AppIntent {
+    static let title: LocalizedStringResource = "Edit Message"
+    static let description = IntentDescription("Opens a chat with the message ready to edit. Nothing is sent.")
+    static let supportedModes: IntentModes = .foreground(.immediate)
+    static let authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
+    /// Only the reply card runs it; Shortcuts has Send Message for writing to a chat.
+    static let isDiscoverable = false
+
+    @Parameter(title: "Chat")
+    var chat: ChatConversationEntity
+
+    @Parameter(title: "Message")
+    var text: String
+
+    @Dependency private var container: ModelContainer
+    @Dependency private var drafts: ChatDraftHandoff
+
+    init() {}
+
+    init(chat: ChatConversationEntity, text: String) {
+        self.chat = chat
+        self.text = text
+    }
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        try ChatIntentActions(context: container.mainContext).handDraft(text, to: chat.id, via: drafts)
+        return .result()
+    }
+}
+
 struct SummarizeChatIntent: AppIntent {
     static let title: LocalizedStringResource = "Summarize Chat"
     static let description = IntentDescription("Summarizes a chat on device with Apple Intelligence.")

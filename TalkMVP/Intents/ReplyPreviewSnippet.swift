@@ -30,7 +30,7 @@ final class ReplyPreviewCache {
 }
 
 /// Shows the reply preview card while Siri asks for confirmation. Send and Cancel are the
-/// system's own confirmation buttons.
+/// system's own confirmation buttons; the card adds Edit in L!NK.
 struct ReplyPreviewSnippetIntent: SnippetIntent {
     static let title: LocalizedStringResource = "Reply Preview"
     static let isDiscoverable = false
@@ -60,20 +60,21 @@ struct ReplyPreviewSnippetIntent: SnippetIntent {
         } else {
             preview = try await actions.preview(text, for: chat.id)
         }
-        return .result(view: ReplyPreviewCard(chatName: chat.displayName, preview: preview))
+        return .result(view: ReplyPreviewCard(chat: chat, preview: preview))
     }
 }
 
 /// The text being sent, then one block per language: who reads it, what they will read, and
-/// that translation back in the sender's language.
+/// that translation back in the sender's language. Edit in L!NK opens the chat with the text in
+/// its message field instead of sending it.
 struct ReplyPreviewCard: View {
-    let chatName: String
+    let chat: ChatConversationEntity
     let preview: ReplyPreview
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(chatName)
+                Text(chat.displayName)
                     .font(.headline)
                 Text("You're sending")
                     .font(.subheadline)
@@ -86,6 +87,15 @@ struct ReplyPreviewCard: View {
             ForEach(Array(preview.lines.enumerated()), id: \.offset) { _, line in
                 ReplyPreviewLineView(line: line, senderLanguage: preview.senderLanguage)
             }
+
+            // A secondary action beside the system's Send, so a bordered button. The label grows
+            // with the text size and keeps at least a 44 pt target.
+            Button(intent: OpenChatDraftIntent(chat: chat, text: preview.text)) {
+                Label("Edit in L!NK", systemImage: "pencil")
+                    .frame(maxWidth: .infinity, minHeight: 44)
+            }
+            .buttonStyle(.bordered)
+            .accessibilityIdentifier("editInLinkButton")
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()

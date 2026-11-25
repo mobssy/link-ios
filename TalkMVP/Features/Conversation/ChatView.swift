@@ -24,6 +24,8 @@ struct ChatView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.dynamicTypeSize) var dynamicTypeSize
     @Environment(LanguageManager.self) var languageManager
+    /// Where a reply drafted with Siri waits for this chat; absent in previews.
+    @Environment(ChatDraftHandoff.self) var draftHandoff: ChatDraftHandoff?
 
     let chatRoom: ChatRoom
 
@@ -337,6 +339,10 @@ struct ChatView: View {
             checkIfFriend()
             loadSenderStandings()
             markMessagesAsRead()
+        }
+        // A reply from Siri's Edit in L!NK, when it is for this chat: on opening, or while open.
+        .onChange(of: draftHandoff?.pending?.roomID, initial: true) {
+            takeDraftFromSiri()
         }
         .sheet(isPresented: $showingDocumentPicker) {
             DocumentPicker { url in

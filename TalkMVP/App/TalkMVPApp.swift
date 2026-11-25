@@ -18,6 +18,8 @@ struct LinkMVPApp: App {
     @State private var appLock = AppLockManager()
     @State private var authManager: AuthManager
     @State private var languageManager = LanguageManager()
+    /// Siri's Edit in L!NK puts a draft here; the app opens its chat with it.
+    @State private var draftHandoff: ChatDraftHandoff
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("themeMode") private var themeMode: String = "system"
 
@@ -31,6 +33,10 @@ struct LinkMVPApp: App {
         // Siri and Shortcuts actions read and write the same store as the app's screens.
         let container = sharedModelContainer
         AppDependencyManager.shared.add(dependency: container)
+        // The intent and the screens share one hand-off, so a draft from Siri reaches the chat.
+        let handoff = ChatDraftHandoff()
+        _draftHandoff = State(initialValue: handoff)
+        AppDependencyManager.shared.add(dependency: handoff)
     }
 
     var sharedModelContainer: ModelContainer = {
@@ -69,6 +75,7 @@ struct LinkMVPApp: App {
                 .environment(authManager)
                 .environment(appLock)
                 .environment(languageManager)
+                .environment(draftHandoff)
                 // Text, dates and numbers in the language picked in Settings.
                 .environment(\.locale, languageManager.locale)
                 .tint(.appPrimaryText)

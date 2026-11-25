@@ -1234,6 +1234,21 @@ struct ChatIntentActionsTests {
         try actions().checkAccess()
     }
 
+    @Test("Edit in L!NK hands the draft to its chat and sends nothing, only when access is allowed")
+    func draftIsHandedOverWithoutSending() throws {
+        let handoff = ChatDraftHandoff()
+        #expect(throws: ChatIntentError.signedOut) { try actions().handDraft("Draft from Siri", to: room.id, via: handoff) }
+        try signIn()
+        #expect(throws: ChatIntentError.appLocked) { try actions(locked: true).handDraft("Draft from Siri", to: room.id, via: handoff) }
+        #expect(throws: ChatIntentError.chatNotFound) { try actions().handDraft("Draft from Siri", to: UUID(), via: handoff) }
+        #expect(handoff.pending == nil)
+
+        try actions().handDraft("Draft from Siri", to: room.id, via: handoff)
+
+        #expect(handoff.takeDraft(for: room.id) == "Draft from Siri")
+        #expect(try context.fetchCount(FetchDescriptor<Message>()) == 0)
+    }
+
     @Test("A message sent through Siri lands in the chat as the user's, with the chat's options and preview")
     func sendAddsTheMessage() async throws {
         try signIn()
@@ -3699,5 +3714,48 @@ struct ReplyPreviewTests {
         ]
         let preview = await build(text: "펜션 예약했어요!", members: ["Nobody", "한서연", "Emma Kang"], recent: recent, stub: stub)
         #expect(preview.lines.map(\.language) == ["en", "ko", nil])
+    }
+}
+
+@Suite("Chat draft hand-off")
+@MainActor
+struct ChatDraftHandoffTests {
+
+    @Test("A draft is taken once")
+    func takeDraftOnce() {
+        let handoff = ChatDraftHandoff()
+        let room = UUID()
+
+        handoff.hand("Draft from Siri", to: room)
+
+        #expect(handoff.pending?.roomID == room)
+        #expect(handoff.takeDraft(for: room) == "Draft from Siri")
+        #expect(handoff.takeDraft(for: room) == nil)
+        #expect(handoff.pending == nil)
+    }
+
+    @Test("Another chat can't take the draft, and it stays for its own")
+    func takeDraftOnlyForItsRoom() {
+        let handoff = ChatDraftHandoff()
+        let room = UUID()
+
+        handoff.hand("Draft from Siri", to: room)
+
+        #expect(handoff.takeDraft(for: UUID()) == nil)
+        #expect(handoff.pending?.roomID == room)
+        #expect(handoff.takeDraft(for: room) == "Draft from Siri")
+    }
+
+    @Test("A newer draft replaces the one not taken yet")
+    func newerDraftReplacesOlder() {
+        let handoff = ChatDraftHandoff()
+        let first = UUID()
+        let second = UUID()
+
+        handoff.hand("First", to: first)
+        handoff.hand("Second", to: second)
+
+        #expect(handoff.takeDraft(for: first) == nil)
+        #expect(handoff.takeDraft(for: second) == "Second")
     }
 }

@@ -80,6 +80,7 @@ extension ChatView {
                     .padding(.vertical, 8)
                     .glassEffect(.regular.interactive(), in: .capsule)
                     .focused($isTextFieldFocused)
+                    .accessibilityIdentifier("messageField")
                     .submitLabel(.send)
                     .onSubmit {
                         sendMessage(viewModel: viewModel)
@@ -245,6 +246,14 @@ extension ChatView {
         inputText = ""
         replyingToMessage = nil
         isTextFieldFocused = false
+    }
+
+    /// Puts a draft Siri handed over for this chat in the message field, ready to edit. It is
+    /// not sent: the user sends it, as anything they type.
+    func takeDraftFromSiri() {
+        guard let draft = draftHandoff?.takeDraft(for: chatRoom.id) else { return }
+        inputText = draft
+        isTextFieldFocused = true
     }
 
     func sendLocation() {
