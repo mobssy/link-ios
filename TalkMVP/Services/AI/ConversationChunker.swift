@@ -10,7 +10,7 @@ import Foundation
 
 /// The on-device model reads about 4,000 tokens at a time, instructions and answer included, so
 /// a long chat is summarized a part at a time. Parts are sized by a token estimate rather than
-/// the model's own count, which is only available from iOS 26.4 and costs a call per line.
+/// the model's own count, which costs a call per line.
 nonisolated enum ConversationChunker {
     /// A deliberately high token count: one per non-ASCII character (Korean, Japanese, Chinese
     /// count about one each or less) and one per three ASCII characters, plus a few for the line.

@@ -204,34 +204,24 @@ final class TalkMVPUITests: XCTestCase {
             .firstMatch
         XCTAssertTrue(message.waitForExistence(timeout: 5))
 
-        // iOS 27 reveals a Reply button; on iOS 26 the swipe itself starts the reply once the
-        // bubble has moved far enough, so the drag there has a set length: swipeRight()'s
-        // depends on the element's size and the Xcode version, and fell short on this short
-        // bubble after Xcode 27.1.
-        if #available(iOS 27, *) {
-            // From the bubble itself: the row spans the screen, and a swipe from its middle, the
-            // empty side of the user's own message, sometimes did nothing. The action allows a
-            // full swipe, so the reply may already have started and Reply slid away; only a
-            // shorter swipe needs it tapped.
-            let bubble = message.staticTexts["swipe me"]
-            // From its left edge and not too far: the user's own bubble sits against the right
-            // edge, and a drag that ran off the screen was sometimes dropped.
-            let start = bubble.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.5))
-            start.press(forDuration: 0.05, thenDragTo: start.withOffset(CGVector(dx: 90, dy: 0)))
-            let cancel = app.buttons["Cancel"]
-            let reply = app.buttons["Reply"]
-            let deadline = Date().addingTimeInterval(3)
-            while !cancel.exists && !(reply.exists && reply.isHittable) && Date() < deadline {
-                usleep(200_000)
-            }
-            if !cancel.exists {
-                XCTAssertTrue(reply.exists && reply.isHittable, "swiping a message reveals Reply or starts the reply")
-                reply.tap()
-            }
-        } else {
-            let start = message.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5))
-            start.press(forDuration: 0, thenDragTo: start.withOffset(CGVector(dx: 100, dy: 0)),
-                        withVelocity: .fast, thenHoldForDuration: 0)
+        // From the bubble itself: the row spans the screen, and a swipe from its middle, the
+        // empty side of the user's own message, sometimes did nothing. The action allows a
+        // full swipe, so the reply may already have started and Reply slid away; only a
+        // shorter swipe needs it tapped.
+        let bubble = message.staticTexts["swipe me"]
+        // From its left edge and not too far: the user's own bubble sits against the right
+        // edge, and a drag that ran off the screen was sometimes dropped.
+        let start = bubble.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.5))
+        start.press(forDuration: 0.05, thenDragTo: start.withOffset(CGVector(dx: 90, dy: 0)))
+        let cancel = app.buttons["Cancel"]
+        let reply = app.buttons["Reply"]
+        let deadline = Date().addingTimeInterval(3)
+        while !cancel.exists && !(reply.exists && reply.isHittable) && Date() < deadline {
+            usleep(200_000)
+        }
+        if !cancel.exists {
+            XCTAssertTrue(reply.exists && reply.isHittable, "swiping a message reveals Reply or starts the reply")
+            reply.tap()
         }
         XCTAssertTrue(app.buttons["Cancel"].waitForExistence(timeout: 3), "the reply banner opens")
     }

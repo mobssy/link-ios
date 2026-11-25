@@ -14,11 +14,10 @@ final class SiriActionsUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    /// Sends a message and summarizes a chat the way Siri would, through AppIntentsTesting (new in
-    /// iOS 27), against the running app signed into test mode.
+    /// Sends a message and summarizes a chat the way Siri would, through AppIntentsTesting,
+    /// against the running app signed into test mode.
     @MainActor
     func testSiriSendsAMessageAndSummarizesAChat() async throws {
-        guard #available(iOS 27, *) else { throw XCTSkip("Running App Intents from a test needs iOS 27.") }
         let app = XCUIApplication()
         app.launchArguments += ["-UITestingInMemoryStore", "-selectedLanguage", "en", "-contactsOnboardingShown", "YES"]
         app.launch()

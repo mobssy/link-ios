@@ -22,15 +22,13 @@ nonisolated protocol PhotoDescribing: Sendable {
     func describe(_ imageData: Data, languageCode: String) async -> String?
 }
 
-/// Descriptions from the on-device model's image input, new in iOS 27. Before that, or on a
-/// model without vision, there are none, and photos work as they always have.
+/// Descriptions from the on-device model's image input. On a model without vision there are
+/// none, and photos work as they always have.
 nonisolated struct OnDevicePhotoDescriber: PhotoDescribing {
     func describe(_ imageData: Data, languageCode: String) async -> String? {
-        guard #available(iOS 27, *) else { return nil }
-        return await describeWithVision(imageData, languageCode: languageCode)
+        await describeWithVision(imageData, languageCode: languageCode)
     }
 
-    @available(iOS 27, *)
     private func describeWithVision(_ imageData: Data, languageCode: String) async -> String? {
         let model = SystemLanguageModel.default
         guard case .available = model.availability, model.capabilities.contains(.vision),
