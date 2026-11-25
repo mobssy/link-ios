@@ -54,7 +54,9 @@ final class SiriActionsUITests: XCTestCase {
         }
         let trip = try XCTUnwrap(matches.first, "Siri finds the chat by its name")
 
-        try await definitions.intents["OpenChatDraftIntent"].makeIntent(chat: trip, text: "Draft from Siri").run()
+        // The card names the chat by its id as text, the way the send intent builds it.
+        let chatID = trip.identifier.instanceIdentifier
+        try await definitions.intents["OpenChatDraftIntent"].makeIntent(chatID: chatID, text: "Draft from Siri").run()
 
         let field = app.textFields["messageField"]
         XCTAssertTrue(field.waitForExistence(timeout: 5), "the chat opens")

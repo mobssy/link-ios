@@ -10,13 +10,15 @@ import AppIntents
 import Foundation
 import GeoToolbox
 import SwiftData
+// The messages schema's @AppIntent expansion names file types (.audio, .image, .item).
 import UniformTypeIdentifiers
 
 /// Sends a message to a chat picked by name, as the App Shortcut phrases and Shortcuts ask ("Send a
 /// message to Family Group with L!NK"). Siri's messages domain can't name a chat, only people, so
 /// this is the way to reach a group by its name. It confirms like the domain's intent below.
 struct SendChatMessageIntent: AppIntent {
-    static let title: LocalizedStringResource = "Send Message"
+    /// Not just "Send Message": the messages domain's intent below is listed under that name.
+    static let title: LocalizedStringResource = "Send Message to Chat"
     static let description = IntentDescription("Sends a message to one of your chats.")
     /// Sending as the user needs the phone unlocked, like opening the chat would.
     static let authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
@@ -68,26 +70,33 @@ struct SendMessageToPeopleIntent {
         let actions = ChatIntentActions(context: container.mainContext)
         try actions.checkAccess()
         let room = try destination.room(in: actions)
+        // Read before sending, so a failure here can't follow a message that already went out.
+        let authorName = try actions.signedInName()
         let sent = try await sendAfterSiriConfirms(content.map { String($0.characters) } ?? "", to: room, using: actions)
-        let message = ChatMessageEntity(sent, in: room, authorName: try actions.signedInName())
+        let message = ChatMessageEntity(sent, in: room, authorName: authorName)
         return .result(value: [message], dialog: "Sent to \(room.name).")
     }
 }
 
-extension AppIntent {
+/// An intent that sends a reply only after Siri has shown the reply preview card and the user
+/// said Send. Only the two send intents adopt it.
+protocol ConfirmsReplyWithPreview: AppIntent {}
+
+extension SendChatMessageIntent: ConfirmsReplyWithPreview {}
+extension SendMessageToPeopleIntent: ConfirmsReplyWithPreview {}
+
+extension ConfirmsReplyWithPreview {
     /// Sends `text` to `room` only once the user says Send in the system's confirmation, which
     /// shows the reply preview card and speaks `ReplyPreviewDialog`. Cancelling sends nothing, and
     /// there is no way around the confirmation.
     @MainActor
     @discardableResult
     func sendAfterSiriConfirms(_ text: String, to room: ChatRoom, using actions: ChatIntentActions) async throws -> Message {
-        let chat = ChatConversationEntity(room)
-        return try await actions.sendAfterConfirming(text, to: room.id) { preview in
-            ReplyPreviewCache.shared.store(preview, for: room.id)
+        try await actions.sendAfterConfirming(text, to: room.id, pending: .shared) { preview in
             try await requestConfirmation(
                 actionName: .send,
                 dialog: IntentDialog(ReplyPreviewDialog.text(for: preview, chatName: room.name)),
-                snippetIntent: ReplyPreviewSnippetIntent(chat: chat, text: preview.text)
+                snippetIntent: ReplyPreviewSnippetIntent(chatID: room.id.uuidString, text: preview.text)
             )
         }
     }
@@ -96,17 +105,18 @@ extension AppIntent {
 /// Edit in L!NK on the reply card: opens the chat with the reply in its message field, to change
 /// before sending. It sends nothing. The messages domain's `draftMessage` schema would fit, but the
 /// 27.2 tools reject its `conversation` destination (as for `sendMessage`), and a draft from the
-/// card belongs to one chat, so this names the chat itself.
+/// card belongs to one chat, so this names the chat itself, by its id as text for the reason
+/// `ReplyPreviewSnippetIntent` gives.
 struct OpenChatDraftIntent: AppIntent {
     static let title: LocalizedStringResource = "Edit Message"
     static let description = IntentDescription("Opens a chat with the message ready to edit. Nothing is sent.")
     static let supportedModes: IntentModes = .foreground(.immediate)
     static let authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
-    /// Only the reply card runs it; Shortcuts has Send Message for writing to a chat.
+    /// Only the reply card runs it; Shortcuts has Send Message to Chat for writing to a chat.
     static let isDiscoverable = false
 
     @Parameter(title: "Chat")
-    var chat: ChatConversationEntity
+    var chatID: String
 
     @Parameter(title: "Message")
     var text: String
@@ -116,14 +126,17 @@ struct OpenChatDraftIntent: AppIntent {
 
     init() {}
 
-    init(chat: ChatConversationEntity, text: String) {
-        self.chat = chat
+    init(chatID: String, text: String) {
+        self.chatID = chatID
         self.text = text
     }
 
     @MainActor
     func perform() async throws -> some IntentResult {
-        try ChatIntentActions(context: container.mainContext).handDraft(text, to: chat.id, via: drafts)
+        let actions = ChatIntentActions(context: container.mainContext)
+        try actions.checkAccess()
+        let room = try actions.room(id: chatID)
+        try actions.handDraft(text, to: room.id, via: drafts, pending: .shared)
         return .result()
     }
 }

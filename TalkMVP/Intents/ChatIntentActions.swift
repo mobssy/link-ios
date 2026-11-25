@@ -71,6 +71,12 @@ struct ChatIntentActions {
         return room
     }
 
+    /// The chat whose id is written out in `id`, as the reply card's intents carry it.
+    func room(id: String) throws -> ChatRoom {
+        guard let uuid = UUID(uuidString: id) else { throw ChatIntentError.chatNotFound }
+        return try room(id: uuid)
+    }
+
     /// The chat for the people Siri names: one person's one-to-one chat, or the group whose members
     /// are exactly those people. Names match whatever their case.
     func room(forPeople names: [String]) throws -> ChatRoom {
@@ -141,24 +147,33 @@ struct ChatIntentActions {
     }
 
     /// Shows the preview to `confirm` and sends only if it returns. `confirm` throws to cancel
-    /// (Siri's confirmation does when the user says no), and then nothing is sent.
+    /// (Siri's confirmation does when the user says no), and then nothing is sent. The preview
+    /// waits in `pending` for the card while `confirm` runs, and is gone once it ends.
     @discardableResult
     func sendAfterConfirming(
         _ text: String,
         to roomID: UUID,
+        pending: ReplyPreviewCache,
         confirm: (ReplyPreview) async throws -> Void
     ) async throws -> Message {
         let preview = try await preview(text, for: roomID)
+        pending.store(preview, for: roomID)
+        defer { pending.clear() }
         try await confirm(preview)
+        // Edit in L!NK on the card puts the reply in the chat's message field, but a button inside
+        // the snippet can't cancel the system's confirmation around it. If the user says Send
+        // there afterwards, the reply would go out and also sit in the field, so it is cancelled.
+        guard !pending.wasEdited(preview.text, in: roomID) else { throw CancellationError() }
         return try await send(text, to: roomID)
     }
 
     /// Hands `text` to the chat's message field through `handoff`, for the user to finish in the
-    /// app. Nothing is sent.
-    func handDraft(_ text: String, to roomID: UUID, via handoff: ChatDraftHandoff) throws {
+    /// app, and marks the reply waiting in `pending` as taken there. Nothing is sent.
+    func handDraft(_ text: String, to roomID: UUID, via handoff: ChatDraftHandoff, pending: ReplyPreviewCache) throws {
         try checkAccess()
         let room = try room(id: roomID)
         handoff.hand(text, to: room.id)
+        pending.markEdited(text, in: room.id)
     }
 
     /// Who a reply in this chat is for: the members of a group, or the one person otherwise.

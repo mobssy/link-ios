@@ -1237,16 +1237,28 @@ struct ChatIntentActionsTests {
     @Test("Edit in L!NK hands the draft to its chat and sends nothing, only when access is allowed")
     func draftIsHandedOverWithoutSending() throws {
         let handoff = ChatDraftHandoff()
-        #expect(throws: ChatIntentError.signedOut) { try actions().handDraft("Draft from Siri", to: room.id, via: handoff) }
+        let pending = ReplyPreviewCache()
+        #expect(throws: ChatIntentError.signedOut) { try actions().handDraft("Draft from Siri", to: room.id, via: handoff, pending: pending) }
         try signIn()
-        #expect(throws: ChatIntentError.appLocked) { try actions(locked: true).handDraft("Draft from Siri", to: room.id, via: handoff) }
-        #expect(throws: ChatIntentError.chatNotFound) { try actions().handDraft("Draft from Siri", to: UUID(), via: handoff) }
+        #expect(throws: ChatIntentError.appLocked) { try actions(locked: true).handDraft("Draft from Siri", to: room.id, via: handoff, pending: pending) }
+        #expect(throws: ChatIntentError.chatNotFound) { try actions().handDraft("Draft from Siri", to: UUID(), via: handoff, pending: pending) }
         #expect(handoff.pending == nil)
+        #expect(!pending.wasEdited("Draft from Siri", in: room.id))
 
-        try actions().handDraft("Draft from Siri", to: room.id, via: handoff)
+        try actions().handDraft("Draft from Siri", to: room.id, via: handoff, pending: pending)
 
         #expect(handoff.takeDraft(for: room.id) == "Draft from Siri")
+        #expect(pending.wasEdited("Draft from Siri", in: room.id))
         #expect(try context.fetchCount(FetchDescriptor<Message>()) == 0)
+    }
+
+    @Test("The reply card's intents find a chat by its id as text, and nothing else")
+    func roomByIDText() throws {
+        #expect(try actions().room(id: room.id.uuidString).id == room.id)
+        #expect(try actions().room(id: room.id.uuidString.lowercased()).id == room.id)
+        #expect(throws: ChatIntentError.chatNotFound) { try actions().room(id: UUID().uuidString) }
+        #expect(throws: ChatIntentError.chatNotFound) { try actions().room(id: "not an id") }
+        #expect(throws: ChatIntentError.chatNotFound) { try actions().room(id: "") }
     }
 
     @Test("A message sent through Siri lands in the chat as the user's, with the chat's options and preview")
@@ -1278,6 +1290,9 @@ struct ChatIntentActionsTests {
 
     private struct Cancelled: Error {}
 
+    /// The reply waiting for Siri's answer, one per test.
+    private let pending = ReplyPreviewCache()
+
     private func confirmingActions(_ probe: FlowProbe, locked: Bool = false) -> ChatIntentActions {
         var actions = actions(locked: locked)
         actions.previewReply = { text, _, _ in
@@ -1293,12 +1308,14 @@ struct ChatIntentActionsTests {
         let probe = FlowProbe()
         var shown: ReplyPreview?
 
-        let sent = try await confirmingActions(probe).sendAfterConfirming("  On my way  ", to: room.id) { preview in
+        let sent = try await confirmingActions(probe).sendAfterConfirming("  On my way  ", to: room.id, pending: pending) { preview in
             shown = preview
             let count = try context.fetchCount(FetchDescriptor<Message>())
             #expect(count == 0)
+            #expect(pending.preview(for: room.id, text: "On my way") == preview, "the card gets the preview Siri speaks")
         }
 
+        #expect(pending.preview(for: room.id, text: "On my way") == nil, "the preview is gone once Siri is done")
         #expect(shown?.text == "On my way")
         #expect(sent.text == "On my way")
         #expect(try context.fetch(FetchDescriptor<Message>()).map(\.text) == ["On my way"])
@@ -1312,11 +1329,50 @@ struct ChatIntentActionsTests {
         let probe = FlowProbe()
 
         await #expect(throws: Cancelled.self) {
-            try await confirmingActions(probe).sendAfterConfirming("hi", to: room.id) { _ in throw Cancelled() }
+            try await confirmingActions(probe).sendAfterConfirming("hi", to: room.id, pending: pending) { _ in throw Cancelled() }
         }
 
         #expect(try context.fetchCount(FetchDescriptor<Message>()) == 0)
         #expect(room.lastMessage == "before")
+        #expect(pending.preview(for: room.id, text: "hi") == nil, "the preview is gone once Siri is done")
+    }
+
+    @Test("Saying Send after Edit in L!NK took the reply to the chat sends nothing")
+    func sendAfterEditSendsNothing() async throws {
+        try signIn()
+        room.lastMessage = "before"
+        let probe = FlowProbe()
+        let handoff = ChatDraftHandoff()
+        let actions = confirmingActions(probe)
+
+        await #expect(throws: CancellationError.self) {
+            try await actions.sendAfterConfirming("  On my way  ", to: room.id, pending: pending) { preview in
+                // The card's Edit in L!NK runs while Siri still asks; then the user says Send.
+                try actions.handDraft(preview.text, to: room.id, via: handoff, pending: pending)
+            }
+        }
+
+        #expect(try context.fetchCount(FetchDescriptor<Message>()) == 0)
+        #expect(room.lastMessage == "before")
+        #expect(handoff.takeDraft(for: room.id) == "On my way", "the reply waits in the chat's field instead")
+        #expect(!pending.wasEdited("On my way", in: room.id), "the edit mark is gone with the reply")
+    }
+
+    @Test("An edit of another chat's draft doesn't stop this reply")
+    func editOfAnotherChatStillSends() async throws {
+        try signIn()
+        let other = ChatRoom(name: "Study Group")
+        context.insert(other)
+        try context.save()
+        let probe = FlowProbe()
+        let actions = confirmingActions(probe)
+
+        let sent = try await actions.sendAfterConfirming("On my way", to: room.id, pending: pending) { preview in
+            try actions.handDraft(preview.text, to: other.id, via: ChatDraftHandoff(), pending: pending)
+        }
+
+        #expect(sent.text == "On my way")
+        #expect(try context.fetchCount(FetchDescriptor<Message>()) == 1)
     }
 
     @Test("A locked app fails before any preview or confirmation")
@@ -1324,7 +1380,7 @@ struct ChatIntentActionsTests {
         try signIn()
         let probe = FlowProbe()
         await #expect(throws: ChatIntentError.appLocked) {
-            try await confirmingActions(probe, locked: true).sendAfterConfirming("hi", to: room.id) { _ in probe.confirms += 1 }
+            try await confirmingActions(probe, locked: true).sendAfterConfirming("hi", to: room.id, pending: pending) { _ in probe.confirms += 1 }
         }
         #expect(probe.previews == 0 && probe.confirms == 0)
     }
@@ -1333,7 +1389,7 @@ struct ChatIntentActionsTests {
     func signedOutFailsBeforePreview() async throws {
         let probe = FlowProbe()
         await #expect(throws: ChatIntentError.signedOut) {
-            try await confirmingActions(probe).sendAfterConfirming("hi", to: room.id) { _ in probe.confirms += 1 }
+            try await confirmingActions(probe).sendAfterConfirming("hi", to: room.id, pending: pending) { _ in probe.confirms += 1 }
         }
         #expect(probe.previews == 0 && probe.confirms == 0)
     }
@@ -1343,7 +1399,7 @@ struct ChatIntentActionsTests {
         try signIn()
         let probe = FlowProbe()
         await #expect(throws: ChatIntentError.emptyMessage) {
-            try await confirmingActions(probe).sendAfterConfirming("  ", to: room.id) { _ in probe.confirms += 1 }
+            try await confirmingActions(probe).sendAfterConfirming("  ", to: room.id, pending: pending) { _ in probe.confirms += 1 }
         }
         #expect(probe.previews == 0 && probe.confirms == 0)
     }
@@ -1523,6 +1579,27 @@ struct ChatConversationEntityTests {
         #expect(cache.preview(for: roomID, text: "On my way") == preview)
         #expect(cache.preview(for: roomID, text: "Something else") == nil)
         #expect(cache.preview(for: UUID(), text: "On my way") == nil)
+    }
+
+    @Test("An edit counts for its chat and text, until the next reply or until Siri is done")
+    func previewCacheEditMark() {
+        let cache = ReplyPreviewCache()
+        let roomID = UUID()
+        let preview = ReplyPreview(text: "On my way", senderLanguage: "en", lines: [])
+        cache.store(preview, for: roomID)
+
+        cache.markEdited("On my way", in: roomID)
+        #expect(cache.wasEdited("On my way", in: roomID))
+        #expect(!cache.wasEdited("Something else", in: roomID))
+        #expect(!cache.wasEdited("On my way", in: UUID()))
+
+        cache.store(preview, for: roomID)
+        #expect(!cache.wasEdited("On my way", in: roomID), "a new reply starts unedited")
+
+        cache.markEdited("On my way", in: roomID)
+        cache.clear()
+        #expect(!cache.wasEdited("On my way", in: roomID))
+        #expect(cache.preview(for: roomID, text: "On my way") == nil)
     }
 }
 
