@@ -5,7 +5,8 @@ colors:
   periwinkle-mist: "#B5C7EB"
   periwinkle-deep: "#395CAC"
   ink-on-mist: "#151C30"
-  incoming-bubble: "rgba(142, 142, 147, 0.2)"
+  incoming-bubble: "rgba(128, 128, 128, 0.2)"
+  incoming-bubble-dark: "rgba(255, 255, 255, 0.17)"
   disappearing-flame: "#FF9500"
   recording-red: "#FF3B30"
 typography:
@@ -100,7 +101,7 @@ A single soft periwinkle carries the brand against the system's neutral palette.
 
 ### Neutral
 - **System semantic colors** (label, secondaryLabel, tertiaryLabel, systemBackground, secondarySystemBackground, tertiarySystemFill): all text, backgrounds, and fills outside the bubble. They adapt to Dark Mode and Increase Contrast on their own.
-- **Incoming Bubble** (gray at 20% opacity): other people's bubbles, translucent so a chat's chosen background shows through. With Increase Contrast it becomes systemGray4.
+- **Incoming Bubble** (gray at 20% in light, white at 17% in dark): other people's bubbles, translucent so a chat's chosen background shows through. Dark mode uses the lighter wash so a bubble's edge stays visible on black. With Increase Contrast it becomes systemGray4.
 
 ### Signal colors
 - **Disappearing Flame** (system orange): the flame on a disappearing message.
@@ -179,6 +180,7 @@ Soft, generously rounded forms throughout: bubbles at 20pt, glass panels at 16pt
 ### Menus
 - **Chat menu:** a system menu from the toolbar circle in three sections: the on-device AI (Summarize, Meeting Notes), finding things (Search, Bookmarks), and this chat's settings (Translate Messages toggle, Mute, Disappearing Messages, Background). Each item has an SF Symbol.
 - **Summary offer:** opening a chat with 10 or more unread messages shows a glass strip under the title, "Catch up with a summary", with a close button.
+- **Friend banner:** a one-to-one chat with someone who isn't a friend shows a glass strip with Add Friend and a close button; closed, it stays away for that chat.
 
 ## Do's and Don'ts
 
