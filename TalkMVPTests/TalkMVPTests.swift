@@ -7,6 +7,7 @@
 //
 
 import Testing
+import AppIntents
 import AVFoundation
 import Foundation
 import ImageIO
@@ -1341,6 +1342,51 @@ struct ChatIntentActionsTests {
         #expect(ChatIntentActions.recipients(of: ChatRoom(name: "Empty", profileImage: ChatRoom.groupSymbol)) == [])
     }
 
+    @Test("Siri's person finds the one-to-one chat with that name, not a group they are in")
+    func destinationPersonFindsOneToOne() throws {
+        let group = ChatRoom(name: "Trip", profileImage: ChatRoom.groupSymbol)
+        group.memberNames = ["Emma Kang"]
+        let emma = ChatRoom(name: "Emma Kang")
+        context.insert(group)
+        context.insert(emma)
+        try context.save()
+
+        #expect(try actions().room(forPeople: ["emma kang"]).id == emma.id)
+    }
+
+    @Test("Several people find the group whose members are exactly those people")
+    func destinationPeopleFindGroup() throws {
+        let bigger = ChatRoom(name: "Everyone", profileImage: ChatRoom.groupSymbol)
+        bigger.memberNames = ["Emma Kang", "한서연", "강민재"]
+        let trip = ChatRoom(name: "Family Trip", profileImage: ChatRoom.groupSymbol)
+        trip.memberNames = ["Emma Kang", "한서연"]
+        context.insert(bigger)
+        context.insert(trip)
+        try context.save()
+
+        #expect(try actions().room(forPeople: ["한서연", "Emma Kang"]).id == trip.id)
+    }
+
+    @Test("People with no chat of their own, or no one at all, find no chat")
+    func destinationWithoutAChatIsNotFound() throws {
+        #expect(throws: ChatIntentError.chatNotFound) { try actions().room(forPeople: ["Nobody"]) }
+        #expect(throws: ChatIntentError.chatNotFound) { try actions().room(forPeople: ["Emma Kang", "Nobody"]) }
+        #expect(throws: ChatIntentError.chatNotFound) { try actions().room(forPeople: []) }
+    }
+
+    @Test("Siri's people are read by the names they carry")
+    func personNames() {
+        var components = PersonNameComponents()
+        components.givenName = "Emma"
+        components.familyName = "Kang"
+        let people = [
+            IntentPerson(identifier: .unknown, name: .displayName("한서연"), handle: nil),
+            IntentPerson(identifier: .unknown, name: .components(components), handle: nil),
+            IntentPerson(identifier: .unknown, name: .unknown, handle: nil),
+        ]
+        #expect(ChatDestination.names(of: people) == ["한서연", "Emma Kang"])
+    }
+
     @Test("Chats are found by part of their name, most recent first")
     func roomsMatchByName() throws {
         let older = ChatRoom(name: "Study Group")
@@ -1369,6 +1415,130 @@ struct ChatIntentActionsTests {
     ] as [([String], String)])
     func summaryLanguage(preferred: [String], expected: String) {
         #expect(ChatIntentActions.summaryLanguage(for: preferred) == expected)
+    }
+}
+
+// MARK: - Siri messages schema
+
+@MainActor
+@Suite("Siri conversation")
+struct ChatConversationEntityTests {
+    private let lastActive = Date(timeIntervalSince1970: 1_800_000_000)
+
+    @Test("A group is a conversation with its members, its name as the group name, and its state")
+    func conversationEntityFromGroup() {
+        let room = ChatRoom(name: "Family Trip", profileImage: ChatRoom.groupSymbol)
+        room.memberNames = ["Emma Kang", "한서연"]
+        room.lastMessage = "See you at 7"
+        room.unreadCount = 2
+        room.timestamp = lastActive
+
+        let entity = ChatConversationEntity(room)
+
+        #expect(entity.id == room.id)
+        #expect(entity.recipients.map(\.id) == ["Emma Kang", "한서연"])
+        #expect(entity.recipients.map(\.person.name) == [.displayName("Emma Kang"), .displayName("한서연")])
+        #expect(entity.displayName == "Family Trip")
+        #expect(entity.conversationName == "Family Trip")
+        #expect(String(entity.previewText.characters) == "See you at 7")
+        #expect(entity.isRead == false)
+        #expect(entity.dateLastActive == lastActive)
+        #expect(entity.attributes.isEmpty)
+    }
+
+    @Test("A one-to-one chat is a conversation with that person and no group name")
+    func conversationEntityFromOneToOne() {
+        let room = ChatRoom(name: "Emma Kang")
+        room.lastMessage = "Thanks!"
+        room.unreadCount = 0
+        room.timestamp = lastActive
+        room.notificationsEnabled = false
+
+        let entity = ChatConversationEntity(room)
+
+        #expect(entity.recipients.map(\.id) == ["Emma Kang"])
+        #expect(entity.displayName == "Emma Kang")
+        #expect(entity.conversationName == nil)
+        #expect(String(entity.previewText.characters) == "Thanks!")
+        #expect(entity.isRead)
+        #expect(entity.dateLastActive == lastActive)
+        #expect(entity.attributes == [.muted])
+    }
+
+    @Test("A message sent from Siri is the user's own, in its chat, with its text and time")
+    func messageEntityFromSent() {
+        let room = ChatRoom(name: "Emma Kang")
+        let message = Message(text: "On my way", isFromCurrentUser: true, chatRoomId: room.id.uuidString)
+        message.isDisappearing = true
+
+        let entity = ChatMessageEntity(message, in: room, authorName: "Tester")
+
+        #expect(entity.id == message.id)
+        #expect(entity.body.map { String($0.characters) } == "On my way")
+        #expect(entity.author.id == "Tester" && entity.author.person.isMe)
+        #expect(entity.conversation.id == room.id)
+        #expect(entity.date == message.timestamp)
+        #expect(entity.isRead)
+        #expect(entity.attributes == [.disappearing])
+        #expect(entity.reaction == nil && entity.messageEffect == nil && entity.referencedMessage == nil)
+    }
+
+    @Test("The card gets the preview Siri spoke, only for the same chat and text")
+    func previewCacheMatchesChatAndText() {
+        let cache = ReplyPreviewCache()
+        let roomID = UUID()
+        let preview = ReplyPreview(text: "On my way", senderLanguage: "en", lines: [])
+        cache.store(preview, for: roomID)
+
+        #expect(cache.preview(for: roomID, text: "On my way") == preview)
+        #expect(cache.preview(for: roomID, text: "Something else") == nil)
+        #expect(cache.preview(for: UUID(), text: "On my way") == nil)
+    }
+}
+
+@Suite("Siri reply dialog")
+struct ReplyPreviewDialogTests {
+    private func dialog(_ lines: [ReplyPreview.Line], text: String = "예약했어요!", chat: String) -> String {
+        let preview = ReplyPreview(text: text, senderLanguage: "ko", lines: lines)
+        return AppLocalization.string(ReplyPreviewDialog.text(for: preview, chatName: chat), languageCode: "en")
+    }
+
+    @Test("In a one-to-one chat Siri says the translation back")
+    func dialogOneToOneTranslated() {
+        let line = ReplyPreview.Line(language: "en", members: ["Emma Kang"], reading: .translated("I booked it!", back: "예약했어요!"))
+        #expect(dialog([line], chat: "Emma Kang") == "Emma Kang will read it as \"예약했어요!\" Send it?")
+    }
+
+    @Test("A translation back without an ending gets one, so the question reads as a new sentence")
+    func dialogBackTranslationGetsAnEnding() {
+        let line = ReplyPreview.Line(language: "en", members: ["Emma Kang"], reading: .translated("I booked it", back: "예약했어요"))
+        #expect(dialog([line], chat: "Emma Kang") == "Emma Kang will read it as \"예약했어요.\" Send it?")
+    }
+
+    @Test("When it can't be translated, Siri says it goes as written")
+    func dialogOneToOneUntranslatable() {
+        let line = ReplyPreview.Line(language: "en", members: ["Emma Kang"], reading: .untranslatable)
+        #expect(dialog([line], chat: "Emma Kang") == "Emma Kang will see it as written. Send it?")
+    }
+
+    @Test("A group reading several languages is asked to look at the card")
+    func dialogGroupSeveralLanguages() {
+        let lines: [ReplyPreview.Line] = [
+            .init(language: "en", members: ["Emma Kang", "Joon"], reading: .translated("I booked it!", back: "예약했어요!")),
+            .init(language: "ja", members: ["佐藤ゆき"], reading: .translated("予約しました！", back: "예약했어요!")),
+        ]
+        #expect(dialog(lines, chat: "Family Trip") == "2 languages. Take a look before sending.")
+    }
+
+    @Test("When everyone reads it as written, Siri just asks to send it")
+    func dialogEveryoneAsWritten() {
+        let line = ReplyPreview.Line(language: "ko", members: ["한서연", "강민재"], reading: .asWritten)
+        #expect(dialog([line], chat: "Family Group") == "Send \"예약했어요!\" to Family Group?")
+    }
+
+    @Test("With no one to read it yet, Siri just asks to send it")
+    func dialogNoRecipients() {
+        #expect(dialog([], chat: "Family Group") == "Send \"예약했어요!\" to Family Group?")
     }
 }
 

@@ -32,7 +32,7 @@ final class SiriActionsUITests: XCTestCase {
 
         let definitions = IntentDefinitions(bundleIdentifier: "com.cclab.TalkMVP.TalkMVP")
         let matches = try await afterTheSystemKnowsTheApp {
-            try await definitions.entities["ChatRoomEntity"].entities(matching: "Family")
+            try await definitions.entities["ChatConversationEntity"].entities(matching: "Family")
         }
         let family = try XCTUnwrap(matches.first, "Siri finds the chat by part of its name")
 

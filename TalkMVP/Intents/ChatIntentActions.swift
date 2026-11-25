@@ -71,6 +71,46 @@ struct ChatIntentActions {
         return room
     }
 
+    /// The chat for the people Siri names: one person's one-to-one chat, or the group whose members
+    /// are exactly those people. Names match whatever their case.
+    func room(forPeople names: [String]) throws -> ChatRoom {
+        let wanted = Set(names.map(Self.nameKey))
+        let match: (ChatRoom) -> Bool = wanted.count == 1
+            ? { !$0.isGroup && wanted.contains(Self.nameKey($0.name)) }
+            : { $0.isGroup && Set($0.memberNames.map(Self.nameKey)) == wanted }
+        guard !wanted.isEmpty, let room = try rooms().first(where: match) else { throw ChatIntentError.chatNotFound }
+        return room
+    }
+
+    /// Everyone a reply can go to, each name once, in the order of the most recent chats; with a
+    /// name, only those whose name contains it.
+    func people(matching name: String? = nil) throws -> [String] {
+        var seen = Set<String>()
+        let everyone = try rooms().flatMap(Self.recipients(of:)).filter { seen.insert(Self.nameKey($0)).inserted }
+        guard let name = name?.trimmingCharacters(in: .whitespacesAndNewlines), !name.isEmpty else { return everyone }
+        return everyone.filter { $0.localizedStandardContains(name) }
+    }
+
+    /// The signed-in user's name, as their messages are signed.
+    func signedInName() throws -> String {
+        let user = try context.fetch(FetchDescriptor<User>(predicate: #Predicate { $0.isCurrentUser == true })).first
+        guard let user else { throw ChatIntentError.signedOut }
+        return user.displayName
+    }
+
+    /// The messages with these ids, each with its chat; one whose chat is gone is left out.
+    func messages(ids: [UUID]) throws -> [(message: Message, room: ChatRoom)] {
+        let messages = try context.fetch(FetchDescriptor<Message>(predicate: #Predicate { ids.contains($0.id) }))
+        return messages.compactMap { message in
+            guard let roomID = UUID(uuidString: message.chatRoomId), let room = try? room(id: roomID) else { return nil }
+            return (message, room)
+        }
+    }
+
+    private static func nameKey(_ name: String) -> String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
     /// Sends `text` to the chat as the signed-in user, with the chat's options, the way the chat
     /// screen does, and puts it in the chat list preview.
     @discardableResult

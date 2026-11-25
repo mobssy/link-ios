@@ -8,52 +8,13 @@
 
 import AppIntents
 import Foundation
+import GeoToolbox
 import SwiftData
+import UniformTypeIdentifiers
 
-/// A chat, as Siri and Shortcuts refer to it.
-struct ChatRoomEntity: AppEntity {
-    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Chat"
-    static let defaultQuery = ChatRoomQuery()
-
-    let id: UUID
-    let name: String
-
-    var displayRepresentation: DisplayRepresentation { DisplayRepresentation(title: "\(name)") }
-}
-
-extension ChatRoomEntity {
-    init(_ room: ChatRoom) {
-        self.init(id: room.id, name: room.name)
-    }
-}
-
-/// Finds chats for Siri ("send a message to Mina") and for picking one in Shortcuts. While App
-/// Lock is on or nobody is signed in, it finds none, so chat names stay out of sight too.
-struct ChatRoomQuery: EntityStringQuery {
-    @Dependency private var container: ModelContainer
-
-    @MainActor
-    func entities(for identifiers: [UUID]) async throws -> [ChatRoomEntity] {
-        let actions = ChatIntentActions(context: container.mainContext)
-        guard (try? actions.checkAccess()) != nil else { return [] }
-        return try actions.rooms().filter { identifiers.contains($0.id) }.map(ChatRoomEntity.init)
-    }
-
-    @MainActor
-    func entities(matching string: String) async throws -> [ChatRoomEntity] {
-        let actions = ChatIntentActions(context: container.mainContext)
-        guard (try? actions.checkAccess()) != nil else { return [] }
-        return try actions.rooms(matching: string).map(ChatRoomEntity.init)
-    }
-
-    @MainActor
-    func suggestedEntities() async throws -> [ChatRoomEntity] {
-        let actions = ChatIntentActions(context: container.mainContext)
-        guard (try? actions.checkAccess()) != nil else { return [] }
-        return try actions.rooms().map(ChatRoomEntity.init)
-    }
-}
-
+/// Sends a message to a chat picked by name, as the App Shortcut phrases and Shortcuts ask ("Send a
+/// message to Family Group with L!NK"). Siri's messages domain can't name a chat, only people, so
+/// this is the way to reach a group by its name. It confirms like the domain's intent below.
 struct SendChatMessageIntent: AppIntent {
     static let title: LocalizedStringResource = "Send Message"
     static let description = IntentDescription("Sends a message to one of your chats.")
@@ -61,7 +22,7 @@ struct SendChatMessageIntent: AppIntent {
     static let authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
 
     @Parameter(title: "Chat", requestValueDialog: "Which chat?")
-    var chat: ChatRoomEntity
+    var chat: ChatConversationEntity
 
     @Parameter(title: "Message", requestValueDialog: "What should I send?")
     var message: String
@@ -74,8 +35,61 @@ struct SendChatMessageIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        try await ChatIntentActions(context: container.mainContext).send(message, to: chat.id)
-        return .result(dialog: "Sent to \(chat.name).")
+        let actions = ChatIntentActions(context: container.mainContext)
+        try actions.checkAccess()
+        let room = try actions.room(id: chat.id)
+        try await sendAfterSiriConfirms(message, to: room, using: actions)
+        return .result(dialog: "Sent to \(room.name).")
+    }
+}
+
+/// Sends a message the way Siri's messages domain asks: to people, whose chat it finds, and only
+/// after the user has seen how each of them will read it and said Send.
+@AppIntent(schema: .messages.sendMessage)
+struct SendMessageToPeopleIntent {
+    /// Sending as the user needs the phone unlocked, like opening the chat would.
+    static let authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
+
+    var content: AttributedString?
+    var destination: ChatDestination
+    // L!NK sends text only this round. The schema's other parts are declared because the domain
+    // requires them; a request that carries any of them sends its text and ignores the rest.
+    var subject: AttributedString?
+    var attachments: [IntentFile]
+    var audioMessage: IntentFile?
+    var locations: [PlaceDescriptor]
+    var links: [URL]
+    var scheduledDate: Date?
+
+    @Dependency private var container: ModelContainer
+
+    @MainActor
+    func perform() async throws -> some IntentResult & ReturnsValue<[ChatMessageEntity]> & ProvidesDialog {
+        let actions = ChatIntentActions(context: container.mainContext)
+        try actions.checkAccess()
+        let room = try destination.room(in: actions)
+        let sent = try await sendAfterSiriConfirms(content.map { String($0.characters) } ?? "", to: room, using: actions)
+        let message = ChatMessageEntity(sent, in: room, authorName: try actions.signedInName())
+        return .result(value: [message], dialog: "Sent to \(room.name).")
+    }
+}
+
+extension AppIntent {
+    /// Sends `text` to `room` only once the user says Send in the system's confirmation, which
+    /// shows the reply preview card and speaks `ReplyPreviewDialog`. Cancelling sends nothing, and
+    /// there is no way around the confirmation.
+    @MainActor
+    @discardableResult
+    func sendAfterSiriConfirms(_ text: String, to room: ChatRoom, using actions: ChatIntentActions) async throws -> Message {
+        let chat = ChatConversationEntity(room)
+        return try await actions.sendAfterConfirming(text, to: room.id) { preview in
+            ReplyPreviewCache.shared.store(preview, for: room.id)
+            try await requestConfirmation(
+                actionName: .send,
+                dialog: IntentDialog(ReplyPreviewDialog.text(for: preview, chatName: room.name)),
+                snippetIntent: ReplyPreviewSnippetIntent(chat: chat, text: preview.text)
+            )
+        }
     }
 }
 
@@ -85,7 +99,7 @@ struct SummarizeChatIntent: AppIntent {
     static let authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
 
     @Parameter(title: "Chat", requestValueDialog: "Which chat?")
-    var chat: ChatRoomEntity
+    var chat: ChatConversationEntity
 
     static var parameterSummary: some ParameterSummary {
         Summary("Summarize \(\.$chat)")
