@@ -22,6 +22,8 @@ struct MessageBubbleView: View {
     var languageBadge: String?
     /// How to translate a received text message, shown under it in the bubble; nil for none.
     var translation: MessageTranslation?
+    /// Whether the time and read receipt show under the bubble: only on the last message of a run.
+    var showsTime = true
     /// Hears the translation once it is shown, so the message can be read out with it.
     var onTranslated: ((TranslationState) -> Void)?
     var onAvatarTap: (() -> Void)?
@@ -104,35 +106,48 @@ struct MessageBubbleView: View {
                 )
                 .foregroundStyle(message.isFromCurrentUser ? ownBubbleContent : .primary)
 
-            HStack(spacing: 4) {
+            if showsTime || hasStatus {
+                footer
+            }
+        }
+    }
+
+    /// Bookmarked, disappearing or scheduled: worth showing even where the time is left out.
+    private var hasStatus: Bool {
+        message.isBookmarked || (message.isDisappearing && message.disappearAfterSeconds > 0) || message.isPendingScheduled
+    }
+
+    private var footer: some View {
+        HStack(spacing: 4) {
+            if showsTime {
                 Text(message.timestamp, style: .time)
                     .font(.caption2)
                     .foregroundStyle(Color.secondary)
+            }
 
-                if message.isBookmarked {
-                    Image(systemName: "bookmark.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.appPrimaryText)
-                }
+            if message.isBookmarked {
+                Image(systemName: "bookmark.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.appPrimaryText)
+            }
 
-                if message.isDisappearing && message.disappearAfterSeconds > 0 {
-                    Image(systemName: "flame.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                }
+            if message.isDisappearing && message.disappearAfterSeconds > 0 {
+                Image(systemName: "flame.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+            }
 
-                if message.isPendingScheduled {
-                    Image(systemName: "clock.fill")
-                        .font(.caption2)
-                        .foregroundStyle(Color.secondary)
-                }
+            if message.isPendingScheduled {
+                Image(systemName: "clock.fill")
+                    .font(.caption2)
+                    .foregroundStyle(Color.secondary)
+            }
 
-                if message.isFromCurrentUser {
-                    Image(systemName: message.isRead ? "checkmark.circle.fill" : "checkmark.circle")
-                        .font(.caption2)
-                        .foregroundStyle(message.isRead ? .appPrimaryText : .secondary)
-                        .transition(.scale.combined(with: .opacity))
-                }
+            if message.isFromCurrentUser && showsTime {
+                Image(systemName: message.isRead ? "checkmark.circle.fill" : "checkmark.circle")
+                    .font(.caption2)
+                    .foregroundStyle(message.isRead ? .appPrimaryText : .secondary)
+                    .transition(.scale.combined(with: .opacity))
             }
         }
     }

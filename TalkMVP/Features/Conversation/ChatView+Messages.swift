@@ -99,17 +99,12 @@ extension ChatView {
     @ViewBuilder
     func messagesList(viewModel: ChatViewModel) -> some View {
         let badges = languageBadges(in: viewModel.messages)
-        ForEach(filteredMessages(viewModel: viewModel), id: \.id) { message in
-            MessageBubbleView(
-                message: message,
-                languageBadge: message.isFromCurrentUser ? nil : badges[message.sender],
-                translation: translation(for: message),
-                onTranslated: { translatedTexts[message.id] = $0 },
-                onAvatarTap: { openProfile(of: message.sender) },
-                isTranscribing: viewModel.transcribingMessageIDs.contains(message.id),
-                senderStanding: message.isFromCurrentUser ? nil : senderStandings.map { $0[message.sender] ?? .stranger },
-                onAddFriend: { try sendFriendRequest(toSender: message.sender) }
-            )
+        let shown = filteredMessages(viewModel: viewModel)
+        let runEnds = MessageRuns.runEnds(in: shown.map {
+            MessageRuns.Item(id: $0.id, sender: $0.sender, isFromCurrentUser: $0.isFromCurrentUser, timestamp: $0.timestamp)
+        })
+        ForEach(shown, id: \.id) { message in
+            bubble(for: message, viewModel: viewModel, languageBadge: badges[message.sender], showsTime: runEnds.contains(message.id))
                 .id(message.id)
                 .scaleEffect(poppingMessageIds.contains(message.id) ? 1.18 : 1.0)
                 .transition(.asymmetric(
@@ -128,58 +123,7 @@ extension ChatView {
                     replyingToMessage = message
                     isTextFieldFocused = true
                 }
-                .contextMenu {
-                    if message.messageType == .text {
-                        Button(languageManager.string(LocalizedStringResource("Copy", comment: "Copies a message's text")), systemImage: "doc.on.doc") {
-                            UIPasteboard.general.string = message.text
-                            UIAccessibility.post(notification: .announcement, argument: languageManager.string("Message copied"))
-                        }
-                    }
-                    Button(replyLabel, systemImage: "arrowshape.turn.up.left") {
-                        replyingToMessage = message
-                        isTextFieldFocused = true
-                    }
-                    Button(languageManager.string("Add Reaction"), systemImage: "face.smiling") {
-                        showReactionPicker(for: message)
-                    }
-                    Button(
-                        message.isBookmarked
-                            ? languageManager.string("Remove Bookmark")
-                            : languageManager.string(LocalizedStringResource("Bookmark", comment: "Command that bookmarks a message")),
-                        systemImage: message.isBookmarked ? "bookmark.slash" : "bookmark"
-                    ) {
-                        toggleBookmark(message)
-                    }
-                    if message.isFromCurrentUser {
-                        Button(languageManager.string(LocalizedStringResource("Edit", comment: "Command that edits a message")), systemImage: "pencil") {
-                            startEditingMessage(message)
-                        }
-                        Divider()
-                        Button(languageManager.string("Delete for Me"), systemImage: "trash") {
-                            deleteMessageForMe(message)
-                        }
-                        Button(languageManager.string("Delete for Everyone"), systemImage: "trash.fill", role: .destructive) {
-                            deleteMessageForEveryone(message)
-                        }
-                    } else {
-                        Button(languageManager.string("Delete for Me"), systemImage: "trash") {
-                            deleteMessageForMe(message)
-                        }
-                        Divider()
-                        Button(languageManager.string(LocalizedStringResource("Report", comment: "Reports the person a chat is with")), systemImage: "exclamationmark.bubble") {
-                            showingReportAlert = true
-                        }
-                        if isBlocked {
-                            Button(languageManager.string(LocalizedStringResource("Unblock", comment: "Command that unblocks the other person")), systemImage: "hand.raised.slash") {
-                                unblockUser()
-                            }
-                        } else {
-                            Button(languageManager.string(LocalizedStringResource("Block", comment: "Blocks the person a chat is with")), systemImage: "hand.raised") {
-                                showingBlockAlert = true
-                            }
-                        }
-                    }
-                }
+                .contextMenu { messageMenu(for: message) }
             if message.messageType == .text, let url = firstURL(in: message.text) {
                 LinkPreviewView(url: url)
                     .frame(maxWidth: 280, maxHeight: 140)
@@ -188,6 +132,77 @@ extension ChatView {
                     .padding(.horizontal, 2)
             }
         }
+    }
+
+    /// One message's bubble, with what it needs from the chat.
+    private func bubble(for message: Message, viewModel: ChatViewModel, languageBadge: String?, showsTime: Bool) -> MessageBubbleView {
+        MessageBubbleView(
+            message: message,
+            languageBadge: message.isFromCurrentUser ? nil : languageBadge,
+            translation: translation(for: message),
+            showsTime: showsTime,
+            onTranslated: { translatedTexts[message.id] = $0 },
+            onAvatarTap: { openProfile(of: message.sender) },
+            isTranscribing: viewModel.transcribingMessageIDs.contains(message.id),
+            senderStanding: message.isFromCurrentUser ? nil : senderStandings.map { $0[message.sender] ?? .stranger },
+            onAddFriend: { try sendFriendRequest(toSender: message.sender) }
+        )
+    }
+
+    /// The menu a message opens when held.
+    @ViewBuilder
+    private func messageMenu(for message: Message) -> some View {
+        if message.messageType == .text {
+            Button(languageManager.string(LocalizedStringResource("Copy", comment: "Copies a message's text")), systemImage: "doc.on.doc") {
+                UIPasteboard.general.string = message.text
+                UIAccessibility.post(notification: .announcement, argument: languageManager.string("Message copied"))
+            }
+        }
+        Button(replyLabel, systemImage: "arrowshape.turn.up.left") {
+            replyingToMessage = message
+            isTextFieldFocused = true
+        }
+        Button(languageManager.string("Add Reaction"), systemImage: "face.smiling") {
+            showReactionPicker(for: message)
+        }
+        Button(
+            message.isBookmarked
+                ? languageManager.string("Remove Bookmark")
+                : languageManager.string(LocalizedStringResource("Bookmark", comment: "Command that bookmarks a message")),
+            systemImage: message.isBookmarked ? "bookmark.slash" : "bookmark"
+        ) {
+            toggleBookmark(message)
+        }
+        if message.isFromCurrentUser {
+            Button(languageManager.string(LocalizedStringResource("Edit", comment: "Command that edits a message")), systemImage: "pencil") {
+                startEditingMessage(message)
+            }
+            Divider()
+            Button(languageManager.string("Delete for Me"), systemImage: "trash") {
+                deleteMessageForMe(message)
+            }
+            Button(languageManager.string("Delete for Everyone"), systemImage: "trash.fill", role: .destructive) {
+                deleteMessageForEveryone(message)
+            }
+        } else {
+            Button(languageManager.string("Delete for Me"), systemImage: "trash") {
+                deleteMessageForMe(message)
+            }
+            Divider()
+            Button(languageManager.string(LocalizedStringResource("Report", comment: "Reports the person a chat is with")), systemImage: "exclamationmark.bubble") {
+                showingReportAlert = true
+            }
+            if isBlocked {
+                Button(languageManager.string(LocalizedStringResource("Unblock", comment: "Command that unblocks the other person")), systemImage: "hand.raised.slash") {
+                    unblockUser()
+                }
+            } else {
+                Button(languageManager.string(LocalizedStringResource("Block", comment: "Blocks the person a chat is with")), systemImage: "hand.raised") {
+                    showingBlockAlert = true
+                }
+            }
+        }
+    
     }
 
     /// The swipe's and the menu's name for replying to a message.

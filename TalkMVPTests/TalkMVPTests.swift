@@ -3258,3 +3258,38 @@ struct AppLocalizationTests {
         #expect(locale.region == "GB")
     }
 }
+
+@Suite("Message runs")
+struct MessageRunsTests {
+    private let start = Date(timeIntervalSince1970: 1_000_000)
+
+    private func item(_ sender: String, mine: Bool = false, minutes: Double) -> MessageRuns.Item {
+        MessageRuns.Item(id: UUID(), sender: sender, isFromCurrentUser: mine, timestamp: start.addingTimeInterval(minutes * 60))
+    }
+
+    @Test("Messages one person sent close together share one time, on the last")
+    func closeMessagesShareTheLast() {
+        let items = [item("A", minutes: 0), item("A", minutes: 1), item("A", minutes: 4)]
+        #expect(MessageRuns.runEnds(in: items) == [items[2].id])
+    }
+
+    @Test("A new sender, the reader's own message, or a long pause starts a new run")
+    func runsBreak() {
+        let items = [
+            item("A", minutes: 0),
+            item("B", minutes: 1),
+            item("Me", mine: true, minutes: 2),
+            item("Me", mine: true, minutes: 20),
+            item("Me", mine: true, minutes: 21)
+        ]
+        #expect(MessageRuns.runEnds(in: items) == [items[0].id, items[1].id, items[2].id, items[4].id])
+    }
+
+    @Test("An empty chat has no runs, and a single message ends its own")
+    func edges() {
+        #expect(MessageRuns.runEnds(in: []).isEmpty)
+        let one = item("A", minutes: 0)
+        #expect(MessageRuns.runEnds(in: [one]) == [one.id])
+    }
+}
+
