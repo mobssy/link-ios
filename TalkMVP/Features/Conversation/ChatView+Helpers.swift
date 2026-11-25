@@ -48,9 +48,14 @@ extension ChatView {
         case .text:
             // The translation is part of the message, so it is read with it, while it is shown.
             let translatedLabel = languageManager.string(LocalizedStringResource("Translated", comment: "Says a message is shown translated"))
-            contentLabel = translatedTexts[message.id].flatMap { translation(for: message) == nil ? nil : $0 }.map {
-                "\(message.text). \(translatedLabel): \($0)"
-            } ?? message.text
+            switch translation(for: message) == nil ? nil : translatedTexts[message.id] {
+            case .translated(let translated):
+                contentLabel = "\(message.text). \(translatedLabel): \(translated)"
+            case .failed:
+                contentLabel = "\(message.text). \(languageManager.string("Couldn't translate"))"
+            case .translating, nil:
+                contentLabel = message.text
+            }
         case .image:
             contentLabel = [languageManager.string(LocalizedStringResource("Photo", comment: "VoiceOver name for a photo message")), message.imageDescription]
                 .compactMap { $0 }

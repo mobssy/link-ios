@@ -165,34 +165,73 @@ nonisolated struct MessageTranslation: Equatable {
     let target: String
 }
 
-/// A message's translation, as the lower half of its bubble: a small "Translated" label, then the
-/// translation at the message's own text size.
+/// Where a message's translation stands. The bubble shows exactly this, so it never says a message
+/// is translated before it is, or after nothing could translate it.
+nonisolated enum TranslationState: Equatable {
+    case translating
+    case translated(String)
+    case failed
+}
+
+/// A message's translation, as the lower half of its bubble. A finished translation reads as the
+/// message, behind a small translate glyph; only the exceptions, translating and failing, are
+/// spelled out, and a failure can be tried again.
 struct TranslatedTextView: View {
     @Environment(LanguageManager.self) private var languageManager
 
     let text: String
     let autoDetect: Bool
     let target: String
-    /// Hears what was shown once translating is done: the translation, or that there is none.
-    var onResult: ((String) -> Void)?
+    /// Hears how translating ended: with a translation, or failed.
+    var onResult: ((TranslationState) -> Void)?
 
-    /// nil once a try came back empty-handed: no translator on this device could translate it.
-    @State private var translated: String?
-    @State private var isLoading = true
+    @State private var state = TranslationState.translating
+    @State private var attempt: Task<Void, Never>?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Label(languageManager.string(LocalizedStringResource("Translated", comment: "Says a message is shown translated")), systemImage: "translate")
-                .font(.caption)
-                .foregroundStyle(Color.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            // Only a real translation reads as the message; waiting and failing stay quiet.
-            Text(isLoading ? languageManager.string("Translating...") : translated ?? unavailableText)
-                .foregroundStyle(!isLoading && translated != nil ? Color.primary : Color.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+        content
+            .fixedSize(horizontal: false, vertical: true)
+            .onAppear(perform: translate)
+            .onChange(of: text) { _, _ in translate() }
+            .onDisappear { attempt?.cancel() }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch state {
+        case .translating:
+            HStack(spacing: 6) {
+                ProgressView()
+                    .controlSize(.mini)
+                Text(languageManager.string("Translating..."))
+            }
+            .font(.caption)
+            .foregroundStyle(Color.secondary)
+            .accessibilityElement(children: .combine)
+        case .translated(let translation):
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Image(systemName: "translate")
+                    .font(.caption)
+                    .foregroundStyle(Color.secondary)
+                Text(translation)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(translatedLabel): \(translation)")
+        case .failed:
+            HStack(spacing: 8) {
+                Label(unavailableText, systemImage: "exclamationmark.bubble")
+                    .foregroundStyle(Color.secondary)
+                Button(languageManager.string(LocalizedStringResource("Try Again", comment: "Button in a message bubble that tries translating the message again after it failed.")), action: translate)
+                    .foregroundStyle(.appPrimaryText)
+                    .fontWeight(.semibold)
+                    .minimumHitTarget(visibleSize: 20)
+            }
+            .font(.caption)
         }
-        .onAppear(perform: translate)
-        .onChange(of: text) { _, _ in translate() }
+    }
+
+    private var translatedLabel: String {
+        languageManager.string(LocalizedStringResource("Translated", comment: "Says a message is shown translated"))
     }
 
     private var unavailableText: String {
@@ -200,14 +239,13 @@ struct TranslatedTextView: View {
     }
 
     private func translate() {
-        isLoading = true
-        Task {
+        attempt?.cancel()
+        state = .translating
+        attempt = Task {
             let result = await AIService.shared.translate(text, autoDetect: autoDetect, target: target)
-            await MainActor.run {
-                self.translated = result
-                self.isLoading = false
-                onResult?(result ?? unavailableText)
-            }
+            guard !Task.isCancelled else { return }
+            state = result.map(TranslationState.translated) ?? .failed
+            onResult?(state)
         }
     }
 }

@@ -55,6 +55,10 @@ extension ChatView {
                 .padding(.horizontal, 12)
             }
             .scrollDismissesKeyboard(.interactively)
+            // At the accessibility text sizes the title and the reply suggestions are big enough
+            // that large message text sliding under their soft edge reads through them; a hard
+            // edge keeps them legible.
+            .scrollEdgeEffectStyle(dynamicTypeSize.isAccessibilitySize ? .hard : .soft, for: [.top, .bottom])
             // A translation arriving makes a bubble taller after the chat has scrolled to the
             // newest message; anchored at the bottom, that message stays in view instead of
             // sliding under the message field.

@@ -22,6 +22,7 @@ struct ChatView: View {
     @Environment(\.screenSafeArea) private var screenSafeArea
     @Environment(\.prefersReducedMotion) var reduceMotion
     @Environment(\.openURL) private var openURL
+    @Environment(\.dynamicTypeSize) var dynamicTypeSize
     @Environment(LanguageManager.self) var languageManager
 
     let chatRoom: ChatRoom
@@ -40,8 +41,8 @@ struct ChatView: View {
     @State var reactionToMessage: Message?
     /// The appearance this chat's own background calls for; see `ChatBackgroundAppearance`.
     @State private var backgroundColorScheme: ColorScheme?
-    /// What each translated message's translation says once shown, for reading it out.
-    @State var translatedTexts: [UUID: String] = [:]
+    /// How each message's translation ended, for reading it out with the message.
+    @State var translatedTexts: [UUID: TranslationState] = [:]
     @State var showingReactionPicker = false
     @State var editingMessage: Message?
     @State var showingEditAlert = false

@@ -23,7 +23,7 @@ struct MessageBubbleView: View {
     /// How to translate a received text message, shown under it in the bubble; nil for none.
     var translation: MessageTranslation?
     /// Hears the translation once it is shown, so the message can be read out with it.
-    var onTranslated: ((String) -> Void)?
+    var onTranslated: ((TranslationState) -> Void)?
     var onAvatarTap: (() -> Void)?
     /// A voice message whose words are still being written down.
     var isTranscribing = false
@@ -130,7 +130,7 @@ struct MessageBubbleView: View {
                 if message.isFromCurrentUser {
                     Image(systemName: message.isRead ? "checkmark.circle.fill" : "checkmark.circle")
                         .font(.caption2)
-                        .foregroundStyle(message.isRead ? .appPrimary : .secondary)
+                        .foregroundStyle(message.isRead ? .appPrimaryText : .secondary)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
