@@ -3328,3 +3328,118 @@ struct SummaryOfferTests {
         #expect(!SummaryOffer.shows(unreadAtOpen: unread, summaryEnabled: enabled, dismissed: dismissed))
     }
 }
+
+// MARK: - Reply preview
+
+/// Records what the preview asked to translate, and answers "[target] text" unless the target is failing.
+private actor TranslateStub {
+    private(set) var calls: [String] = []
+    let failing: Set<String>
+    let failingBack: Set<String>
+
+    init(failing: Set<String> = [], failingBack: Set<String> = []) {
+        self.failing = failing
+        self.failingBack = failingBack
+    }
+
+    func translate(_ text: String, _ target: String) -> String? {
+        calls.append(target)
+        if failing.contains(target) { return nil }
+        if failingBack.contains(target) { return nil }
+        return "[\(target)] \(text)"
+    }
+}
+
+@Suite("Reply preview")
+struct ReplyPreviewTests {
+    private func said(_ text: String, by sender: String) -> SummaryMessage {
+        SummaryMessage(text: text, sender: sender, isFromCurrentUser: false, messageType: .text)
+    }
+
+    private func build(
+        text: String, members: [String], recent: [SummaryMessage] = [], siri: String = "en",
+        known: [String: String] = [:], stub: TranslateStub
+    ) async -> ReplyPreview {
+        await ReplyPreviewBuilder.build(
+            text: text, members: members, recent: recent, siriLanguage: siri,
+            knownLanguage: { known[$0] }, translate: { await stub.translate($0, $1) }
+        )
+    }
+
+    @Test func senderLanguageComesFromTheText() {
+        #expect(ReplyPreviewBuilder.senderLanguage(of: "펜션 예약했어요!", siriLanguage: "en") == "ko")
+    }
+
+    @Test func shortTextFallsBackToSiri() {
+        #expect(ReplyPreviewBuilder.senderLanguage(of: "👍", siriLanguage: "ja") == "ja")
+    }
+
+    @Test func sameLanguageReadsAsWritten() async {
+        let stub = TranslateStub()
+        let recent = [said("펜션 예약 확인했어요 감사합니다", by: "한서연"), said("저도 내일 가능합니다 같이 가요", by: "강민재")]
+        let preview = await build(text: "펜션 예약했어요!", members: ["한서연", "강민재"], recent: recent, stub: stub)
+        #expect(preview.lines == [.init(language: "ko", members: ["한서연", "강민재"], reading: .asWritten)])
+        #expect(await stub.calls.isEmpty)
+    }
+
+    @Test func otherLanguageIsTranslatedAndBack() async {
+        let stub = TranslateStub()
+        let recent = [said("I booked the pension yesterday, see you there", by: "Emma Kang")]
+        let preview = await build(text: "펜션 예약했어요!", members: ["Emma Kang"], recent: recent, stub: stub)
+        #expect(preview.lines == [.init(language: "en", members: ["Emma Kang"], reading: .translated("[en] 펜션 예약했어요!", back: "[ko] [en] 펜션 예약했어요!"))])
+    }
+
+    @Test func twoLanguagesTwoLines() async {
+        let stub = TranslateStub()
+        let recent = [
+            said("昨日はありがとうございました、また今度行きましょう", by: "佐藤ゆき"),
+            said("Gracias por la invitación, nos vemos pronto en la casa", by: "Lucía García"),
+        ]
+        let preview = await build(text: "See you at the pension tomorrow!", members: ["佐藤ゆき", "Lucía García"], recent: recent, stub: stub)
+        #expect(preview.lines.map(\.language) == ["es", "ja"])
+        #expect(preview.lines.allSatisfy { if case .translated = $0.reading { true } else { false } })
+    }
+
+    @Test func untranslatableIsFlagged() async {
+        let stub = TranslateStub(failing: ["en"])
+        let recent = [said("I booked the pension yesterday, see you there", by: "Emma Kang")]
+        let preview = await build(text: "펜션 예약했어요!", members: ["Emma Kang"], recent: recent, stub: stub)
+        #expect(preview.lines == [.init(language: "en", members: ["Emma Kang"], reading: .untranslatable)])
+    }
+
+    @Test func backTranslationFailureKeepsTheTranslation() async {
+        let stub = TranslateStub(failingBack: ["ko"])
+        let recent = [said("I booked the pension yesterday, see you there", by: "Emma Kang")]
+        let preview = await build(text: "펜션 예약했어요!", members: ["Emma Kang"], recent: recent, stub: stub)
+        #expect(preview.lines.first?.reading == .translated("[en] 펜션 예약했어요!", back: nil))
+    }
+
+    @Test func unknownLanguageMember() async {
+        let stub = TranslateStub()
+        let preview = await build(text: "펜션 예약했어요!", members: ["Nobody"], stub: stub)
+        #expect(preview.lines == [.init(language: nil, members: ["Nobody"], reading: .unknownLanguage)])
+        #expect(await stub.calls.isEmpty)
+    }
+
+    @Test func knownLanguageFallback() async {
+        let stub = TranslateStub()
+        let preview = await build(text: "펜션 예약했어요!", members: ["Emma Kang"], known: ["Emma Kang": "en"], stub: stub)
+        #expect(preview.lines.first?.language == "en")
+        #expect(preview.lines.first?.reading == .translated("[en] 펜션 예약했어요!", back: "[ko] [en] 펜션 예약했어요!"))
+    }
+
+    @Test func noMembersNoLines() async {
+        let preview = await build(text: "펜션 예약했어요!", members: [], stub: TranslateStub())
+        #expect(preview.lines.isEmpty)
+    }
+
+    @Test func linesAreOrderedTranslatedThenAsWrittenThenUnknown() async {
+        let stub = TranslateStub()
+        let recent = [
+            said("펜션 예약 확인했어요 감사합니다", by: "한서연"),
+            said("I booked the pension yesterday, see you there", by: "Emma Kang"),
+        ]
+        let preview = await build(text: "펜션 예약했어요!", members: ["Nobody", "한서연", "Emma Kang"], recent: recent, stub: stub)
+        #expect(preview.lines.map(\.language) == ["en", "ko", nil])
+    }
+}
