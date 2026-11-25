@@ -36,6 +36,18 @@ struct ChatIntentActions {
     var summarize: (_ messages: [SummaryMessage], _ language: String) async -> String = { messages, language in
         await AIService.shared.summarize(messages: messages, targetLanguage: language)
     }
+    /// Builds what the user is shown before a reply goes out: the text and how each recipient
+    /// would read it.
+    var previewReply: (_ text: String, _ room: ChatRoom, _ recent: [SummaryMessage]) async -> ReplyPreview = { text, room, recent in
+        await ReplyPreviewBuilder.build(
+            text: text,
+            members: ChatIntentActions.recipients(of: room),
+            recent: recent,
+            siriLanguage: ChatIntentActions.summaryLanguage(),
+            knownLanguage: { TestData.language(of: $0) },
+            translate: { await AIService.shared.translate($0, autoDetect: true, target: $1) }
+        )
+    }
 
     /// Siri can reach the app without opening it, so an action checks what the app's own screens
     /// would: that someone is signed in, and that App Lock isn't keeping the chats out of sight.
@@ -76,6 +88,38 @@ struct ChatIntentActions {
         try await LocalChatRoomRepository(modelContext: context).updateChatRoom(room, lastMessage: text, timestamp: Date())
         return message
     }
+
+    /// The preview of sending `text` to the chat, built from its last 20 messages. Nothing is sent.
+    func preview(_ text: String, for roomID: UUID) async throws -> ReplyPreview {
+        try checkAccess()
+        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { throw ChatIntentError.emptyMessage }
+        let room = try room(id: roomID)
+        let recent = try await LocalMessageRepository(modelContext: context)
+            .fetchMessages(for: room.id.uuidString, limit: Self.previewMessageLimit, before: nil)
+        return await previewReply(text, room, recent.map(SummaryMessage.init))
+    }
+
+    /// Shows the preview to `confirm` and sends only if it returns. `confirm` throws to cancel
+    /// (Siri's confirmation does when the user says no), and then nothing is sent.
+    @discardableResult
+    func sendAfterConfirming(
+        _ text: String,
+        to roomID: UUID,
+        confirm: (ReplyPreview) async throws -> Void
+    ) async throws -> Message {
+        let preview = try await preview(text, for: roomID)
+        try await confirm(preview)
+        return try await send(text, to: roomID)
+    }
+
+    /// Who a reply in this chat is for: the members of a group, or the one person otherwise.
+    static func recipients(of room: ChatRoom) -> [String] {
+        room.isGroup ? room.memberNames : [room.name]
+    }
+
+    /// How many of the chat's latest messages a reply preview looks at.
+    static let previewMessageLimit = 20
 
     /// The chat summarized in `language`, as plain text for Siri to say or show.
     func summary(of roomID: UUID, language: String) async throws -> String {

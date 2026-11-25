@@ -1253,6 +1253,94 @@ struct ChatIntentActionsTests {
         await #expect(throws: ChatIntentError.chatNotFound) { try await actions().send("hi", to: UUID()) }
     }
 
+    /// Counts what the send flow calls, so a test can show a step never ran.
+    @MainActor
+    private final class FlowProbe {
+        var previews = 0
+        var confirms = 0
+    }
+
+    private struct Cancelled: Error {}
+
+    private func confirmingActions(_ probe: FlowProbe, locked: Bool = false) -> ChatIntentActions {
+        var actions = actions(locked: locked)
+        actions.previewReply = { text, _, _ in
+            probe.previews += 1
+            return ReplyPreview(text: text, senderLanguage: "en", lines: [])
+        }
+        return actions
+    }
+
+    @Test("Confirming sends the trimmed text exactly once, after the preview was shown")
+    func confirmingSendsOnce() async throws {
+        try signIn()
+        let probe = FlowProbe()
+        var shown: ReplyPreview?
+
+        let sent = try await confirmingActions(probe).sendAfterConfirming("  On my way  ", to: room.id) { preview in
+            shown = preview
+            let count = try context.fetchCount(FetchDescriptor<Message>())
+            #expect(count == 0)
+        }
+
+        #expect(shown?.text == "On my way")
+        #expect(sent.text == "On my way")
+        #expect(try context.fetch(FetchDescriptor<Message>()).map(\.text) == ["On my way"])
+        #expect(room.lastMessage == "On my way")
+    }
+
+    @Test("Cancelling at the preview sends nothing and leaves the chat list alone")
+    func cancellingSendsNothing() async throws {
+        try signIn()
+        room.lastMessage = "before"
+        let probe = FlowProbe()
+
+        await #expect(throws: Cancelled.self) {
+            try await confirmingActions(probe).sendAfterConfirming("hi", to: room.id) { _ in throw Cancelled() }
+        }
+
+        #expect(try context.fetchCount(FetchDescriptor<Message>()) == 0)
+        #expect(room.lastMessage == "before")
+    }
+
+    @Test("A locked app fails before any preview or confirmation")
+    func lockedFailsBeforePreview() async throws {
+        try signIn()
+        let probe = FlowProbe()
+        await #expect(throws: ChatIntentError.appLocked) {
+            try await confirmingActions(probe, locked: true).sendAfterConfirming("hi", to: room.id) { _ in probe.confirms += 1 }
+        }
+        #expect(probe.previews == 0 && probe.confirms == 0)
+    }
+
+    @Test("Signed out fails before any preview or confirmation")
+    func signedOutFailsBeforePreview() async throws {
+        let probe = FlowProbe()
+        await #expect(throws: ChatIntentError.signedOut) {
+            try await confirmingActions(probe).sendAfterConfirming("hi", to: room.id) { _ in probe.confirms += 1 }
+        }
+        #expect(probe.previews == 0 && probe.confirms == 0)
+    }
+
+    @Test("Blank text fails before any preview or confirmation")
+    func emptyTextFailsBeforePreview() async throws {
+        try signIn()
+        let probe = FlowProbe()
+        await #expect(throws: ChatIntentError.emptyMessage) {
+            try await confirmingActions(probe).sendAfterConfirming("  ", to: room.id) { _ in probe.confirms += 1 }
+        }
+        #expect(probe.previews == 0 && probe.confirms == 0)
+    }
+
+    @Test("Recipients are the members of a group, or the one person in a one-to-one chat")
+    func recipientsOfRooms() {
+        let group = ChatRoom(name: "Study Group", profileImage: ChatRoom.groupSymbol)
+        group.memberNames = ["Mina", "Joon"]
+        #expect(ChatIntentActions.recipients(of: group) == ["Mina", "Joon"])
+        #expect(ChatIntentActions.recipients(of: ChatRoom(name: "김민지")) == ["김민지"])
+        #expect(ChatIntentActions.recipients(of: ChatRoom(name: "Empty", profileImage: ChatRoom.groupSymbol)) == [])
+    }
+
     @Test("Chats are found by part of their name, most recent first")
     func roomsMatchByName() throws {
         let older = ChatRoom(name: "Study Group")
