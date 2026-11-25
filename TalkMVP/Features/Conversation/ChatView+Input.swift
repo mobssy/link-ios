@@ -248,11 +248,11 @@ extension ChatView {
         isTextFieldFocused = false
     }
 
-    /// Puts a draft Siri handed over for this chat in the message field, ready to edit. It is
-    /// not sent: the user sends it, as anything they type.
+    /// Puts a draft Siri handed over for this chat in the message field, ready to edit, after
+    /// anything already typed there. It is not sent: the user sends it, as anything they type.
     func takeDraftFromSiri() {
         guard let draft = draftHandoff?.takeDraft(for: chatRoom.id) else { return }
-        inputText = draft
+        inputText = ChatDraftHandoff.merged(draft, into: inputText)
         isTextFieldFocused = true
     }
 

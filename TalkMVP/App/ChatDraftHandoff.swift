@@ -28,4 +28,11 @@ final class ChatDraftHandoff {
         self.pending = nil
         return pending.text
     }
+
+    /// The message field once `draft` joins what is already in it: the draft alone in an empty
+    /// field, else on a new line after the unsent text, which is never thrown away.
+    nonisolated static func merged(_ draft: String, into field: String) -> String {
+        if field.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return draft }
+        return field.hasSuffix("\n") ? field + draft : field + "\n" + draft
+    }
 }

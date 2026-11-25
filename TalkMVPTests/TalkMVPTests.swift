@@ -3838,6 +3838,16 @@ struct ChatDraftHandoffTests {
         #expect(handoff.takeDraft(for: room) == "Draft from Siri")
     }
 
+    @Test("A draft fills an empty field, and joins unsent text on a new line", arguments: [
+        ("", "Draft from Siri"),
+        ("  \n", "Draft from Siri"),
+        ("Running late", "Running late\nDraft from Siri"),
+        ("Running late\n", "Running late\nDraft from Siri"),
+    ])
+    func draftMergesIntoTheField(field: String, expected: String) {
+        #expect(ChatDraftHandoff.merged("Draft from Siri", into: field) == expected)
+    }
+
     @Test("A newer draft replaces the one not taken yet")
     func newerDraftReplacesOlder() {
         let handoff = ChatDraftHandoff()
