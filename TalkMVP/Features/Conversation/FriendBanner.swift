@@ -12,9 +12,10 @@ nonisolated enum FriendBanner: Equatable {
     case none, addFriend, requestSent
 
     /// `standing` is nil until it has been looked up. A group has no one person to add, and
-    /// someone blocked is unblocked from the menu, not befriended from a banner.
-    init(isGroup: Bool, standing: FriendStanding?, isBlocked: Bool) {
-        guard !isGroup, !isBlocked else {
+    /// someone blocked is unblocked from the menu, not befriended from a banner. Once closed, the
+    /// banner stays away: adding the person is still in their profile and a message's menu.
+    init(isGroup: Bool, standing: FriendStanding?, isBlocked: Bool, closed: Bool = false) {
+        guard !isGroup, !isBlocked, !closed else {
             self = .none
             return
         }
@@ -26,12 +27,28 @@ nonisolated enum FriendBanner: Equatable {
     }
 }
 
+/// Which chats' friend banners were closed, kept across launches.
+nonisolated enum ClosedFriendBanners {
+    static let key = "closedFriendBannerRooms"
+
+    static func contains(_ roomID: UUID, in defaults: UserDefaults = .standard) -> Bool {
+        (defaults.stringArray(forKey: key) ?? []).contains(roomID.uuidString)
+    }
+
+    static func close(_ roomID: UUID, in defaults: UserDefaults = .standard) {
+        let closed = defaults.stringArray(forKey: key) ?? []
+        guard !closed.contains(roomID.uuidString) else { return }
+        defaults.set(closed + [roomID.uuidString], forKey: key)
+    }
+}
+
 struct FriendBannerView: View {
     @Environment(LanguageManager.self) private var languageManager
 
     let banner: FriendBanner
     let name: String
     let onAddFriend: () -> Void
+    let onClose: () -> Void
 
     var body: some View {
         if banner != .none {
@@ -51,6 +68,14 @@ struct FriendBannerView: View {
                         .font(.footnote)
                         .foregroundStyle(Color.secondary)
                 }
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(Color.secondary)
+                }
+                .buttonStyle(.plain)
+                .minimumHitTarget(visibleSize: 20)
+                .accessibilityLabel(languageManager.string("Close"))
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)

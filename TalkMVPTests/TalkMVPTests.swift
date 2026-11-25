@@ -2806,6 +2806,19 @@ struct FriendBannerTests {
         #expect(FriendBanner(isGroup: false, standing: nil, isBlocked: false) == .none)
     }
 
+    @Test("A closed banner stays closed for that chat only, across launches")
+    func closedBannerStaysClosed() throws {
+        let defaults = try #require(UserDefaults(suiteName: "ClosedFriendBanners.\(UUID().uuidString)"))
+        let room = UUID(), other = UUID()
+        #expect(!ClosedFriendBanners.contains(room, in: defaults))
+        ClosedFriendBanners.close(room, in: defaults)
+        ClosedFriendBanners.close(room, in: defaults)
+        #expect(ClosedFriendBanners.contains(room, in: defaults))
+        #expect(!ClosedFriendBanners.contains(other, in: defaults))
+        #expect(defaults.stringArray(forKey: ClosedFriendBanners.key) == [room.uuidString])
+        #expect(FriendBanner(isGroup: false, standing: .stranger, isBlocked: false, closed: true) == .none)
+    }
+
     @Test("A room with members, a group icon or an organization is a group, even before anyone joins")
     func whichRoomsAreGroups() {
         let withMembers = ChatRoom(name: "Family")

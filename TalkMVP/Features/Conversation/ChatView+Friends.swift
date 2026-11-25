@@ -56,7 +56,10 @@ extension ChatView {
     }
 
     var friendBanner: FriendBanner {
-        FriendBanner(isGroup: chatRoom.isGroup, standing: oneToOneStanding, isBlocked: isBlocked)
+        FriendBanner(
+            isGroup: chatRoom.isGroup, standing: oneToOneStanding, isBlocked: isBlocked,
+            closed: friendBannerClosed || ClosedFriendBanners.contains(chatRoom.id)
+        )
     }
 
     /// Sends the friend request the banner offers, after its confirmation.

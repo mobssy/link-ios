@@ -57,6 +57,8 @@ struct ChatView: View {
     // MARK: - Friends
     @State var isFriend = false
     @State var friendRequestSent = false
+    /// Set when the friend banner is closed, so it goes at once; `ClosedFriendBanners` keeps it.
+    @State var friendBannerClosed = false
     @State var isBlocked = false
     @State var showingAddFriendAlert = false
     @State var addFriendEmail = ""
@@ -199,6 +201,9 @@ struct ChatView: View {
         VStack(spacing: 0) {
             FriendBannerView(banner: friendBanner, name: chatRoom.name) {
                 showingAddFriendAlert = true
+            } onClose: {
+                ClosedFriendBanners.close(chatRoom.id)
+                friendBannerClosed = true
             }
 
             if SummaryOffer.shows(unreadAtOpen: unreadAtOpen, summaryEnabled: aiSummaryEnabled, dismissed: summaryOfferDismissed) {

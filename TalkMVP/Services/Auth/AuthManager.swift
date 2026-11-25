@@ -370,6 +370,7 @@ class AuthManager {
         }
         attachmentFiles.removeFiles(keeping: [])
         passwordStore.removeAllPasswords()
+        UserDefaults.standard.removeObject(forKey: ClosedFriendBanners.key)
 
         // 알림 정리
         let center = UNUserNotificationCenter.current()
