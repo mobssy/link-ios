@@ -236,11 +236,14 @@ actor AIService {
 
         // Asked for one summary of a long chat, the model dwelt on how it began and dropped the
         // plans made at the end, hence the reminder. Without the line about the reader, half the
-        // summaries called them "the assistant".
+        // summaries called them "the assistant". A trip planned for "12월 19일" came back as
+        // "a December 2024 trip": the model supplied a year nobody wrote, hence the line on dates.
         let instructions = """
         You are an expert conversation analyst. Summarize chat conversations clearly and insightfully.
         Always write in \(languageName(for: language)). Cover the whole conversation, from the first message
         to the last: plans made near the end matter as much as those made at the start.
+        Keep dates, times, places and amounts exactly as the chat gives them; never add a year, a date or a \
+        number the chat doesn't state.
         "\(labels.me)" in the chat is the person reading this summary, one of the participants. Never call \
         anyone "the assistant" or "the user".
         """
