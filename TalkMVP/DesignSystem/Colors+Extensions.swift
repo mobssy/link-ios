@@ -28,6 +28,18 @@ extension Color {
         highContrast ? Color(UIColor.label) : .appPrimary
     }
 
+    /// The fill of other people's message bubbles: translucent, so a chat's own background shows
+    /// through. Gray at 20% is about #1A1A1A on black, too close to see where a bubble ends, so
+    /// dark mode uses a lighter wash (about #2B2B2B on black). With high contrast it is opaque.
+    static func incomingBubble(highContrast: Bool) -> Color {
+        if highContrast { return Color(UIColor.systemGray4) }
+        return Color(UIColor { traits in
+            traits.userInterfaceStyle == .dark
+                ? UIColor(white: 1, alpha: 0.17)
+                : UIColor(white: 0.5, alpha: 0.2)
+        })
+    }
+
     /// Text and icons on your own message bubbles.
     static func onOwnBubble(highContrast: Bool) -> Color {
         highContrast ? Color(UIColor.systemBackground) : .onAppPrimary

@@ -82,7 +82,7 @@ struct MessageBubbleView: View {
         if message.isFromCurrentUser {
             return Color.ownBubble(highContrast: highContrast)
         } else {
-            return highContrast ? Color(UIColor.systemGray4) : Color.gray.opacity(0.2)
+            return Color.incomingBubble(highContrast: highContrast)
         }
     }
 
