@@ -27,7 +27,7 @@ class ChatRoom {
     // MARK: - 알림 설정
     var notificationsEnabled: Bool = true  // 채팅방 알림 활성화 여부
 
-    // MARK: - 자폭 메시지 설정
+    // MARK: - 사라지는 메시지 설정
     var disappearingDuration: Int = 0  // 0=off, 60=1분, 3600=1시간, 86400=1일
 
     // MARK: - 배경/테마 커스터마이징

@@ -3851,13 +3851,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自動削除メッセージ"
+            "value" : "消えるメッセージ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "자폭 메시지"
+            "value" : "사라지는 메시지"
           }
         },
         "zh-Hans" : {
