@@ -16,6 +16,11 @@ final class SiriActionsUITests: XCTestCase {
 
     /// Sends a message and summarizes a chat the way Siri would, through AppIntentsTesting,
     /// against the running app signed into test mode.
+    ///
+    /// The send intent asks the system to confirm before it sends, with the reply preview card.
+    /// In the iOS 27.2 SDK, AppIntentsTesting accepts that confirmation by itself, so `run()`
+    /// returns with the message sent. This test covers the confirmed path; that cancelling sends
+    /// nothing is covered by `cancellingSendsNothing` in `ChatIntentActionsTests`.
     @MainActor
     func testSiriSendsAMessageAndSummarizesAChat() async throws {
         let app = launchInTestModeOnChats()
