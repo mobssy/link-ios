@@ -216,7 +216,8 @@ struct TranslatedTextView: View {
                 Text(translation)
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(translatedLabel): \(translation)")
+            // A String, not a literal: the label is already localized and isn't a catalog key.
+            .accessibilityLabel(String("\(translatedLabel): \(translation)"))
         case .failed:
             HStack(spacing: 8) {
                 Label(unavailableText, systemImage: "exclamationmark.bubble")
