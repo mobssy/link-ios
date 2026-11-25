@@ -72,8 +72,10 @@ struct ChatConversationEntity {
     var attributes: Set<ChatConversationAttribute>
     var dateLastActive: Date?
 
+    /// The name only. The last message stays out of Siri's and Shortcuts' pickers, where anyone
+    /// near the phone could read it.
     var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "\(displayName)", subtitle: "\(String(previewText.characters))")
+        DisplayRepresentation(title: "\(displayName)")
     }
 }
 
@@ -83,7 +85,9 @@ extension ChatConversationEntity {
         id = room.id
         recipients = ChatIntentActions.recipients(of: room).map { ChatPersonEntity(name: $0) }
         displayName = room.name
-        previewText = AttributedString(room.lastMessage)
+        // A disappearing chat's last message outlives the message itself (the chat list keeps
+        // it), so it isn't handed to Siri at all.
+        previewText = AttributedString(room.disappearingDuration > 0 ? "" : room.lastMessage)
         conversationName = room.isGroup ? room.name : nil
         isRead = room.unreadCount == 0
         attributes = room.notificationsEnabled ? [] : [.muted]

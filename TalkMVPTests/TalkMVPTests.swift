@@ -1461,6 +1461,21 @@ struct ChatConversationEntityTests {
         #expect(entity.attributes.isEmpty)
     }
 
+    @Test("A disappearing chat hands Siri no last message, and no chat shows its last message in a picker")
+    func conversationEntityKeepsMessagesOutOfSight() {
+        let room = ChatRoom(name: "Emma Kang")
+        room.lastMessage = "The door code is 4821"
+        room.disappearingDuration = 60
+
+        let entity = ChatConversationEntity(room)
+
+        #expect(entity.previewText.characters.isEmpty)
+        #expect(entity.displayRepresentation.subtitle == nil)
+
+        room.disappearingDuration = 0
+        #expect(ChatConversationEntity(room).displayRepresentation.subtitle == nil)
+    }
+
     @Test("A one-to-one chat is a conversation with that person and no group name")
     func conversationEntityFromOneToOne() {
         let room = ChatRoom(name: "Emma Kang")
