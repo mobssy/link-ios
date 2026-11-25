@@ -12,7 +12,7 @@ You write in Korean, they answer in Japanese, and you both read your own languag
 
 - **Translation in the bubble**, on the device, across seven languages.
 - **On-device AI**: summaries, meeting notes, reply suggestions, and search by meaning across languages.
-- **Easy for everyone**: large text, VoiceOver, six app languages, Siri that shows how each person will read your reply before it sends.
+- **Easy for everyone**: large text, VoiceOver, six app languages, Siri that shows how each person will read your reply.
 - **No server, no account**: tap **Try Test Mode** and chat with sample friends.
 
 ## iPhone Duo
