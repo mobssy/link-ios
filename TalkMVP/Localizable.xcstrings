@@ -5166,6 +5166,41 @@
         }
       }
     },
+    "Family Trip" : {
+      "comment" : "Name of a sample group chat in test mode where a family plans a trip.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viaje familiar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "家族旅行"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가족 여행"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "家庭旅行"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "家庭旅行"
+          }
+        }
+      }
+    },
     "FAQs" : {
       "localizations" : {
         "es" : {

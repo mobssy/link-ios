@@ -176,6 +176,7 @@ nonisolated enum TestData {
     static let groupMembers: [String: [String]] = [
         "family_group": ["강민재", "한서연"],
         "work_colleagues": ["유지훈", "조하린"],
+        "family_trip": ["한서연", "Emma Kang"],
         "study_group": ["佐藤ゆき", "Lucía García"]
     ]
 
@@ -183,6 +184,7 @@ nonisolated enum TestData {
     /// in theirs, and the reader sees it translated.
     static let memberLanguages: [String: String] = [
         "강민재": "ko", "한서연": "ko", "유지훈": "ko", "조하린": "ko", "권도윤": "ko", "김민지": "ko",
+        "Emma Kang": "en",
         "佐藤ゆき": "ja",
         "Lucía García": "es"
     ]

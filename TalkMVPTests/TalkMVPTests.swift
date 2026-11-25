@@ -3012,8 +3012,8 @@ struct SampleChatsTests {
     @Test("Previews and unread counts come from the messages themselves")
     func unreadCountsFollowTheMessages() {
         let rooms = SampleChats.rooms(readerLanguage: "en")
-        #expect(rooms.map(\.key) == ["study_group", "family_group", "minji", "work_colleagues"])
-        #expect(rooms.map(\.unreadCount) == [2, 1, 1, 0])
+        #expect(rooms.map(\.key) == ["study_group", "family_group", "minji", "work_colleagues", "family_trip"])
+        #expect(rooms.map(\.unreadCount) == [2, 1, 1, 0, 11])
         #expect(rooms.allSatisfy { $0.lastMessage == $0.lines.last?.text })
         #expect(rooms.allSatisfy { !$0.lastMessage.contains("Hello") })
     }
@@ -3027,6 +3027,12 @@ struct SampleChatsTests {
                 #expect(ConversationLanguage.confidentLanguage(of: line.text)?.rawValue.hasPrefix(code) == true, "\(name): \(line.text)")
             }
         }
+    }
+
+    @Test("One sample chat has enough unread messages to offer its summary on opening")
+    func oneSampleChatOffersASummary() {
+        let rooms = SampleChats.rooms(readerLanguage: "en")
+        #expect(rooms.filter { SummaryOffer.shows(unreadAtOpen: $0.unreadCount, summaryEnabled: true, dismissed: false) }.map(\.key) == ["family_trip"])
     }
 
     @Test("A language the app doesn't speak gets the English lines")

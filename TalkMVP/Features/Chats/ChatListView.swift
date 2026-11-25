@@ -19,12 +19,14 @@ private enum SampleGroupName: String {
     case familyGroup = "family_group"
     case workColleagues = "work_colleagues"
     case studyGroup = "study_group"
+    case familyTrip = "family_trip"
 
     var resource: LocalizedStringResource {
         switch self {
         case .familyGroup: "Family Group"
         case .workColleagues: "Work Colleagues"
         case .studyGroup: "Study Group"
+        case .familyTrip: "Family Trip"
         }
     }
 }

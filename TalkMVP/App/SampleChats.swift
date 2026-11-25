@@ -75,6 +75,24 @@ nonisolated enum SampleChats {
                 line("조하린", "발표는 제가 먼저 할게요."),
                 reader("work_colleagues", 1),
             ]),
+            // A long, unread planning chat: opening it offers the summary, and its dates, owners
+            // and open question give the meeting notes something real to find.
+            Room(key: "family_trip", personName: nil, members: TestData.groupMembers["family_trip"] ?? [], minutesAgo: 26 * 60, lines: [
+                line("한서연", "다음 달 제주 여행 날짜 정해요! 12월 19일부터 22일까지 어때요?"),
+                line("Emma Kang", "That works for me! I'll fly in from Los Angeles on the 18th."),
+                reader("family_trip", 0),
+                line("한서연", "숙소는 애월 쪽 펜션 두 곳 중에서 골라요."),
+                line("Emma Kang", "The one with the ocean view looks great. Is it big enough for six people?"),
+                line("한서연", "방이 세 개라 여섯 명 충분해요. 1박에 32만 원이에요."),
+                line("Emma Kang", "Perfect. Can you book it by Friday? The price goes up after that."),
+                line("한서연", "네, 금요일까지 제가 예약할게요."),
+                line("Emma Kang", "I'll book the flights for Mom and Dad from Gimpo."),
+                line("한서연", "고마워요! 할머니가 휠체어를 쓰셔서 공항 도움 서비스도 같이 신청해 줄 수 있어요?"),
+                line("Emma Kang", "Of course, I'll request wheelchair assistance when I book the flights."),
+                line("한서연", "첫날 저녁은 흑돼지 어때요? 식당은 제가 찾아볼게요."),
+                line("Emma Kang", "Yes please! Does anyone know if we need to book the boat tour ahead of time?"),
+                line("한서연", "그건 아직 모르겠어요. 누가 확인해 줄 수 있을까요?"),
+            ]),
         ]
     }
 
@@ -94,36 +112,42 @@ nonisolated enum SampleChats {
             "family_group": ["Saturday works for me, I'll bring dessert."],
             "minji": ["Hi Minji! It's good to hear from you."],
             "work_colleagues": ["Thanks, I'll read it tonight.", "Sounds good, see you at ten tomorrow."],
+            "family_trip": ["The 19th works for me. I'll look into a rental car."],
         ],
         "ko": [
             "study_group": ["토요일 3시 좋아요!"],
             "family_group": ["토요일 좋아요, 디저트는 제가 가져갈게요."],
             "minji": ["민지 씨, 안녕하세요! 연락 주셔서 반가워요."],
             "work_colleagues": ["감사합니다, 오늘 밤에 읽어 볼게요.", "좋아요, 내일 10시에 봬요."],
+            "family_trip": ["19일부터 좋아요. 렌터카는 제가 알아볼게요."],
         ],
         "ja": [
             "study_group": ["土曜日の3時で大丈夫です！"],
             "family_group": ["土曜日なら行けます、デザートを持っていきますね。"],
             "minji": ["ミンジさん、こんにちは！連絡ありがとうございます。"],
             "work_colleagues": ["ありがとうございます、今夜読んでおきます。", "いいですね、明日の10時に会いましょう。"],
+            "family_trip": ["19日からで大丈夫です。レンタカーは私が調べておきますね。"],
         ],
         "zh": [
             "study_group": ["周六下午三点我可以！"],
             "family_group": ["周六我可以，我来带甜点。"],
             "minji": ["敏智你好！很高兴收到你的消息。"],
             "work_colleagues": ["谢谢，我今晚会看的。", "好的，明天十点见。"],
+            "family_trip": ["19号开始我可以。租车的事我来查一下。"],
         ],
         "zh-Hant": [
             "study_group": ["週六下午三點我可以！"],
             "family_group": ["週六我可以，我來帶甜點。"],
             "minji": ["敏智你好！很高興收到你的訊息。"],
             "work_colleagues": ["謝謝，我今晚會看的。", "好的，明天十點見。"],
+            "family_trip": ["19號開始我可以。租車的事我來查一下。"],
         ],
         "es": [
             "study_group": ["¡El sábado a las tres me viene bien!"],
             "family_group": ["El sábado me viene bien, yo llevo el postre."],
             "minji": ["¡Hola, Minji! Qué alegría saber de ti."],
             "work_colleagues": ["Gracias, lo leo esta noche.", "Perfecto, nos vemos mañana a las diez."],
+            "family_trip": ["Desde el 19 me viene bien. Yo me encargo del coche de alquiler."],
         ],
     ]
 }
