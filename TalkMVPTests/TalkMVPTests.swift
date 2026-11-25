@@ -1261,6 +1261,24 @@ struct ChatIntentActionsTests {
         #expect(throws: ChatIntentError.chatNotFound) { try actions().room(id: "") }
     }
 
+    @Test("People are listed once whatever the case of their name, and filtered by part of it")
+    func peopleAreDeduplicatedAndFiltered() throws {
+        let trip = ChatRoom(name: "Family Trip", profileImage: ChatRoom.groupSymbol)
+        trip.memberNames = ["Emma Kang", "한서연"]
+        trip.timestamp = Date()
+        let emma = ChatRoom(name: "emma kang ")
+        emma.timestamp = Date().addingTimeInterval(-60)
+        room.timestamp = Date().addingTimeInterval(-120)
+        context.insert(trip)
+        context.insert(emma)
+        try context.save()
+
+        #expect(try actions().people() == ["Emma Kang", "한서연", "Family Group"])
+        #expect(try actions().people(matching: "EMMA") == ["Emma Kang"])
+        #expect(try actions().people(matching: "  ") == ["Emma Kang", "한서연", "Family Group"])
+        #expect(try actions().people(matching: "Nobody").isEmpty)
+    }
+
     @Test("A message sent through Siri lands in the chat as the user's, with the chat's options and preview")
     func sendAddsTheMessage() async throws {
         try signIn()
@@ -1373,6 +1391,19 @@ struct ChatIntentActionsTests {
 
         #expect(sent.text == "On my way")
         #expect(try context.fetchCount(FetchDescriptor<Message>()) == 1)
+    }
+
+    @Test("A chat that is gone fails before any preview or confirmation")
+    func missingChatFailsBeforePreview() async throws {
+        try signIn()
+        let probe = FlowProbe()
+        await #expect(throws: ChatIntentError.chatNotFound) {
+            try await confirmingActions(probe).preview("hi", for: UUID())
+        }
+        await #expect(throws: ChatIntentError.chatNotFound) {
+            try await confirmingActions(probe).sendAfterConfirming("hi", to: UUID(), pending: pending) { _ in probe.confirms += 1 }
+        }
+        #expect(probe.previews == 0 && probe.confirms == 0)
     }
 
     @Test("A locked app fails before any preview or confirmation")
@@ -1620,6 +1651,12 @@ struct ReplyPreviewDialogTests {
     func dialogBackTranslationGetsAnEnding() {
         let line = ReplyPreview.Line(language: "en", members: ["Emma Kang"], reading: .translated("I booked it", back: "예약했어요"))
         #expect(dialog([line], chat: "Emma Kang") == "Emma Kang will read it as \"예약했어요.\" Send it?")
+    }
+
+    @Test("A Japanese or Chinese translation back ends with 。", arguments: ["ja", "zh-Hans", "zh-Hant"])
+    func dialogBackTranslationEndsInCJK(language: String) {
+        #expect(ReplyPreviewDialog.sentence("予約しました", language: language) == "予約しました。")
+        #expect(ReplyPreviewDialog.sentence("予約しました！", language: language) == "予約しました！")
     }
 
     @Test("When it can't be translated, Siri says it goes as written")
@@ -3796,6 +3833,17 @@ struct ReplyPreviewTests {
     @Test func noMembersNoLines() async {
         let preview = await build(text: "펜션 예약했어요!", members: [], stub: TranslateStub())
         #expect(preview.lines.isEmpty)
+    }
+
+    @Test func moreReadersComeFirst() async {
+        let stub = TranslateStub()
+        let known = ["佐藤ゆき": "ja", "田中ひろし": "ja", "Lucía García": "es"]
+        let preview = await build(
+            text: "See you at the pension tomorrow!", members: ["Lucía García", "佐藤ゆき", "田中ひろし"],
+            known: known, stub: stub
+        )
+        #expect(preview.lines.map(\.language) == ["ja", "es"], "two readers of Japanese before one of Spanish")
+        #expect(preview.lines.first?.members == ["佐藤ゆき", "田中ひろし"])
     }
 
     @Test func linesAreOrderedTranslatedThenAsWrittenThenUnknown() async {
